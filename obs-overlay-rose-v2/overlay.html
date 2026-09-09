@@ -1,0 +1,1941 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8" />
+  <title>Overlay clavier + souris V2</title>
+  <style>
+    :root {
+      --accent: #e56b8a;
+      --accent-rgb: 229, 107, 138;
+      --rose: var(--accent);
+      --rose-glow: rgba(var(--accent-rgb), 0.4);
+      --key: rgba(18, 18, 22, 0.88);
+      --key-hi: rgba(255, 255, 255, 0.08);
+      --text: rgba(255, 255, 255, 0.94);
+      --stroke: rgba(255, 255, 255, 0.28);
+      --gap: 3px;
+      --u: 50px;
+      --ku: 34px;
+      --kgap: 2px;
+      --mouse: calc(var(--u) * 4 + var(--gap) * 3);
+      --radius: 10px;
+      --key-radius: 7px;
+      --pad-radius: 12px;
+      --glow: 0 0 0 transparent;
+    }
+
+    body.design-classic {
+      --key: rgba(18, 18, 22, 0.88);
+      --stroke: rgba(255, 255, 255, 0.28);
+      --key-radius: 7px;
+      --pad-radius: 12px;
+      --radius: 10px;
+      --glow: 0 0 0 transparent;
+    }
+
+    body.design-kawaii {
+      --key: rgba(255, 228, 236, 0.92);
+      --stroke: rgba(255, 140, 170, 0.55);
+      --text: #5a3040;
+      --radius: 18px;
+      --key-radius: 16px;
+      --pad-radius: 26px;
+      --kgap: 4px;
+      --gap: 6px;
+      --glow: 0 4px 0 rgba(255, 150, 180, 0.35);
+    }
+
+    body.design-gothic {
+      --key: rgba(28, 24, 34, 0.9);
+      --stroke: rgba(186, 160, 190, 0.38);
+      --text: rgba(236, 228, 238, 0.96);
+      --radius: 16px;
+      --key-radius: 14px;
+      --pad-radius: 22px;
+      --glow: 0 8px 22px rgba(80, 40, 90, 0.22);
+      --kgap: 4px;
+      --gap: 6px;
+    }
+
+    body.design-iphone {
+      --key: rgba(255, 255, 255, 0.22);
+      --stroke: rgba(255, 255, 255, 0.38);
+      --text: rgba(255, 255, 255, 0.96);
+      --radius: 22px;
+      --key-radius: 12px;
+      --pad-radius: 28px;
+      --kgap: 5px;
+      --gap: 6px;
+      --glow: 0 10px 28px rgba(0, 0, 0, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+    }
+
+    body.design-neon {
+      --key: rgba(8, 10, 18, 0.92);
+      --stroke: rgba(var(--accent-rgb), 0.55);
+      --glow: 0 0 14px rgba(var(--accent-rgb), 0.35);
+      --key-radius: 8px;
+      --pad-radius: 14px;
+    }
+
+    /* â€”â€” Formes + motifs par thÃ¨me â€”â€” */
+    body.design-classic .mbtn { border-radius: 10px; }
+    body.design-classic .wheel-wrap { flex: 0 0 42px; }
+    body.design-classic .wheel { border-radius: 10px; }
+    body.design-classic .wheel-up { border-radius: 10px 10px 0 0; }
+    body.design-classic .wheel-down { border-radius: 0 0 10px 10px; }
+    body.design-classic .pad { border-radius: 12px; }
+
+    /* Kawaii : cÅ“urs + pattes */
+    body.design-kawaii .key,
+    body.design-kawaii .mbtn,
+    body.design-kawaii .wheel,
+    body.design-kawaii .pad {
+      box-shadow: var(--glow);
+      border-width: 2px;
+    }
+    body.design-kawaii .key,
+    body.design-kawaii .mbtn {
+      overflow: visible;
+    }
+    body.design-kawaii .key.on,
+    body.design-kawaii .mbtn.on,
+    body.design-kawaii .wheel-up.on,
+    body.design-kawaii .wheel-down.on {
+      color: #fff;
+      text-shadow: 0 1px 0 rgba(0,0,0,0.15);
+    }
+    body.design-kawaii .key:not(.space):not(.shift):not(.mod):not(.tab) {
+      position: relative;
+    }
+    body.design-kawaii .key:not(.space):not(.shift):not(.mod):not(.tab)::after {
+      content: "♥";
+      position: absolute;
+      top: 1px;
+      right: 3px;
+      font-size: 8px;
+      line-height: 1;
+      color: var(--accent);
+      opacity: 0.85;
+      text-transform: none;
+      pointer-events: none;
+    }
+    body.design-kawaii .key.space {
+      position: relative;
+      padding-top: 6px;
+    }
+    body.design-kawaii .key.space::before {
+      content: "ฅ^•ﺎ•^ฅ";
+      position: absolute;
+      top: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 8px;
+      letter-spacing: 0;
+      opacity: 0.55;
+      text-transform: none;
+      pointer-events: none;
+    }
+    body.design-kawaii .clicks { height: calc(var(--u) + 8px); gap: 8px; }
+    body.design-kawaii .mbtn {
+      border-radius: 999px 999px 18px 18px;
+      font-size: 12px;
+    }
+    body.design-kawaii .mbtn::after {
+      content: "♡";
+      position: absolute;
+      top: 3px;
+      right: 7px;
+      font-size: 10px;
+      color: var(--accent);
+      opacity: 0.8;
+      text-transform: none;
+    }
+    body.design-kawaii .wheel-wrap { flex: 0 0 46px; }
+    body.design-kawaii .wheel {
+      border-radius: 999px;
+      overflow: hidden;
+      border-width: 2px;
+    }
+    body.design-kawaii .wheel-up { border-radius: 999px 999px 0 0; }
+    body.design-kawaii .wheel-down { border-radius: 0 0 999px 999px; }
+    body.design-kawaii .pad {
+      border-radius: 30px;
+      border-width: 2px;
+      background:
+        radial-gradient(circle at 22% 28%, rgba(var(--accent-rgb), 0.22) 0 7px, transparent 8px),
+        radial-gradient(circle at 38% 18%, rgba(var(--accent-rgb), 0.22) 0 5px, transparent 6px),
+        radial-gradient(circle at 12% 18%, rgba(var(--accent-rgb), 0.22) 0 5px, transparent 6px),
+        radial-gradient(circle at 28% 12%, rgba(var(--accent-rgb), 0.22) 0 5px, transparent 6px),
+        radial-gradient(circle at 78% 72%, rgba(var(--accent-rgb), 0.18) 0 8px, transparent 9px),
+        radial-gradient(circle at 88% 64%, rgba(var(--accent-rgb), 0.18) 0 5px, transparent 6px),
+        radial-gradient(circle at 70% 64%, rgba(var(--accent-rgb), 0.18) 0 5px, transparent 6px),
+        radial-gradient(circle at 80% 58%, rgba(var(--accent-rgb), 0.18) 0 5px, transparent 6px),
+        var(--key);
+    }
+    body.design-kawaii .sf-score {
+      color: #fff0f5;
+      -webkit-text-stroke: 2px #ff6b9a;
+    }
+
+    /* Gothic doux + stickers */
+    body.design-gothic .key,
+    body.design-gothic .mbtn,
+    body.design-gothic .wheel,
+    body.design-gothic .pad {
+      border-radius: 16px;
+      clip-path: none;
+      border: 1px solid rgba(186, 160, 190, 0.35);
+      background: linear-gradient(165deg, rgba(48, 40, 58, 0.95), rgba(22, 18, 28, 0.92));
+      box-shadow: 0 8px 20px rgba(40, 20, 55, 0.28), inset 0 1px 0 rgba(255,255,255,0.08);
+      letter-spacing: 0.04em;
+      overflow: hidden;
+    }
+    body.design-gothic .key {
+      border-radius: 14px;
+    }
+    body.design-gothic .key.on,
+    body.design-gothic .mbtn.on,
+    body.design-gothic .wheel-up.on,
+    body.design-gothic .wheel-down.on {
+      background: color-mix(in srgb, var(--accent) 72%, #2a2030);
+      box-shadow: 0 0 16px rgba(var(--accent-rgb), 0.35);
+      color: #fff;
+    }
+    body.design-gothic .key.space::after {
+      content: none;
+    }
+    body.design-gothic .clicks {
+      gap: 8px;
+      height: calc(var(--u) + 4px);
+    }
+    body.design-gothic .mbtn {
+      border-radius: 18px;
+      font-size: 12px;
+      letter-spacing: 0.08em;
+    }
+    body.design-gothic #m2 {
+      clip-path: none;
+    }
+    body.design-gothic .wheel-wrap { flex: 0 0 42px; }
+    body.design-gothic .wheel {
+      border-radius: 16px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(42, 34, 52, 0.96), rgba(18, 14, 24, 0.95));
+      box-shadow: 0 8px 18px rgba(40, 20, 55, 0.25);
+    }
+    body.design-gothic .wheel-up {
+      border-radius: 16px 16px 0 0;
+      border-bottom: 1px solid rgba(186, 160, 190, 0.25);
+    }
+    body.design-gothic .wheel-down { border-radius: 0 0 16px 16px; }
+    body.design-gothic .pad {
+      border-radius: 24px;
+      background:
+        radial-gradient(circle at 30% 20%, rgba(var(--accent-rgb), 0.14), transparent 42%),
+        linear-gradient(165deg, rgba(42, 34, 54, 0.96), rgba(16, 12, 22, 0.94));
+      box-shadow: 0 12px 28px rgba(30, 15, 45, 0.32), inset 0 1px 0 rgba(255,255,255,0.08);
+    }
+    body.design-gothic .sg-banner {
+      -webkit-text-stroke: 1.5px #2a2030;
+      color: color-mix(in srgb, var(--accent) 70%, #ddd0e8);
+    }
+    body.design-gothic .sf-score {
+      color: #f3e8f6;
+      -webkit-text-stroke: 2px #2a1c30;
+    }
+
+    .stickers {
+      display: none;
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 12;
+      overflow: visible;
+    }
+
+    body.design-gothic .stickers-gothic,
+    body.design-minecraft .stickers-minecraft,
+    body.design-cat .stickers-cat,
+    body.design-kawaii .stickers-kawaii {
+      display: block;
+    }
+
+    .stickers img {
+      position: absolute;
+      object-fit: contain;
+      max-width: 58px;
+      max-height: 58px;
+      width: auto;
+      height: auto;
+      border-radius: 12px;
+      background: rgba(255,255,255,0.92);
+      box-shadow: 0 6px 14px rgba(20, 10, 30, 0.3);
+      opacity: 0.95;
+      transform-origin: center center;
+    }
+
+    .stickers .s-cat {
+      width: 52px;
+      left: 18px;
+      top: 10px;
+      transform: rotate(-7deg);
+    }
+
+    .stickers .s-kawaii {
+      width: 50px;
+      right: 18px;
+      top: 14px;
+      transform: rotate(6deg);
+    }
+
+    .stickers .s-chibi {
+      width: 52px;
+      left: 48px;
+      bottom: 12px;
+      transform: rotate(4deg);
+    }
+
+    .stickers .s-gothic {
+      width: 48px;
+      right: 42px;
+      bottom: 14px;
+      transform: rotate(-5deg);
+    }
+
+    .stickers-minecraft img {
+      border-radius: 4px;
+      background: transparent;
+      image-rendering: pixelated;
+      box-shadow: 3px 3px 0 rgba(0,0,0,0.35);
+      max-width: 62px;
+      max-height: 62px;
+    }
+
+    .stickers-minecraft .mc-chicken {
+      width: 58px;
+      left: 16px;
+      top: 8px;
+      transform: rotate(-5deg);
+    }
+
+    .stickers-minecraft .mc-steve {
+      width: 54px;
+      right: 16px;
+      top: 10px;
+      transform: rotate(6deg);
+      background: #fff;
+      border-radius: 8px;
+    }
+
+    .stickers-minecraft .mc-cat {
+      width: 62px;
+      left: 44px;
+      bottom: 10px;
+      transform: rotate(3deg);
+      border-radius: 8px;
+    }
+
+    .stickers-minecraft .mc-grass {
+      width: 34px;
+      right: 48px;
+      bottom: 14px;
+      transform: rotate(-8deg);
+      border-radius: 0;
+      box-shadow: 2px 2px 0 rgba(0,0,0,0.4);
+    }
+
+    .stickers-cat img {
+      border-radius: 10px;
+      background: #fff;
+      box-shadow: 3px 3px 0 #2b2118;
+      max-width: 60px;
+      max-height: 60px;
+    }
+
+    .stickers-cat .cat-pixel {
+      width: 54px;
+      left: 16px;
+      top: 8px;
+      transform: rotate(-5deg);
+      image-rendering: pixelated;
+    }
+
+    .stickers-cat .cat-kittens {
+      width: 60px;
+      right: 14px;
+      top: 10px;
+      transform: rotate(5deg);
+    }
+
+    .stickers-cat .cat-warrior {
+      width: 56px;
+      left: 52px;
+      bottom: 10px;
+      transform: rotate(3deg);
+    }
+
+    .stickers-kawaii img {
+      border-radius: 14px;
+      background: #fff;
+      box-shadow: 0 6px 12px rgba(255, 120, 160, 0.3);
+      max-width: 56px;
+      max-height: 56px;
+    }
+
+    .stickers-kawaii .kw-1 {
+      width: 52px;
+      left: 16px;
+      top: 8px;
+      transform: rotate(-6deg);
+    }
+
+    .stickers-kawaii .kw-2 {
+      width: 52px;
+      right: 16px;
+      top: 10px;
+      transform: rotate(5deg);
+    }
+
+    .stickers-kawaii .kw-3 {
+      width: 50px;
+      left: 50px;
+      bottom: 10px;
+      transform: rotate(4deg);
+    }
+
+    .stickers-kawaii .kw-4 {
+      width: 50px;
+      right: 44px;
+      bottom: 12px;
+      transform: rotate(-4deg);
+    }
+
+    /* iPhone liquid glass */
+    body.design-iphone .key,
+    body.design-iphone .mbtn,
+    body.design-iphone .wheel,
+    body.design-iphone .pad {
+      background: linear-gradient(165deg, rgba(255,255,255,0.42), rgba(255,255,255,0.12) 42%, rgba(255,255,255,0.18));
+      backdrop-filter: blur(22px) saturate(160%);
+      -webkit-backdrop-filter: blur(22px) saturate(160%);
+      border: 1px solid rgba(255,255,255,0.42);
+      box-shadow:
+        0 12px 30px rgba(0, 0, 0, 0.16),
+        inset 0 1px 0 rgba(255,255,255,0.65),
+        inset 0 -1px 0 rgba(255,255,255,0.12);
+    }
+    body.design-iphone .key { border-radius: 12px; }
+    body.design-iphone .key.on,
+    body.design-iphone .mbtn.on {
+      background: color-mix(in srgb, var(--accent) 78%, white 12%);
+      box-shadow: 0 8px 20px rgba(var(--accent-rgb), 0.35), inset 0 1px 0 rgba(255,255,255,0.45);
+    }
+    body.design-iphone .clicks {
+      height: calc(var(--u) + 4px);
+      gap: 8px;
+    }
+    body.design-iphone .mbtn {
+      border-radius: 18px;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+    }
+    body.design-iphone .wheel-wrap { flex: 0 0 44px; }
+    body.design-iphone .wheel {
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    body.design-iphone .wheel-up {
+      border-radius: 16px 16px 0 0;
+      border-bottom: 1px solid rgba(255,255,255,0.28);
+    }
+    body.design-iphone .wheel-down { border-radius: 0 0 16px 16px; }
+    body.design-iphone .wheel-up.on,
+    body.design-iphone .wheel-down.on {
+      background: color-mix(in srgb, var(--accent) 70%, white 10%);
+      color: #fff;
+    }
+    body.design-iphone .pad {
+      border-radius: 28px;
+      box-shadow:
+        0 16px 40px rgba(0, 0, 0, 0.18),
+        inset 0 1px 0 rgba(255,255,255,0.7),
+        inset 0 -8px 24px rgba(255,255,255,0.08);
+    }
+    body.design-iphone .sf-score {
+      color: #fff;
+      -webkit-text-stroke: 2px rgba(30, 30, 40, 0.55);
+    }
+
+    /* Neon */
+    body.design-neon .clicks {
+      height: calc(var(--u) + 4px);
+      align-items: stretch;
+    }
+    body.design-neon .mbtn {
+      border-radius: 0;
+      clip-path: polygon(8% 0, 100% 0, 92% 100%, 0 100%);
+      letter-spacing: 0.12em;
+      box-shadow: 0 0 16px rgba(var(--accent-rgb), 0.28);
+    }
+    body.design-neon #m2 {
+      clip-path: polygon(0 0, 92% 0, 100% 100%, 8% 100%);
+    }
+    body.design-neon .wheel-wrap { flex: 0 0 36px; }
+    body.design-neon .wheel {
+      border-radius: 999px;
+      overflow: hidden;
+      box-shadow: 0 0 18px rgba(var(--accent-rgb), 0.45);
+      border-color: rgba(var(--accent-rgb), 0.8);
+    }
+    body.design-neon .wheel-up,
+    body.design-neon .wheel-down { border-radius: 0; }
+    body.design-neon .wheel-up { border-bottom-color: rgba(var(--accent-rgb), 0.45); }
+    body.design-neon .pad {
+      border-radius: 18px 18px 22px 22px;
+      border-color: rgba(var(--accent-rgb), 0.65);
+      box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.25), inset 0 0 24px rgba(var(--accent-rgb), 0.08);
+    }
+
+    body.design-cat {
+      --key: #fff6e8;
+      --stroke: #2b2118;
+      --text: #2b2118;
+      --radius: 20px;
+      --key-radius: 18px;
+      --pad-radius: 28px;
+      --kgap: 5px;
+      --gap: 6px;
+      --glow: 4px 4px 0 #2b2118;
+    }
+
+    body.design-apex {
+      --key: rgba(12, 18, 24, 0.94);
+      --stroke: rgba(218, 41, 42, 0.75);
+      --text: #f2f5f7;
+      --radius: 2px;
+      --key-radius: 2px;
+      --pad-radius: 4px;
+      --kgap: 3px;
+      --gap: 3px;
+      --glow: 0 0 16px rgba(218, 41, 42, 0.28);
+    }
+
+    body.design-valorant {
+      --key: rgba(15, 25, 35, 0.94);
+      --stroke: rgba(255, 70, 85, 0.7);
+      --text: #ece8e1;
+      --radius: 0;
+      --key-radius: 0;
+      --pad-radius: 0;
+      --kgap: 3px;
+      --gap: 3px;
+      --glow: 0 0 0 transparent;
+    }
+
+    body.design-minecraft {
+      --key: #8b5a2b;
+      --stroke: #3d2914;
+      --text: #f5f0d8;
+      --radius: 0;
+      --key-radius: 0;
+      --pad-radius: 0;
+      --kgap: 2px;
+      --gap: 2px;
+      --glow: inset -3px -3px 0 rgba(0,0,0,0.35), inset 3px 3px 0 rgba(255,255,255,0.18);
+    }
+
+    /* Chat cartoon */
+    body.design-cat .key,
+    body.design-cat .mbtn,
+    body.design-cat .wheel,
+    body.design-cat .pad {
+      border: 3px solid #2b2118;
+      box-shadow: 4px 4px 0 #2b2118;
+      overflow: visible;
+    }
+    body.design-cat .key {
+      border-radius: 16px 16px 14px 14px;
+      background: linear-gradient(180deg, #fffaf0, #ffe0b8);
+    }
+    body.design-cat .key.on,
+    body.design-cat .mbtn.on {
+      background: var(--accent);
+      color: #fff;
+    }
+    body.design-cat .key:not(.space):not(.shift):not(.mod):not(.tab)::before,
+    body.design-cat .key:not(.space):not(.shift):not(.mod):not(.tab)::after {
+      content: "";
+      position: absolute;
+      top: -8px;
+      width: 10px;
+      height: 12px;
+      background: #ffe0b8;
+      border: 3px solid #2b2118;
+      border-bottom: none;
+      pointer-events: none;
+      z-index: 2;
+    }
+    body.design-cat .key:not(.space):not(.shift):not(.mod):not(.tab) {
+      position: relative;
+    }
+    body.design-cat .key:not(.space):not(.shift):not(.mod):not(.tab)::before {
+      left: 3px;
+      border-radius: 10px 4px 0 0;
+      transform: rotate(-18deg);
+    }
+    body.design-cat .key:not(.space):not(.shift):not(.mod):not(.tab)::after {
+      right: 3px;
+      border-radius: 4px 10px 0 0;
+      transform: rotate(18deg);
+    }
+    body.design-cat .key.space {
+      position: relative;
+      border-radius: 18px;
+    }
+    body.design-cat .key.space::after {
+      content: "=^..^=";
+      position: absolute;
+      top: 2px;
+      left: 50%;
+      transform: translateX(-50%);
+      font-size: 9px;
+      letter-spacing: 0;
+      text-transform: none;
+      opacity: 0.7;
+      pointer-events: none;
+    }
+    body.design-cat .clicks { height: calc(var(--u) + 10px); gap: 8px; }
+    body.design-cat .mbtn {
+      border-radius: 18px 18px 22px 22px;
+      background: linear-gradient(180deg, #fffaf0, #ffd7a8);
+      font-size: 12px;
+    }
+    body.design-cat .wheel-wrap { flex: 0 0 48px; }
+    body.design-cat .wheel {
+      border-radius: 999px;
+      overflow: hidden;
+      background: #ffe8c8;
+    }
+    body.design-cat .wheel-up { border-radius: 999px 999px 0 0; }
+    body.design-cat .wheel-down { border-radius: 0 0 999px 999px; }
+    body.design-cat .pad {
+      border-radius: 30px;
+      background:
+        radial-gradient(circle at 50% 58%, #2b2118 0 4px, transparent 5px),
+        radial-gradient(circle at 38% 48%, #2b2118 0 2.5px, transparent 3.5px),
+        radial-gradient(circle at 62% 48%, #2b2118 0 2.5px, transparent 3.5px),
+        radial-gradient(circle at 30% 42%, transparent 0 8px, #2b2118 8.5px 10px, transparent 11px),
+        radial-gradient(circle at 70% 42%, transparent 0 8px, #2b2118 8.5px 10px, transparent 11px),
+        linear-gradient(180deg, #fffaf0, #ffd7a8);
+    }
+    body.design-cat .sf-score {
+      color: #fff8e8;
+      -webkit-text-stroke: 2px #2b2118;
+    }
+
+    /* Apex-inspired HUD */
+    body.design-apex .key,
+    body.design-apex .mbtn {
+      border-radius: 0;
+      clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+      background: linear-gradient(135deg, rgba(30,40,50,0.95), rgba(10,14,18,0.95));
+      border: 1px solid rgba(218, 41, 42, 0.55);
+      box-shadow: inset 0 0 0 1px rgba(255,255,255,0.04), 0 0 12px rgba(218,41,42,0.15);
+      letter-spacing: 0.1em;
+      font-size: 12px;
+    }
+    body.design-apex .key.on,
+    body.design-apex .mbtn.on {
+      background: linear-gradient(135deg, #da292a, #8a1018);
+      box-shadow: 0 0 18px rgba(218,41,42,0.55);
+    }
+    body.design-apex .clicks { gap: 3px; height: calc(var(--u) + 2px); }
+    body.design-apex .mbtn {
+      clip-path: polygon(0 0, 100% 0, 100% 70%, 82% 100%, 0 100%);
+      font-size: 12px;
+      letter-spacing: 0.14em;
+    }
+    body.design-apex #m2 {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 18% 100%, 0 70%);
+    }
+    body.design-apex .wheel-wrap { flex: 0 0 34px; }
+    body.design-apex .wheel {
+      border-radius: 0;
+      clip-path: polygon(20% 0, 80% 0, 100% 50%, 80% 100%, 20% 100%, 0 50%);
+      border: none;
+      background: linear-gradient(180deg, #1c2730, #0b1014);
+      box-shadow: inset 0 0 0 1px rgba(218,41,42,0.6);
+      overflow: hidden;
+    }
+    body.design-apex .wheel-up,
+    body.design-apex .wheel-down { border-radius: 0; }
+    body.design-apex .pad {
+      border-radius: 0;
+      clip-path: polygon(0 0, 100% 0, 100% 88%, 92% 100%, 0 100%);
+      background:
+        linear-gradient(90deg, rgba(218,41,42,0.15), transparent 18%),
+        linear-gradient(180deg, rgba(255,255,255,0.04), transparent 30%),
+        rgba(10, 14, 18, 0.95);
+      border: 1px solid rgba(218,41,42,0.45);
+      box-shadow: inset 0 0 24px rgba(218,41,42,0.12);
+    }
+    body.design-apex .sf-score {
+      color: #ffd4d4;
+      -webkit-text-stroke: 2px #4a0a0e;
+    }
+
+    /* Valorant-inspired */
+    body.design-valorant .key,
+    body.design-valorant .mbtn,
+    body.design-valorant .wheel,
+    body.design-valorant .pad {
+      border-radius: 0;
+      border: 1px solid rgba(255,70,85,0.45);
+      background: #0f1923;
+      box-shadow: inset 2px 0 0 rgba(255,70,85,0.85);
+    }
+    body.design-valorant .key {
+      clip-path: polygon(0 0, 100% 0, 100% 100%, 10% 100%, 0 78%);
+      font-weight: 800;
+      letter-spacing: 0.06em;
+    }
+    body.design-valorant .key.on,
+    body.design-valorant .mbtn.on {
+      background: #ff4655;
+      color: #fff;
+      box-shadow: none;
+    }
+    body.design-valorant .clicks { gap: 2px; }
+    body.design-valorant .mbtn {
+      clip-path: none;
+      box-shadow: inset 0 2px 0 rgba(255,70,85,0.9);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      font-weight: 800;
+    }
+    body.design-valorant .wheel-wrap { flex: 0 0 32px; }
+    body.design-valorant .wheel {
+      box-shadow: none;
+      border-left: 2px solid #ff4655;
+      overflow: hidden;
+    }
+    body.design-valorant .wheel-up { border-bottom: 1px solid rgba(255,70,85,0.35); }
+    body.design-valorant .pad {
+      box-shadow: inset 0 0 0 1px rgba(236,232,225,0.12), inset 3px 0 0 #ff4655;
+      background:
+        linear-gradient(135deg, rgba(255,70,85,0.08), transparent 40%),
+        repeating-linear-gradient(
+          -45deg,
+          transparent,
+          transparent 10px,
+          rgba(255,255,255,0.015) 10px,
+          rgba(255,255,255,0.015) 11px
+        ),
+        #0f1923;
+    }
+    body.design-valorant .sf-score {
+      color: #ff4655;
+      -webkit-text-stroke: 2px #ece8e1;
+      font-style: normal;
+      transform: translateX(-50%) skewX(-12deg) scale(0.9);
+    }
+    body.design-valorant .sf-score.show {
+      transform: translateX(-50%) skewX(-12deg) scale(1);
+    }
+
+    /* Minecraft-inspired */
+    body.design-minecraft {
+      font-family: "Segoe UI", Tahoma, sans-serif;
+      image-rendering: pixelated;
+    }
+    body.design-minecraft .key,
+    body.design-minecraft .mbtn,
+    body.design-minecraft .wheel,
+    body.design-minecraft .pad {
+      border-radius: 0 !important;
+      border: 2px solid #2b1d0e;
+      box-shadow: inset -3px -3px 0 rgba(0,0,0,0.35), inset 3px 3px 0 rgba(255,255,255,0.2);
+    }
+    body.design-minecraft .key {
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.12) 25%, transparent 25% 50%, rgba(0,0,0,0.12) 50% 75%, transparent 75%),
+        linear-gradient(0deg, rgba(0,0,0,0.12) 25%, transparent 25% 50%, rgba(0,0,0,0.12) 50% 75%, transparent 75%),
+        #8b5a2b;
+      background-size: 8px 8px, 8px 8px, auto;
+      text-shadow: 1px 1px 0 #3d2914;
+      font-weight: 800;
+    }
+    body.design-minecraft .key.on,
+    body.design-minecraft .mbtn.on {
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.1) 25%, transparent 25% 50%, rgba(0,0,0,0.1) 50% 75%, transparent 75%),
+        linear-gradient(0deg, rgba(0,0,0,0.1) 25%, transparent 25% 50%, rgba(0,0,0,0.1) 50% 75%, transparent 75%),
+        var(--accent);
+      background-size: 8px 8px, 8px 8px, auto;
+      color: #fff;
+    }
+    body.design-minecraft .key.space {
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.12) 25%, transparent 25% 50%, rgba(0,0,0,0.12) 50% 75%, transparent 75%),
+        linear-gradient(0deg, rgba(0,0,0,0.12) 25%, transparent 25% 50%, rgba(0,0,0,0.12) 50% 75%, transparent 75%),
+        linear-gradient(#5a9e3a 0 38%, #8b5a2b 38%);
+      background-size: 8px 8px, 8px 8px, auto;
+      color: #f5f0d8;
+      text-shadow: 1px 1px 0 #1e1408;
+    }
+    body.design-minecraft .key.space.on {
+      background:
+        linear-gradient(90deg, rgba(0,0,0,0.1) 25%, transparent 25% 50%, rgba(0,0,0,0.1) 50% 75%, transparent 75%),
+        linear-gradient(0deg, rgba(0,0,0,0.1) 25%, transparent 25% 50%, rgba(0,0,0,0.1) 50% 75%, transparent 75%),
+        var(--accent);
+      background-size: 8px 8px, 8px 8px, auto;
+      color: #fff;
+    }
+    body.design-minecraft .key.space::before,
+    body.design-minecraft .key.space::after {
+      content: none !important;
+    }
+    body.design-minecraft .clicks { gap: 2px; }
+    body.design-minecraft .mbtn {
+      background: #6b7280;
+      font-size: 11px;
+      letter-spacing: 0.04em;
+    }
+    body.design-minecraft .wheel-wrap { flex: 0 0 36px; }
+    body.design-minecraft .wheel {
+      overflow: hidden;
+      background: #4a5560;
+      box-shadow: inset -2px -2px 0 rgba(0,0,0,0.4), inset 2px 2px 0 rgba(255,255,255,0.15);
+    }
+    body.design-minecraft .wheel-up,
+    body.design-minecraft .wheel-down { border-radius: 0; }
+    body.design-minecraft .pad {
+      background:
+        linear-gradient(#5a9e3a 0 18%, transparent 18%),
+        url("/assets/mc-grass.jpg") center / 48px 48px repeat;
+      image-rendering: pixelated;
+      box-shadow: inset -4px -4px 0 rgba(0,0,0,0.35), inset 4px 4px 0 rgba(255,255,255,0.12);
+    }
+    body.design-minecraft .sf-score {
+      font-family: Impact, "Arial Black", sans-serif;
+      font-style: normal;
+      color: #fff;
+      -webkit-text-stroke: 3px #1a1a1a;
+      letter-spacing: 0;
+      transform: translateX(-50%) scale(0.9);
+    }
+    body.design-minecraft .sf-score.show {
+      transform: translateX(-50%) scale(1);
+    }
+
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      background: transparent;
+      overflow: hidden;
+      font-family: Bahnschrift, "Segoe UI", sans-serif;
+      color: var(--text);
+      user-select: none;
+    }
+
+    body.tiktok { background: #00ff00; }
+
+    .stage {
+      position: relative;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 18px 16px 18px;
+      width: max-content;
+      overflow: visible;
+    }
+
+    .kb {
+      display: flex;
+      flex-direction: column;
+      gap: var(--kgap);
+    }
+
+    .kb-box {
+      position: relative;
+    }
+
+    .row {
+      display: flex;
+      gap: var(--kgap);
+      height: var(--ku);
+    }
+
+    .key, .mbtn {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--key);
+      border: 1px solid var(--stroke);
+      border-radius: var(--radius);
+      font-weight: 600;
+      color: var(--text);
+      text-transform: uppercase;
+      overflow: hidden;
+      transition: background 60ms linear, color 60ms linear, box-shadow 60ms linear;
+      box-shadow: var(--glow);
+    }
+
+    .key {
+      height: var(--ku);
+      width: var(--ku);
+      font-size: 13px;
+      border-radius: var(--key-radius);
+    }
+
+    .key.tab { width: calc(var(--ku) * 1.18); }
+    .key.shift { width: calc(var(--ku) * 1.38); font-size: 9px; letter-spacing: 0.05em; }
+    .key.mod { width: calc(var(--ku) * 1.14); font-size: 9px; letter-spacing: 0.05em; }
+    .key.space { width: calc(var(--ku) * 3.1 + var(--kgap) * 2); font-size: 9px; letter-spacing: 0.08em; }
+    .key.sym { text-transform: none; font-size: 14px; }
+
+    .key svg {
+      width: 15px;
+      height: 15px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2.4;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .key.on, .mbtn.on {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--stroke);
+      box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.45);
+    }
+
+    .mouse {
+      display: flex;
+      flex-direction: column;
+      gap: var(--gap);
+      width: var(--mouse);
+      height: var(--mouse);
+      overflow: visible;
+    }
+
+    .clicks {
+      display: flex;
+      gap: var(--gap);
+      height: var(--u);
+      overflow: visible;
+    }
+
+    .mbtn {
+      flex: 1 1 0;
+      width: auto;
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      position: relative;
+    }
+
+    .cps { display: none; }
+
+    .wheel-wrap {
+      position: relative;
+      flex: 1 1 0;
+      height: 100%;
+      min-width: 0;
+      overflow: visible;
+      z-index: 5;
+    }
+
+    .wheel {
+      width: 100%;
+      height: 100%;
+      border-radius: var(--radius);
+      overflow: hidden;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      background: var(--key);
+      z-index: 3;
+      border: 1px solid var(--stroke);
+      box-shadow: var(--glow);
+    }
+
+    .wheel-up, .wheel-down {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 9px;
+      color: rgba(255, 255, 255, 0.35);
+      transition: background 60ms linear, color 60ms linear;
+      position: relative;
+      overflow: hidden;
+      border-radius: 0;
+    }
+
+    .wheel-up { border-radius: var(--radius) var(--radius) 0 0; border-bottom: 1px solid var(--stroke); }
+    .wheel-down { border-radius: 0 0 var(--radius) var(--radius); }
+
+    .wheel-up.on, .wheel-down.on {
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .sf-score {
+      position: absolute;
+      left: 50%;
+      font-family: Impact, "Arial Black", Bahnschrift, sans-serif;
+      font-style: italic;
+      font-weight: 900;
+      font-size: 28px;
+      line-height: 0.85;
+      letter-spacing: 0.02em;
+      color: #fff7e6;
+      -webkit-text-stroke: 2px #1a0a12;
+      paint-order: stroke fill;
+      transform: translateX(-50%) skewX(-18deg) rotate(-8deg) scale(0.85);
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 20;
+    }
+
+    .sf-score.show {
+      opacity: 1;
+      transform: translateX(-50%) skewX(-18deg) rotate(-8deg) scale(1);
+    }
+
+    .sf-score.sf-down.show {
+      transform: translateX(-50%) skewX(-18deg) rotate(8deg) scale(1);
+    }
+
+    .sf-score.pop { animation: sf-pop 160ms ease-out; }
+    .sf-score.sf-up { top: -14px; }
+    .sf-score.sf-down {
+      bottom: -14px;
+      transform: translateX(-50%) skewX(-18deg) rotate(8deg) scale(0.85);
+    }
+    .sf-score.sf-down.pop { animation: sf-pop-down 160ms ease-out; }
+
+    @keyframes sf-pop {
+      0% { transform: translateX(-50%) skewX(-18deg) rotate(-8deg) scale(1.35); }
+      100% { transform: translateX(-50%) skewX(-18deg) rotate(-8deg) scale(1); }
+    }
+
+    @keyframes sf-pop-down {
+      0% { transform: translateX(-50%) skewX(-18deg) rotate(8deg) scale(1.35); }
+      100% { transform: translateX(-50%) skewX(-18deg) rotate(8deg) scale(1); }
+    }
+
+    .pad {
+      position: relative;
+      flex: 1 1 auto;
+      background: var(--key);
+      border-radius: var(--pad-radius);
+      overflow: hidden;
+      box-shadow: var(--glow);
+      border: 1px solid var(--stroke);
+    }
+
+    #trail { display: block; width: 100%; height: 100%; }
+
+    .status {
+      position: fixed;
+      right: 8px;
+      bottom: 8px;
+      font-size: 10px;
+      letter-spacing: 0.08em;
+      color: rgba(255, 255, 255, 0.4);
+      font-weight: 700;
+    }
+
+    .status.ok { display: none; }
+
+    .sg-banner {
+      position: absolute;
+      left: 0;
+      top: 0;
+      opacity: 0;
+      z-index: 8;
+      pointer-events: none;
+      white-space: nowrap;
+      font-family: Impact, "Arial Black", Bahnschrift, sans-serif;
+      font-style: italic;
+      font-weight: 900;
+      font-size: 26px;
+      line-height: 1;
+      letter-spacing: 0.04em;
+      color: var(--accent);
+      -webkit-text-stroke: 1.5px #fff;
+      paint-order: stroke fill;
+      --sg-rot: -8deg;
+      --sg-rot-in: -16deg;
+      transform: translate(-50%, -50%) skewX(-6deg) rotate(var(--sg-rot));
+      transition: opacity 1s ease-in;
+    }
+
+    .sg-banner.show {
+      opacity: 1;
+      transition: opacity 60ms linear;
+    }
+
+    .sg-banner.pop {
+      animation: sg-comic 280ms cubic-bezier(0.2, 1.4, 0.4, 1) both;
+    }
+
+    @keyframes sg-comic {
+      0% { transform: translate(-50%, -50%) skewX(-16deg) rotate(var(--sg-rot-in)) scale(1.5); }
+      55% { transform: translate(-50%, -50%) skewX(-3deg) rotate(var(--sg-rot)) scale(1.06); }
+      100% { transform: translate(-50%, -50%) skewX(-6deg) rotate(var(--sg-rot)) scale(1); }
+    }
+  </style>
+</head>
+<body>
+  <div class="stage">
+    <div class="stickers stickers-gothic" aria-hidden="true">
+      <img class="s-cat" data-src="/assets/sticker-cat.jpg" alt="" />
+      <img class="s-kawaii" data-src="/assets/sticker-kawaii.jpg" alt="" />
+      <img class="s-chibi" data-src="/assets/sticker-chibi.jpg" alt="" />
+      <img class="s-gothic" data-src="/assets/sticker-gothic.jpg" alt="" />
+    </div>
+    <div class="stickers stickers-minecraft" aria-hidden="true">
+      <img class="mc-chicken" data-src="/assets/mc-chicken.jpg" alt="" />
+      <img class="mc-steve" data-src="/assets/mc-steve.jpg" alt="" />
+      <img class="mc-cat" data-src="/assets/mc-cat.jpg" alt="" />
+      <img class="mc-grass" data-src="/assets/mc-grass.jpg" alt="" />
+    </div>
+    <div class="stickers stickers-cat" aria-hidden="true">
+      <img class="cat-pixel" data-src="/assets/cat-pixel.gif" data-fallback="/assets/cat-pixel.jpg" alt="" />
+      <img class="cat-kittens" data-src="/assets/cat-kittens.gif" data-fallback="/assets/cat-kittens.jpg" alt="" />
+      <img class="cat-warrior" data-src="/assets/cat-warrior.gif" data-fallback="/assets/cat-warrior.jpg" alt="" />
+    </div>
+    <div class="stickers stickers-kawaii" aria-hidden="true">
+      <img class="kw-1" data-src="/assets/kawaii-1.gif" alt="" />
+      <img class="kw-2" data-src="/assets/kawaii-2.gif" alt="" />
+      <img class="kw-3" data-src="/assets/kawaii-3.gif" alt="" />
+      <img class="kw-4" data-src="/assets/kawaii-4.gif" alt="" />
+    </div>
+    <div class="kb-box">
+      <div class="kb" id="kb"></div>
+      <div class="sg-banner" id="sgBanner">SUPERGLIDE</div>
+    </div>
+    <div class="mouse">
+      <div class="clicks">
+        <div class="mbtn" id="m1">M1</div>
+        <div class="wheel-wrap" id="wheelWrap">
+          <div class="wheel" id="wheel">
+            <div class="wheel-up" id="wup">▲</div>
+            <div class="wheel-down" id="wdn">▼</div>
+          </div>
+          <span class="sf-score sf-up" id="cpsUp">0x</span>
+          <span class="sf-score sf-down" id="cpsDown">0x</span>
+        </div>
+        <div class="mbtn" id="m2">M2</div>
+      </div>
+      <div class="pad">
+        <canvas id="trail"></canvas>
+      </div>
+    </div>
+  </div>
+  <div class="status" id="status">LANCE start-overlay.bat</div>
+
+  <script>
+    if (/tiktok=1/.test(location.search)) document.body.classList.add("tiktok");
+
+    const DEFAULT_SETTINGS = {
+      accent: "#e56b8a",
+      design: "classic",
+      mouse: "ribbon",
+      layout: "azerty",
+      sgJump: "space",
+      sgCrouch: "kC",
+      sgFps: 138,
+    };
+
+    let SETTINGS = { ...DEFAULT_SETTINGS };
+    let accentRgb = "229,107,138";
+    let defById = {};
+    let padCache = { w: 100, h: 100, maxX: 45, maxY: 45 };
+    let mouseScaleX = 1;
+    let mouseScaleY = 1;
+    let drawRaf = 0;
+    let animActive = true;
+
+    const STICKER_GROUP = {
+      gothic: "stickers-gothic",
+      minecraft: "stickers-minecraft",
+      cat: "stickers-cat",
+      kawaii: "stickers-kawaii",
+    };
+
+    function bumpAnim() {
+      animActive = true;
+      if (!drawRaf) drawRaf = requestAnimationFrame(draw);
+    }
+
+    function syncStickers(design) {
+      const want = STICKER_GROUP[design] || null;
+      document.querySelectorAll(".stickers").forEach((group) => {
+        const on = !!(want && group.classList.contains(want));
+        group.querySelectorAll("img").forEach((img) => {
+          const current = img.getAttribute("src") || "";
+          const loaded = current && !current.startsWith("data:");
+          if (on) {
+            if (!loaded) {
+              const src = img.dataset.src;
+              if (!src) return;
+              img.onerror = () => {
+                if (img.dataset.fallback) {
+                  img.onerror = null;
+                  img.src = img.dataset.fallback;
+                }
+              };
+              img.src = src;
+            }
+          } else if (loaded) {
+            img.onerror = null;
+            img.src = "data:,";
+          }
+        });
+      });
+    }
+
+    const CONFIG = {
+      wsUrl: (location.protocol === "http:" || location.protocol === "https:")
+        ? ((location.protocol === "https:" ? "wss://" : "ws://") + location.host + "/ws")
+        : "ws://127.0.0.1:7689/ws",
+      settingsUrl: (location.protocol === "http:" || location.protocol === "https:")
+        ? (location.origin + "/settings")
+        : "http://127.0.0.1:7689/settings",
+      padWidthCm: 45,
+      padHeightCm: 39,
+      mouseDpi: 800,
+      travelCm: 2.1,
+      mouseDecay: 0.991,
+      trailLength: 36,
+      minTrailDist: 1.15,
+      cpsWindowMs: 1000,
+      get sgFps() { return SETTINGS.sgFps || 138; },
+    };
+
+    const VC = {
+      n1: 0x0002, n2: 0x0003, n3: 0x0004, n4: 0x0005, n5: 0x0006,
+      tab: 0x000f, caps: 0x003a,
+      kA: 0x0010, kZ: 0x0011, kE: 0x0012, kR: 0x0013,
+      kQ: 0x001e, kS: 0x001f, kD: 0x0020, kF: 0x0021,
+      kW: 0x002c, kX: 0x002d, kC: 0x002e, kV: 0x002f, kB: 0x0030, kN: 0x0031,
+      shiftL: 0x002a, shiftR: 0x0036,
+      ctrlL: 0x001d, ctrlR: 0x0e1d,
+      altL: 0x0038, altR: 0x0e38,
+      space: 0x0039,
+    };
+
+    const TAB_ICON = `<svg viewBox="0 0 24 24"><path d="M5 12h12M13 6l6 6-6 6"/></svg>`;
+
+    function layoutRows(layout) {
+      const top = layout === "qwerty"
+        ? [
+            { id: "n1", label: "1", codes: [VC.n1], cls: "sym" },
+            { id: "n2", label: "2", codes: [VC.n2], cls: "sym" },
+            { id: "n3", label: "3", codes: [VC.n3], cls: "sym" },
+            { id: "n4", label: "4", codes: [VC.n4], cls: "sym" },
+          ]
+        : [
+            { id: "n1", label: "&", codes: [VC.n1], cls: "sym" },
+            { id: "n2", label: "Ã©", codes: [VC.n2], cls: "sym" },
+            { id: "n3", label: "\"", codes: [VC.n3], cls: "sym" },
+            { id: "n4", label: "'", codes: [VC.n4], cls: "sym" },
+          ];
+
+      const letters = layout === "qwerty"
+        ? [
+            { id: "tab", label: TAB_ICON, codes: [VC.tab], cls: "tab" },
+            { id: "kA", label: "Q", codes: [VC.kA] },
+            { id: "kZ", label: "W", codes: [VC.kZ] },
+            { id: "kE", label: "E", codes: [VC.kE] },
+            { id: "kR", label: "R", codes: [VC.kR] },
+          ]
+        : [
+            { id: "tab", label: TAB_ICON, codes: [VC.tab], cls: "tab" },
+            { id: "kA", label: "A", codes: [VC.kA] },
+            { id: "kZ", label: "Z", codes: [VC.kZ] },
+            { id: "kE", label: "E", codes: [VC.kE] },
+            { id: "kR", label: "R", codes: [VC.kR] },
+          ];
+
+      const mid = layout === "qwerty"
+        ? [
+            { id: "shift", label: "SHIFT", codes: [VC.shiftL, VC.shiftR], cls: "shift" },
+            { id: "kQ", label: "A", codes: [VC.kQ] },
+            { id: "kS", label: "S", codes: [VC.kS] },
+            { id: "kD", label: "D", codes: [VC.kD] },
+            { id: "kC", label: "C", codes: [VC.kC] },
+            { id: "kV", label: "V", codes: [VC.kV] },
+          ]
+        : [
+            { id: "shift", label: "SHIFT", codes: [VC.shiftL, VC.shiftR], cls: "shift" },
+            { id: "kQ", label: "Q", codes: [VC.kQ] },
+            { id: "kS", label: "S", codes: [VC.kS] },
+            { id: "kD", label: "D", codes: [VC.kD] },
+            { id: "kC", label: "C", codes: [VC.kC] },
+            { id: "kV", label: "V", codes: [VC.kV] },
+          ];
+
+      return [
+        top,
+        letters,
+        mid,
+        [
+          { id: "ctrl", label: "CTRL", codes: [VC.ctrlL, VC.ctrlR], cls: "mod" },
+          { id: "alt", label: "ALT", codes: [VC.altL, VC.altR], cls: "mod" },
+          { id: "space", label: "SPACE", codes: [VC.space], cls: "space" },
+        ],
+      ];
+    }
+
+    const kb = document.getElementById("kb");
+    let elById = {};
+    let codeToIds = new Map();
+    let keyList = [];
+    const pressed = new Set();
+
+    function rebuildKeyboard() {
+      const wasOn = {};
+      for (const id of Object.keys(elById)) {
+        if (elById[id].classList.contains("on")) wasOn[id] = true;
+      }
+      kb.innerHTML = "";
+      elById = {};
+      defById = {};
+      codeToIds = new Map();
+      keyList = [];
+
+      for (const row of layoutRows(SETTINGS.layout)) {
+        const rowEl = document.createElement("div");
+        rowEl.className = "row";
+        for (const k of row) {
+          const el = document.createElement("div");
+          el.className = "key" + (k.cls ? " " + k.cls : "");
+          el.innerHTML = k.label;
+          if (wasOn[k.id]) el.classList.add("on");
+          rowEl.appendChild(el);
+          elById[k.id] = el;
+          defById[k.id] = k;
+          keyList.push(k);
+          for (const c of k.codes) {
+            if (!codeToIds.has(c)) codeToIds.set(c, []);
+            codeToIds.get(c).push(k.id);
+          }
+        }
+        kb.appendChild(rowEl);
+      }
+    }
+
+    function hexToRgb(hex) {
+      const m = /^#?([0-9a-f]{6})$/i.exec(hex || "");
+      if (!m) return { r: 229, g: 107, b: 138 };
+      const n = parseInt(m[1], 16);
+      return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+    }
+
+    function applySettings(raw) {
+      const next = { ...DEFAULT_SETTINGS, ...(raw || {}) };
+      if (!/^#[0-9a-fA-F]{6}$/.test(next.accent)) next.accent = DEFAULT_SETTINGS.accent;
+      if (!["classic", "kawaii", "gothic", "iphone", "neon", "cat", "apex", "valorant", "minecraft"].includes(next.design)) {
+        const legacy = { soft: "kawaii", sharp: "gothic", glass: "iphone" };
+        next.design = legacy[next.design] || "classic";
+      }
+      if (!["ribbon", "dots", "laser", "comet", "cross", "ring"].includes(next.mouse)) next.mouse = "ribbon";
+      if (next.layout !== "qwerty") next.layout = "azerty";
+      next.sgFps = Math.max(30, Math.min(360, Number(next.sgFps) || 138));
+      const layoutChanged = next.layout !== SETTINGS.layout;
+      SETTINGS = next;
+
+      const rgb = hexToRgb(SETTINGS.accent);
+      accentRgb = rgb.r + "," + rgb.g + "," + rgb.b;
+      document.documentElement.style.setProperty("--accent", SETTINGS.accent);
+      document.documentElement.style.setProperty("--accent-rgb", accentRgb);
+      document.body.classList.remove(
+        "design-classic", "design-kawaii", "design-gothic", "design-iphone", "design-neon",
+        "design-cat", "design-apex", "design-valorant", "design-minecraft",
+        "design-soft", "design-sharp", "design-glass"
+      );
+      document.body.classList.add("design-" + SETTINGS.design);
+      document.body.classList.remove("mouse-ribbon", "mouse-dots", "mouse-laser", "mouse-comet", "mouse-cross", "mouse-ring");
+      document.body.classList.add("mouse-" + SETTINGS.mouse);
+      if (layoutChanged || !keyList.length) rebuildKeyboard();
+      syncStickers(SETTINGS.design);
+      updatePadCache();
+      bumpAnim();
+    }
+
+    async function fetchSettings() {
+      try {
+        const res = await fetch(CONFIG.settingsUrl, { cache: "no-store" });
+        if (!res.ok) return;
+        applySettings(await res.json());
+      } catch (_) {}
+    }
+
+    function applyKeycode(code, down) {
+      const ids = codeToIds.get(code);
+      if (!ids) return;
+      const key = "k:" + code;
+      if (down) pressed.add(key);
+      else pressed.delete(key);
+      for (const id of ids) {
+        const def = defById[id];
+        if (!def || !elById[id]) continue;
+        const wasOn = elById[id].classList.contains("on");
+        const any = def.codes.some((c) => pressed.has("k:" + c));
+        elById[id].classList.toggle("on", any);
+        if (down && !wasOn && any) onSgPress(id);
+      }
+    }
+
+    const sgBanner = document.getElementById("sgBanner");
+    let sgJumpAt = 0;
+    let sgHideTimer = 0;
+    let sgFadeTimer = 0;
+    let sgCombo = 0;
+    let sgSide = 1;
+
+    function placeSgBanner() {
+      const jumpEl = elById[SETTINGS.sgJump] || elById.space;
+      const crouchEl = elById[SETTINGS.sgCrouch] || elById.kC;
+      if (!jumpEl || !crouchEl) return;
+      const c = crouchEl.getBoundingClientRect();
+      const s = jumpEl.getBoundingClientRect();
+      const box = document.querySelector(".kb-box").getBoundingClientRect();
+      const x = (c.left + c.width / 2 + s.left + s.width / 2) / 2 - box.left;
+      const y = (c.top + c.height / 2 + s.top + s.height / 2) / 2 - box.top;
+      sgBanner.style.left = x + "px";
+      sgBanner.style.top = y + "px";
+    }
+
+    function flashSgBanner() {
+      sgCombo += 1;
+      sgSide = -sgSide;
+      const tilt = sgSide * (8 + ((sgCombo - 1) % 3) * 5);
+      sgBanner.style.setProperty("--sg-rot", tilt + "deg");
+      sgBanner.style.setProperty("--sg-rot-in", (tilt * 2.1) + "deg");
+      placeSgBanner();
+      sgBanner.classList.add("show");
+      sgBanner.classList.remove("pop");
+      void sgBanner.offsetWidth;
+      sgBanner.classList.add("pop");
+      clearTimeout(sgHideTimer);
+      clearTimeout(sgFadeTimer);
+      sgHideTimer = setTimeout(() => {
+        sgBanner.classList.remove("show");
+        sgFadeTimer = setTimeout(() => {
+          sgBanner.classList.remove("pop");
+          sgCombo = 0;
+        }, 1000);
+      }, 280);
+    }
+
+    function onSgPress(id) {
+      const now = performance.now();
+      if (id === SETTINGS.sgJump) {
+        sgJumpAt = now;
+        return;
+      }
+      if (id !== SETTINGS.sgCrouch || !sgJumpAt) return;
+      const dt = now - sgJumpAt;
+      sgJumpAt = 0;
+      const frame = 1000 / CONFIG.sgFps;
+      if (dt < frame * 0.5 || dt > frame * 1.4) return;
+      flashSgBanner();
+    }
+
+    const m1 = document.getElementById("m1");
+    const m2 = document.getElementById("m2");
+    const wup = document.getElementById("wup");
+    const wdn = document.getElementById("wdn");
+    const cpsUp = document.getElementById("cpsUp");
+    const cpsDown = document.getElementById("cpsDown");
+    const wheels = [];
+    let mouseMask = 0;
+    let wheelTimer = 0;
+    let wheelCountTimer = 0;
+    let lastWheelUp = null;
+
+    function setMouseButtons(mask) {
+      mouseMask = mask;
+      m1.classList.toggle("on", !!(mask & (1 << 8)));
+      m2.classList.toggle("on", !!(mask & (1 << 9)));
+    }
+
+    function noteWheel(up) {
+      const now = performance.now();
+      if (lastWheelUp !== null && lastWheelUp !== up) wheels.length = 0;
+      lastWheelUp = up;
+      wheels.push(now);
+      while (wheels.length && now - wheels[0] > CONFIG.cpsWindowMs) wheels.shift();
+      const n = wheels.length;
+      const el = up ? cpsUp : cpsDown;
+      const other = up ? cpsDown : cpsUp;
+      other.classList.remove("show", "pop");
+      el.textContent = n + "x";
+      el.classList.add("show");
+      el.classList.remove("pop");
+      void el.offsetWidth;
+      el.classList.add("pop");
+      clearTimeout(wheelCountTimer);
+      wheelCountTimer = setTimeout(() => {
+        wheels.length = 0;
+        lastWheelUp = null;
+        cpsUp.classList.remove("show", "pop");
+        cpsDown.classList.remove("show", "pop");
+      }, CONFIG.cpsWindowMs);
+
+      wup.classList.toggle("on", up);
+      wdn.classList.toggle("on", !up);
+      clearTimeout(wheelTimer);
+      wheelTimer = setTimeout(() => {
+        wup.classList.remove("on");
+        wdn.classList.remove("on");
+      }, 140);
+    }
+
+    const canvas = document.getElementById("trail");
+    const ctx = canvas.getContext("2d");
+    let mx = 0;
+    let my = 0;
+    let lastAbs = null;
+    const trail = [];
+
+    function resizeCanvas() {
+      const r = canvas.getBoundingClientRect();
+      const dpr = Math.min(2, Math.max(1, window.devicePixelRatio || 1));
+      canvas.width = Math.round(r.width * dpr);
+      canvas.height = Math.round(r.height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      updatePadCache();
+      bumpAnim();
+    }
+    resizeCanvas();
+    window.addEventListener("resize", resizeCanvas);
+    if (window.ResizeObserver) {
+      new ResizeObserver(resizeCanvas).observe(canvas.parentElement);
+    }
+
+    function updatePadCache() {
+      const r = canvas.getBoundingClientRect();
+      const margin = 5;
+      padCache.w = r.width;
+      padCache.h = r.height;
+      padCache.maxX = Math.max(8, r.width / 2 - margin);
+      padCache.maxY = Math.max(8, r.height / 2 - margin);
+      const edgeX = (CONFIG.travelCm / 2.54) * CONFIG.mouseDpi;
+      const edgeY = edgeX * (CONFIG.padHeightCm / CONFIG.padWidthCm);
+      mouseScaleX = padCache.maxX / Math.max(1, edgeX);
+      mouseScaleY = padCache.maxY / Math.max(1, edgeY);
+    }
+
+    function padLimits() {
+      return padCache;
+    }
+
+    function wrapAxis(v, max) {
+      const span = max * 2;
+      if (span <= 0) return 0;
+      let n = (v + max) % span;
+      if (n < 0) n += span;
+      return n - max;
+    }
+
+    function addMouseDelta(dx, dy) {
+      mx = wrapAxis(mx + dx * mouseScaleX, padCache.maxX);
+      my = wrapAxis(my + dy * mouseScaleY, padCache.maxY);
+      bumpAnim();
+    }
+
+    function onMouseMoveEvent(data) {
+      if (typeof data.delta_x === "number" || typeof data.dx === "number") {
+        addMouseDelta(data.delta_x ?? data.dx ?? 0, data.delta_y ?? data.dy ?? 0);
+        return;
+      }
+      if (typeof data.x === "number" && typeof data.y === "number") {
+        if (lastAbs) addMouseDelta(data.x - lastAbs.x, data.y - lastAbs.y);
+        lastAbs = { x: data.x, y: data.y };
+      }
+    }
+
+    function drawRibbon(pts, rgb) {
+      if (pts.length < 2) return;
+      const left = [];
+      const right = [];
+      for (let i = 0; i < pts.length; i++) {
+        const p = pts[i];
+        const prev = pts[Math.max(0, i - 1)];
+        const next = pts[Math.min(pts.length - 1, i + 1)];
+        let dx = next.x - prev.x;
+        let dy = next.y - prev.y;
+        const len = Math.hypot(dx, dy) || 1;
+        dx /= len;
+        dy /= len;
+        const t = i / (pts.length - 1);
+        const w = 0.35 + t * t * 4.8;
+        left.push({ x: p.x - dy * w, y: p.y + dx * w });
+        right.push({ x: p.x + dy * w, y: p.y - dx * w });
+      }
+      ctx.beginPath();
+      ctx.moveTo(left[0].x, left[0].y);
+      for (let i = 1; i < left.length; i++) ctx.lineTo(left[i].x, left[i].y);
+      for (let i = right.length - 1; i >= 0; i--) ctx.lineTo(right[i].x, right[i].y);
+      ctx.closePath();
+      const head = pts[pts.length - 1];
+      const tail = pts[0];
+      const grad = ctx.createLinearGradient(tail.x, tail.y, head.x, head.y);
+      grad.addColorStop(0, "rgba(" + rgb + ",0)");
+      grad.addColorStop(0.45, "rgba(" + rgb + ",0.18)");
+      grad.addColorStop(1, "rgba(" + rgb + ",0.95)");
+      ctx.fillStyle = grad;
+      ctx.fill();
+    }
+
+    function drawDots(pts, rgb) {
+      for (let i = 0; i < pts.length; i++) {
+        const t = i / Math.max(1, pts.length - 1);
+        const p = pts[i];
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(" + rgb + "," + (0.12 + t * 0.88).toFixed(3) + ")";
+        ctx.arc(p.x, p.y, 1.1 + t * 2.6, 0, Math.PI * 2);
+        ctx.fill();
+      }
+    }
+
+    function drawLaser(pts, rgb) {
+      if (pts.length < 2) return;
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+      ctx.strokeStyle = "rgba(" + rgb + ",0.95)";
+      ctx.lineWidth = 1.6;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+      ctx.shadowColor = "rgba(" + rgb + ",0.8)";
+      ctx.shadowBlur = 8;
+      ctx.stroke();
+      ctx.shadowBlur = 0;
+      ctx.beginPath();
+      ctx.moveTo(pts[0].x, pts[0].y);
+      for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+      ctx.strokeStyle = "rgba(255,255,255,0.75)";
+      ctx.lineWidth = 0.7;
+      ctx.stroke();
+    }
+
+    function drawComet(pts, rgb) {
+      if (pts.length < 2) return;
+      for (let i = 1; i < pts.length; i++) {
+        const t = i / (pts.length - 1);
+        const a = pts[i - 1];
+        const b = pts[i];
+        ctx.beginPath();
+        ctx.moveTo(a.x, a.y);
+        ctx.lineTo(b.x, b.y);
+        ctx.strokeStyle = "rgba(" + rgb + "," + (0.08 + t * 0.75).toFixed(3) + ")";
+        ctx.lineWidth = 0.8 + t * 5.5;
+        ctx.lineCap = "round";
+        ctx.stroke();
+      }
+      const head = pts[pts.length - 1];
+      const glow = ctx.createRadialGradient(head.x, head.y, 0, head.x, head.y, 14);
+      glow.addColorStop(0, "rgba(" + rgb + ",0.85)");
+      glow.addColorStop(0.45, "rgba(" + rgb + ",0.28)");
+      glow.addColorStop(1, "rgba(" + rgb + ",0)");
+      ctx.fillStyle = glow;
+      ctx.beginPath();
+      ctx.arc(head.x, head.y, 14, 0, Math.PI * 2);
+      ctx.fill();
+    }
+
+    function drawCrossTrail(pts, rgb) {
+      if (pts.length > 1) {
+        ctx.beginPath();
+        ctx.moveTo(pts[0].x, pts[0].y);
+        for (let i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+        ctx.strokeStyle = "rgba(" + rgb + ",0.35)";
+        ctx.lineWidth = 1.2;
+        ctx.lineCap = "round";
+        ctx.stroke();
+      }
+    }
+
+    function drawRingTrail(pts, rgb) {
+      for (let i = 0; i < pts.length; i += 2) {
+        const t = i / Math.max(1, pts.length - 1);
+        const p = pts[i];
+        ctx.beginPath();
+        ctx.strokeStyle = "rgba(" + rgb + "," + (0.1 + t * 0.55).toFixed(3) + ")";
+        ctx.lineWidth = 1.2;
+        ctx.arc(p.x, p.y, 2 + t * 3.2, 0, Math.PI * 2);
+        ctx.stroke();
+      }
+    }
+
+    function drawCursor(px, py, rgb, fill, style, lmb) {
+      if (style === "cross") {
+        const arm = lmb ? 9 : 7;
+        const gap = 2.2;
+        ctx.strokeStyle = fill;
+        ctx.lineWidth = 1.7;
+        ctx.lineCap = "round";
+        ctx.beginPath();
+        ctx.moveTo(px - arm, py); ctx.lineTo(px - gap, py);
+        ctx.moveTo(px + gap, py); ctx.lineTo(px + arm, py);
+        ctx.moveTo(px, py - arm); ctx.lineTo(px, py - gap);
+        ctx.moveTo(px, py + gap); ctx.lineTo(px, py + arm);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.fillStyle = fill;
+        ctx.arc(px, py, 1.4, 0, Math.PI * 2);
+        ctx.fill();
+        return;
+      }
+
+      if (style === "ring") {
+        ctx.beginPath();
+        ctx.strokeStyle = fill;
+        ctx.lineWidth = 2;
+        ctx.arc(px, py, lmb ? 6.2 : 5.2, 0, Math.PI * 2);
+        ctx.stroke();
+        ctx.beginPath();
+        ctx.fillStyle = fill;
+        ctx.arc(px, py, 1.6, 0, Math.PI * 2);
+        ctx.fill();
+        return;
+      }
+
+      if (style === "laser") {
+        ctx.beginPath();
+        ctx.fillStyle = "#fff";
+        ctx.shadowColor = "rgba(" + rgb + ",0.95)";
+        ctx.shadowBlur = 10;
+        ctx.arc(px, py, lmb ? 3.2 : 2.4, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.shadowBlur = 0;
+        return;
+      }
+
+      if (style === "comet") {
+        ctx.beginPath();
+        ctx.fillStyle = "#fff";
+        ctx.arc(px, py, lmb ? 4.4 : 3.6, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.lineWidth = 1.5;
+        ctx.strokeStyle = fill;
+        ctx.stroke();
+        return;
+      }
+
+      if (style === "dots") {
+        ctx.beginPath();
+        ctx.fillStyle = fill;
+        ctx.arc(px, py, lmb ? 4.6 : 3.8, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.beginPath();
+        ctx.fillStyle = "rgba(255,255,255,0.85)";
+        ctx.arc(px - 1, py - 1, 1.2, 0, Math.PI * 2);
+        ctx.fill();
+        return;
+      }
+
+      ctx.beginPath();
+      ctx.fillStyle = fill;
+      ctx.arc(px, py, 3.8, 0, Math.PI * 2);
+      ctx.fill();
+      ctx.lineWidth = 1;
+      ctx.strokeStyle = "rgba(255,255,255,0.35)";
+      ctx.stroke();
+    }
+
+    function drawMouseTrail(pts, rgb, style) {
+      if (style === "dots") drawDots(pts, rgb);
+      else if (style === "laser") drawLaser(pts, rgb);
+      else if (style === "comet") drawComet(pts, rgb);
+      else if (style === "cross") drawCrossTrail(pts, rgb);
+      else if (style === "ring") drawRingTrail(pts, rgb);
+      else drawRibbon(pts, rgb);
+    }
+
+    function draw() {
+      drawRaf = 0;
+      const { w, h, maxX, maxY } = padCache;
+      if (w < 2 || h < 2) {
+        drawRaf = requestAnimationFrame(draw);
+        return;
+      }
+      const cx = w / 2;
+      const cy = h / 2;
+
+      mx *= CONFIG.mouseDecay;
+      my *= CONFIG.mouseDecay;
+      mx = wrapAxis(mx, maxX);
+      my = wrapAxis(my, maxY);
+      if (Math.abs(mx) < 0.12) mx = 0;
+      if (Math.abs(my) < 0.12) my = 0;
+
+      const px = cx + mx;
+      const py = cy + my;
+      const last = trail[trail.length - 1];
+      const dist = last ? Math.hypot(px - last.x, py - last.y) : 999;
+      if (last && dist > Math.min(w, h) * 0.4) trail.length = 0;
+      if (!last || dist >= CONFIG.minTrailDist) {
+        trail.push({ x: px, y: py });
+        while (trail.length > CONFIG.trailLength) trail.shift();
+      } else if (trail.length > 2 && dist < 0.25) {
+        trail.shift();
+      }
+
+      ctx.clearRect(0, 0, w, h);
+      const lmb = m1.classList.contains("on");
+      const rgb = lmb ? "255,255,255" : accentRgb;
+      const style = SETTINGS.mouse || "ribbon";
+      const fill = lmb ? "#fff" : SETTINGS.accent;
+      drawMouseTrail(trail, rgb, style);
+      drawCursor(px, py, rgb, fill, style, lmb);
+
+      const stillBusy = mx !== 0 || my !== 0 || trail.length > 1 || lmb || animActive;
+      animActive = false;
+      if (stillBusy) drawRaf = requestAnimationFrame(draw);
+    }
+    bumpAnim();
+
+    function onEvent(data) {
+      if (!data || !data.event_type) return;
+      const t = data.event_type;
+      if (t === "settings") {
+        applySettings(data.settings);
+        return;
+      }
+      if (t === "key_typed" || t === "hello") return;
+      if (t === "key_pressed" || t === "key_released") {
+        applyKeycode(data.keycode, t === "key_pressed");
+        return;
+      }
+      if (t === "mouse_moved" || t === "mouse_dragged") {
+        onMouseMoveEvent(data);
+        return;
+      }
+      if (t === "mouse_wheel") {
+        const rot = data.rotation ?? data.delta ?? 0;
+        noteWheel(rot > 0);
+        bumpAnim();
+        return;
+      }
+
+      if (t === "mouse_pressed" || t === "mouse_released") {
+        bumpAnim();
+        if (typeof data.mask === "number") {
+          setMouseButtons(data.mask);
+        } else if (typeof data.button === "number") {
+          const down = t === "mouse_pressed";
+          if (data.button === 1) m1.classList.toggle("on", down);
+          if (data.button === 2) m2.classList.toggle("on", down);
+        }
+      }
+    }
+
+    const status = document.getElementById("status");
+    let wsOk = false;
+    let wsPing = 0;
+    let wsFailTimer = 0;
+
+    function startWs() {
+      let ws;
+      try { ws = new WebSocket(CONFIG.wsUrl); }
+      catch (e) {
+        scheduleWsRetry();
+        return;
+      }
+      ws.onopen = () => {
+        wsOk = true;
+        clearTimeout(wsFailTimer);
+        status.textContent = "";
+        status.classList.add("ok");
+        clearInterval(wsPing);
+        wsPing = setInterval(() => {
+          if (ws.readyState === 1) {
+            try { ws.send("{\"event_type\":\"ping\"}"); } catch (_) {}
+          }
+        }, 10000);
+      };
+      ws.onmessage = (e) => {
+        try { onEvent(JSON.parse(e.data)); } catch (_) {}
+      };
+      ws.onerror = () => {};
+      ws.onclose = () => {
+        wsOk = false;
+        clearInterval(wsPing);
+        clearTimeout(wsFailTimer);
+        wsFailTimer = setTimeout(() => {
+          if (!wsOk) {
+            status.classList.remove("ok");
+            status.textContent = "LANCE start-overlay.bat";
+          }
+        }, 2500);
+        setTimeout(startWs, 400);
+      };
+    }
+    function scheduleWsRetry() {
+      setTimeout(startWs, 800);
+    }
+
+    applySettings(DEFAULT_SETTINGS);
+    fetchSettings();
+    startWs();
+
+    const demoKey = {
+      Digit1: VC.n1, Digit2: VC.n2, Digit3: VC.n3, Digit4: VC.n4,
+      Tab: VC.tab,
+      KeyQ: VC.kA, KeyW: VC.kZ, KeyE: VC.kE, KeyR: VC.kR,
+      KeyA: VC.kQ, KeyS: VC.kS, KeyD: VC.kD,
+      KeyC: VC.kC, KeyV: VC.kV,
+      ShiftLeft: VC.shiftL, ShiftRight: VC.shiftR,
+      ControlLeft: VC.ctrlL, ControlRight: VC.ctrlR,
+      AltLeft: VC.altL, AltRight: VC.altR, Space: VC.space,
+    };
+
+    window.addEventListener("keydown", (e) => {
+      if (wsOk) return;
+      if (demoKey[e.code] != null) {
+        e.preventDefault();
+        applyKeycode(demoKey[e.code], true);
+      }
+    });
+    window.addEventListener("keyup", (e) => {
+      if (wsOk) return;
+      if (demoKey[e.code] != null) applyKeycode(demoKey[e.code], false);
+    });
+    window.addEventListener("mousemove", (e) => {
+      if (wsOk) return;
+      addMouseDelta(e.movementX, e.movementY);
+    });
+    window.addEventListener("mousedown", (e) => {
+      if (wsOk) return;
+      if (e.button === 0) m1.classList.add("on");
+      if (e.button === 2) m2.classList.add("on");
+    });
+    window.addEventListener("mouseup", (e) => {
+      if (wsOk) return;
+      if (e.button === 0) m1.classList.remove("on");
+      if (e.button === 2) m2.classList.remove("on");
+    });
+    window.addEventListener("wheel", (e) => {
+      if (wsOk) return;
+      noteWheel(e.deltaY < 0);
+    }, { passive: true });
+    window.addEventListener("contextmenu", (e) => e.preventDefault());
+  </script>
+</body>
+</html>
