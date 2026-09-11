@@ -1,0 +1,5 @@
+﻿Dossier themeperso
+=================
+Tes themes / reglages / images perso sont ici.
+Ce dossier n'est PAS ecrase lors des mises a jour GitHub.
+Ne le supprime pas si tu veux garder ton overlay.

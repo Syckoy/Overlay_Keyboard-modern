@@ -13,6 +13,7 @@
       --key-hi: rgba(255, 255, 255, 0.08);
       --text: rgba(255, 255, 255, 0.94);
       --stroke: rgba(255, 255, 255, 0.28);
+      --stroke-w: 1px;
       --gap: 3px;
       --u: 50px;
       --ku: 34px;
@@ -31,6 +32,15 @@
       --pad-radius: 12px;
       --radius: 10px;
       --glow: 0 0 0 transparent;
+    }
+
+    body.design-custom {
+      --key: rgba(16, 18, 22, 0.9);
+      --stroke: rgba(255, 255, 255, 0.22);
+      --key-radius: 8px;
+      --pad-radius: 14px;
+      --radius: 10px;
+      --glow: 0 0 10px rgba(var(--accent-rgb), 0.18);
     }
 
     body.design-kawaii {
@@ -84,6 +94,13 @@
     body.design-classic .wheel-up { border-radius: 10px 10px 0 0; }
     body.design-classic .wheel-down { border-radius: 0 0 10px 10px; }
     body.design-classic .pad { border-radius: 12px; }
+
+    body.design-custom .mbtn { border-radius: 10px; }
+    body.design-custom .wheel-wrap { flex: 0 0 42px; }
+    body.design-custom .wheel { border-radius: 10px; }
+    body.design-custom .wheel-up { border-radius: 10px 10px 0 0; }
+    body.design-custom .wheel-down { border-radius: 0 0 10px 10px; }
+    body.design-custom .pad { border-radius: 14px; }
 
     /* Kawaii : cÅ“urs + pattes */
     body.design-kawaii .key,
@@ -932,7 +949,7 @@
       align-items: center;
       justify-content: center;
       background: var(--key);
-      border: 1px solid var(--stroke);
+      border: var(--stroke-w) solid var(--stroke);
       border-radius: var(--radius);
       font-weight: 600;
       color: var(--text);
@@ -1018,7 +1035,7 @@
       flex-direction: column;
       background: var(--key);
       z-index: 3;
-      border: 1px solid var(--stroke);
+      border: var(--stroke-w) solid var(--stroke);
       box-shadow: var(--glow);
     }
 
@@ -1096,7 +1113,59 @@
       border-radius: var(--pad-radius);
       overflow: hidden;
       box-shadow: var(--glow);
-      border: 1px solid var(--stroke);
+      border: var(--stroke-w) solid var(--stroke);
+    }
+
+    /* Placement libre souris */
+    .mouse.custom {
+      position: relative;
+      display: block;
+      overflow: visible;
+    }
+
+    .mouse.custom .clicks {
+      display: contents;
+    }
+
+    .mouse.custom #m1,
+    .mouse.custom #m2,
+    .mouse.custom #wheelWrap,
+    .mouse.custom .pad {
+      position: absolute !important;
+      flex: none !important;
+      margin: 0 !important;
+      min-width: 0 !important;
+      min-height: 0 !important;
+      width: auto;
+      height: auto;
+      box-sizing: border-box;
+    }
+
+    .mouse.custom #m1,
+    .mouse.custom #m2 {
+      display: flex !important;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .mouse.custom #wheelWrap {
+      display: block !important;
+      overflow: visible;
+    }
+
+    .mouse.custom #wheelWrap .wheel {
+      width: 100%;
+      height: 100%;
+    }
+
+    .mouse.custom .pad {
+      flex: none !important;
+      overflow: hidden;
+    }
+
+    .mouse.custom .pad #trail {
+      width: 100%;
+      height: 100%;
     }
 
     #trail { display: block; width: 100%; height: 100%; }
@@ -1215,6 +1284,8 @@
       keyCustom: false,
       keyLayout: null,
       mediaLayers: [],
+      mouseCustom: false,
+      mouseLayout: null,
       sgEnabled: true,
       sgJump: "space",
       sgCrouch: "KeyC",
@@ -1237,12 +1308,21 @@
       kawaii: "stickers-kawaii",
     };
 
+    const IS_PREVIEW = (window !== window.top) || /(?:\?|&)preview=1(?:&|$)/.test(location.search);
+
     function bumpAnim() {
       animActive = true;
       if (!drawRaf) drawRaf = requestAnimationFrame(draw);
     }
 
     function syncStickers(design) {
+      if (IS_PREVIEW) {
+        document.querySelectorAll(".stickers img").forEach((img) => {
+          img.onerror = null;
+          if (img.getAttribute("src")) img.src = "data:,";
+        });
+        return;
+      }
       const want = STICKER_GROUP[design] || null;
       document.querySelectorAll(".stickers").forEach((group) => {
         const on = !!(want && group.classList.contains(want));
@@ -1281,8 +1361,8 @@
       mouseDpi: 800,
       travelCm: 2.1,
       mouseDecay: 0.991,
-      trailLength: 36,
-      minTrailDist: 1.15,
+      trailLength: IS_PREVIEW ? 18 : 36,
+      minTrailDist: IS_PREVIEW ? 1.6 : 1.15,
       cpsWindowMs: 1000,
       get sgFps() { return SETTINGS.sgFps || 138; },
     };
@@ -1494,6 +1574,12 @@
           el.style.top = Math.round(pos.y) + "px";
           el.style.setProperty("width", Math.max(16, Math.round(pos.w || 34)) + "px", "important");
           el.style.setProperty("height", Math.max(16, Math.round(pos.h || 34)) + "px", "important");
+          {
+            const rw = Math.max(16, Math.round(pos.w || 34));
+            const rh = Math.max(16, Math.round(pos.h || 34));
+            const rr = Math.max(0, Math.min(Math.floor(Math.min(rw, rh) / 2), Math.round(Number(pos.r) || 8)));
+            el.style.setProperty("border-radius", rr + "px", "important");
+          }
           if (wasOn[k.id]) el.classList.add("on");
           kb.appendChild(el);
           elById[k.id] = el;
@@ -1747,10 +1833,121 @@
       sgBanner.classList.remove("show", "pop");
     }
 
+    const MOUSE_PART_IDS = ["m1", "m2", "wheel", "pad"];
+    const MOUSE_U = 50;
+    const MOUSE_GAP = 3;
+    const MOUSE_BOX = MOUSE_U * 4 + MOUSE_GAP * 3; // 209 — = --mouse CSS
+
+    function buildDefaultMouseLayout() {
+      const box = MOUSE_BOX;
+      const gap = MOUSE_GAP;
+      const u = MOUSE_U;
+      const btnW = Math.floor((box - gap * 2) / 3);
+      const wheelW = box - gap * 2 - btnW * 2;
+      return [
+        { id: "m1", x: 0, y: 0, w: btnW, h: u, r: 10 },
+        { id: "wheel", x: btnW + gap, y: 0, w: wheelW, h: u, r: 10 },
+        { id: "m2", x: btnW + gap + wheelW + gap, y: 0, w: btnW, h: u, r: 10 },
+        { id: "pad", x: 0, y: u + gap, w: box, h: box - u - gap, r: 14 },
+      ];
+    }
+
+    function normalizeMouseLayout(raw) {
+      const byId = Object.create(null);
+      if (Array.isArray(raw)) {
+        for (const p of raw) {
+          if (!p || !MOUSE_PART_IDS.includes(String(p.id))) continue;
+          const id = String(p.id);
+          const minW = id === "pad" ? 80 : id === "wheel" ? 36 : 40;
+          const minH = id === "pad" ? 80 : 36;
+          const w = Math.max(minW, Math.round(Number(p.w) || 34));
+          const h = Math.max(minH, Math.round(Number(p.h) || 34));
+          const fallback = id === "pad" ? 14 : 10;
+          const r = Math.max(0, Math.min(Math.floor(Math.min(w, h) / 2), Math.round(Number(p.r) != null ? Number(p.r) : fallback)));
+          byId[id] = {
+            id,
+            x: Math.round(Number(p.x) || 0),
+            y: Math.round(Number(p.y) || 0),
+            w,
+            h,
+            r,
+          };
+        }
+      }
+      const base = buildDefaultMouseLayout();
+      return base.map((d) => byId[d.id] || d);
+    }
+
+    function mousePartEl(id) {
+      if (id === "m1") return document.getElementById("m1");
+      if (id === "m2") return document.getElementById("m2");
+      if (id === "wheel") return document.getElementById("wheelWrap");
+      if (id === "pad") return document.querySelector(".mouse .pad");
+      return null;
+    }
+
+    function clearMousePartStyles(el) {
+      if (!el) return;
+      el.style.left = "";
+      el.style.top = "";
+      el.style.width = "";
+      el.style.height = "";
+      el.style.borderRadius = "";
+      const wheel = el.querySelector && el.querySelector(".wheel");
+      if (wheel) {
+        wheel.style.borderRadius = "";
+        el.querySelectorAll(".wheel-up, .wheel-down").forEach((n) => { n.style.borderRadius = ""; });
+      }
+    }
+
+    function applyMousePartRadius(el, id, r) {
+      if (!el) return;
+      el.style.setProperty("border-radius", r + "px", "important");
+      if (id !== "wheel") return;
+      const wheel = el.querySelector(".wheel");
+      if (wheel) wheel.style.setProperty("border-radius", r + "px", "important");
+      const up = el.querySelector(".wheel-up");
+      const down = el.querySelector(".wheel-down");
+      if (up) up.style.setProperty("border-radius", r + "px " + r + "px 0 0", "important");
+      if (down) down.style.setProperty("border-radius", "0 0 " + r + "px " + r + "px", "important");
+    }
+
+    function applyMouseLayout() {
+      const root = document.querySelector(".mouse");
+      if (!root) return;
+      const custom = !!SETTINGS.mouseCustom;
+      root.classList.toggle("custom", custom);
+      if (!custom) {
+        root.style.width = "";
+        root.style.height = "";
+        for (const id of MOUSE_PART_IDS) clearMousePartStyles(mousePartEl(id));
+        if (typeof resizeCanvas === "function") requestAnimationFrame(resizeCanvas);
+        return;
+      }
+      const layout = normalizeMouseLayout(SETTINGS.mouseLayout);
+      SETTINGS.mouseLayout = layout;
+      let maxR = 0;
+      let maxB = 0;
+      for (const p of layout) {
+        const el = mousePartEl(p.id);
+        if (!el) continue;
+        el.style.left = p.x + "px";
+        el.style.top = p.y + "px";
+        el.style.width = p.w + "px";
+        el.style.height = p.h + "px";
+        applyMousePartRadius(el, p.id, p.r);
+        maxR = Math.max(maxR, p.x + p.w);
+        maxB = Math.max(maxB, p.y + p.h);
+      }
+      root.style.width = Math.max(MOUSE_BOX, maxR) + "px";
+      root.style.height = Math.max(MOUSE_BOX, maxB) + "px";
+      if (typeof resizeCanvas === "function") requestAnimationFrame(resizeCanvas);
+    }
+
     function applySettings(raw) {
       const next = { ...DEFAULT_SETTINGS, ...(raw || {}) };
       if (!/^#[0-9a-fA-F]{6}$/.test(next.accent)) next.accent = DEFAULT_SETTINGS.accent;
-      if (!["classic", "kawaii", "gothic", "iphone", "neon", "cat", "apex", "valorant", "minecraft"].includes(next.design)) {
+      if (!["classic", "kawaii", "gothic", "iphone", "neon", "cat", "apex", "valorant", "minecraft", "custom"].includes(next.design)) {
         const legacy = { soft: "kawaii", sharp: "gothic", glass: "iphone" };
         next.design = legacy[next.design] || "classic";
       }
@@ -1763,13 +1960,19 @@
         const rawLayout = Array.isArray(next.keyLayout) ? next.keyLayout : [];
         next.keyLayout = rawLayout
           .filter((p) => p && p.id && known.has(String(p.id)))
-          .map((p) => ({
-            id: String(p.id),
-            x: Math.round(Number(p.x) || 0),
-            y: Math.round(Number(p.y) || 0),
-            w: Math.max(16, Math.round(Number(p.w) || 34)),
-            h: Math.max(16, Math.round(Number(p.h) || 34)),
-          }));
+          .map((p) => {
+            const w = Math.max(16, Math.round(Number(p.w) || 34));
+            const h = Math.max(16, Math.round(Number(p.h) || 34));
+            const r = Math.max(0, Math.min(Math.floor(Math.min(w, h) / 2), Math.round(Number(p.r) != null ? Number(p.r) : 8)));
+            return {
+              id: String(p.id),
+              x: Math.round(Number(p.x) || 0),
+              y: Math.round(Number(p.y) || 0),
+              w,
+              h,
+              r,
+            };
+          });
       } else {
         next.keyLayout = null;
         next.mediaLayers = [];
@@ -1777,6 +1980,15 @@
       if (next.keyCustom) {
         next.mediaLayers = normalizeOverlayMedia(next.mediaLayers);
       }
+      next.mouseCustom = !!next.mouseCustom;
+      if (next.mouseCustom) {
+        next.mouseLayout = normalizeMouseLayout(next.mouseLayout);
+      } else {
+        next.mouseLayout = null;
+      }
+      delete next.contour;
+      delete next.contourWidth;
+      delete next.contourColor;
       next.sgEnabled = next.sgEnabled !== false;
       next.sgJump = migrateSgKey(next.sgJump);
       next.sgCrouch = migrateSgKey(next.sgCrouch);
@@ -1784,9 +1996,11 @@
       if (!sgCodesFor(next.sgCrouch).length) next.sgCrouch = DEFAULT_SETTINGS.sgCrouch;
       next.sgFps = Math.max(30, Math.min(360, Number(next.sgFps) || 138));
       const kbSig = next.layout + "|" + next.keyCustom + "|" + JSON.stringify(next.keyLayout) + "|" + JSON.stringify(next.mediaLayers);
+      const mouseSig = String(next.mouseCustom) + "|" + JSON.stringify(next.mouseLayout);
       const layoutChanged = kbSig !== (SETTINGS._kbSig || "");
       SETTINGS = next;
       SETTINGS._kbSig = kbSig;
+      SETTINGS._mouseSig = mouseSig;
       refreshSgCodes();
 
       const rgb = hexToRgb(SETTINGS.accent);
@@ -1795,14 +2009,18 @@
       document.documentElement.style.setProperty("--accent-rgb", accentRgb);
       document.body.classList.remove(
         "design-classic", "design-kawaii", "design-gothic", "design-iphone", "design-neon",
-        "design-cat", "design-apex", "design-valorant", "design-minecraft",
+        "design-cat", "design-apex", "design-valorant", "design-minecraft", "design-custom",
         "design-soft", "design-sharp", "design-glass"
       );
       document.body.classList.add("design-" + SETTINGS.design);
       document.body.classList.remove("mouse-ribbon", "mouse-dots", "mouse-laser", "mouse-comet", "mouse-cross", "mouse-ring");
       document.body.classList.add("mouse-" + SETTINGS.mouse);
+      document.body.classList.remove("has-contour");
+      document.body.style.removeProperty("--contour");
+      document.body.style.removeProperty("--contour-w");
       if (layoutChanged || !keyList.length) rebuildKeyboard();
       else rebuildMediaLayers();
+      applyMouseLayout();
       syncStickers(SETTINGS.design);
       clearSgEffect();
       if (typeof updatePadCache === "function") updatePadCache();
@@ -1911,13 +2129,15 @@
     const cpsDown = document.getElementById("cpsDown");
     const wheels = [];
     let mouseMask = 0;
+    let lmbDown = false;
     let wheelTimer = 0;
     let wheelCountTimer = 0;
     let lastWheelUp = null;
 
     function setMouseButtons(mask) {
       mouseMask = mask;
-      m1.classList.toggle("on", !!(mask & (1 << 8)));
+      lmbDown = !!(mask & (1 << 8));
+      m1.classList.toggle("on", lmbDown);
       m2.classList.toggle("on", !!(mask & (1 << 9)));
     }
 
@@ -1962,7 +2182,9 @@
 
     function resizeCanvas() {
       const r = canvas.getBoundingClientRect();
-      const dpr = Math.min(2, Math.max(1, window.devicePixelRatio || 1));
+      const dpr = IS_PREVIEW
+        ? 1
+        : Math.min(2, Math.max(1, window.devicePixelRatio || 1));
       canvas.width = Math.round(r.width * dpr);
       canvas.height = Math.round(r.height * dpr);
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
@@ -2002,12 +2224,16 @@
     }
 
     function addMouseDelta(dx, dy) {
+      // Pas de trail / rAF si onglet caché (évite du travail inutile)
+      if (document.hidden) return;
       mx = wrapAxis(mx + dx * mouseScaleX, padCache.maxX);
       my = wrapAxis(my + dy * mouseScaleY, padCache.maxY);
       bumpAnim();
     }
 
     function onMouseMoveEvent(data) {
+      // Preview panel : pas de suivi souris (évite un 2e rendu trail pendant le jeu)
+      if (IS_PREVIEW) return;
       if (typeof data.delta_x === "number" || typeof data.dx === "number") {
         addMouseDelta(data.delta_x ?? data.dx ?? 0, data.delta_y ?? data.dy ?? 0);
         return;
@@ -2072,7 +2298,7 @@
       ctx.lineCap = "round";
       ctx.lineJoin = "round";
       ctx.shadowColor = "rgba(" + rgb + ",0.8)";
-      ctx.shadowBlur = 8;
+      ctx.shadowBlur = IS_PREVIEW ? 0 : 6;
       ctx.stroke();
       ctx.shadowBlur = 0;
       ctx.beginPath();
@@ -2169,7 +2395,7 @@
         ctx.beginPath();
         ctx.fillStyle = "#fff";
         ctx.shadowColor = "rgba(" + rgb + ",0.95)";
-        ctx.shadowBlur = 10;
+        ctx.shadowBlur = IS_PREVIEW ? 0 : 8;
         ctx.arc(px, py, lmb ? 3.2 : 2.4, 0, Math.PI * 2);
         ctx.fill();
         ctx.shadowBlur = 0;
@@ -2219,6 +2445,7 @@
 
     function draw() {
       drawRaf = 0;
+      if (document.hidden) return;
       const { w, h, maxX, maxY } = padCache;
       if (w < 2 || h < 2) {
         drawRaf = requestAnimationFrame(draw);
@@ -2247,7 +2474,7 @@
       }
 
       ctx.clearRect(0, 0, w, h);
-      const lmb = m1.classList.contains("on");
+      const lmb = lmbDown;
       const rgb = lmb ? "255,255,255" : accentRgb;
       const style = SETTINGS.mouse || "ribbon";
       const fill = lmb ? "#fff" : SETTINGS.accent;
@@ -2259,6 +2486,9 @@
       if (stillBusy) drawRaf = requestAnimationFrame(draw);
     }
     bumpAnim();
+    document.addEventListener("visibilitychange", () => {
+      if (!document.hidden) bumpAnim();
+    });
 
     function onEvent(data) {
       if (!data || !data.event_type) return;
@@ -2268,6 +2498,9 @@
         return;
       }
       if (t === "key_typed" || t === "hello") return;
+      // Preview : settings + touches/clics seulement (pas le flood souris)
+      if (IS_PREVIEW && (t === "mouse_moved" || t === "mouse_dragged")) return;
+      if (document.hidden && (t === "mouse_moved" || t === "mouse_dragged")) return;
       if (t === "key_pressed" || t === "key_released") {
         applyKeycode(data.keycode, t === "key_pressed");
         return;
@@ -2289,7 +2522,10 @@
           setMouseButtons(data.mask);
         } else if (typeof data.button === "number") {
           const down = t === "mouse_pressed";
-          if (data.button === 1) m1.classList.toggle("on", down);
+          if (data.button === 1) {
+            lmbDown = down;
+            m1.classList.toggle("on", down);
+          }
           if (data.button === 2) m2.classList.toggle("on", down);
         }
       }
@@ -2376,12 +2612,18 @@
     });
     window.addEventListener("mousedown", (e) => {
       if (wsOk) return;
-      if (e.button === 0) m1.classList.add("on");
+      if (e.button === 0) {
+        lmbDown = true;
+        m1.classList.add("on");
+      }
       if (e.button === 2) m2.classList.add("on");
     });
     window.addEventListener("mouseup", (e) => {
       if (wsOk) return;
-      if (e.button === 0) m1.classList.remove("on");
+      if (e.button === 0) {
+        lmbDown = false;
+        m1.classList.remove("on");
+      }
       if (e.button === 2) m2.classList.remove("on");
     });
     window.addEventListener("wheel", (e) => {

@@ -12,6 +12,7 @@ internal static class Program
 {
     const int Port = 7689;
     const int WM_INPUT = 0x00FF;
+    const int WM_TIMER = 0x0113;
     const int RID_INPUT = 0x10000003;
     const int RIM_TYPEMOUSE = 0;
     const int RIM_TYPEKEYBOARD = 1;
@@ -23,16 +24,27 @@ internal static class Program
     const ushort RI_MOUSE_WHEEL = 0x0400;
     const ushort RI_KEY_BREAK = 1;
     const ushort RI_KEY_E0 = 2;
+    const int TIMER_MOUSE_FLUSH = 1;
+    // Coalesce high-Hz Raw Input moves (~125 Hz max) to avoid WS/CPU floods while gaming
+    const uint MouseFlushMs = 8;
     static readonly IntPtr HWND_MESSAGE = new IntPtr(-3);
 
     static readonly object Gate = new object();
     static readonly List<WebSocketClient> Clients = new List<WebSocketClient>();
     static int MouseMask;
+    static int PendingDx;
+    static int PendingDy;
+    static bool HasPendingMouse;
+    static IntPtr RawBuf = IntPtr.Zero;
+    static uint RawBufCap;
     static string BaseDir;
     static string HtmlPath;
     static string PanelPath;
     static string SettingsPath;
     static string DefaultSettingsPath;
+    static string ThemePersoDir;
+    static string UserAssetsDir;
+    static string BuiltinAssetsDir;
     static WndProc KeepAlive;
 
     const string DefaultSettingsJson =
@@ -43,9 +55,12 @@ internal static class Program
         BaseDir = AppDomain.CurrentDomain.BaseDirectory;
         HtmlPath = Path.Combine(BaseDir, "overlay.html");
         PanelPath = Path.Combine(BaseDir, "panel.html");
-        SettingsPath = Path.Combine(BaseDir, "settings.json");
         DefaultSettingsPath = Path.Combine(BaseDir, "settings.default.json");
-        try { Directory.CreateDirectory(Path.Combine(BaseDir, "assets")); } catch { }
+        BuiltinAssetsDir = Path.Combine(BaseDir, "assets");
+        ThemePersoDir = Path.Combine(BaseDir, "themeperso");
+        UserAssetsDir = Path.Combine(ThemePersoDir, "assets");
+        SettingsPath = Path.Combine(ThemePersoDir, "settings.json");
+        EnsureThemePerso();
         if (!File.Exists(HtmlPath))
         {
             Console.WriteLine("overlay.html introuvable a cote de bridge.exe");
@@ -60,6 +75,7 @@ internal static class Program
         keep.Start();
 
         Console.WriteLine("Overlay HTML pret (V2 + panneau).");
+        Console.WriteLine("Donnees perso : themeperso\\ (conserve aux mises a jour)");
         Console.WriteLine("Dans OBS : source Navigateur (PAS fichier local)");
         Console.WriteLine("URL overlay : http://127.0.0.1:" + Port + "/");
         Console.WriteLine("URL panneau : http://127.0.0.1:" + Port + "/panel");
@@ -68,6 +84,67 @@ internal static class Program
         Console.WriteLine();
 
         RunMessageWindow();
+    }
+
+    static void EnsureThemePerso()
+    {
+        try { Directory.CreateDirectory(ThemePersoDir); } catch { }
+        try { Directory.CreateDirectory(UserAssetsDir); } catch { }
+        try { Directory.CreateDirectory(BuiltinAssetsDir); } catch { }
+
+        // README local pour que l'utilisateur ne supprime pas le dossier
+        var readme = Path.Combine(ThemePersoDir, "NE-PAS-SUPPRIMER.txt");
+        if (!File.Exists(readme))
+        {
+            try
+            {
+                File.WriteAllText(readme,
+                    "Dossier themeperso\r\n" +
+                    "=================\r\n" +
+                    "Tes themes / reglages / images perso sont ici.\r\n" +
+                    "Ce dossier n'est PAS ecrase lors des mises a jour GitHub.\r\n" +
+                    "Ne le supprime pas si tu veux garder ton overlay.\r\n",
+                    Encoding.UTF8);
+            }
+            catch { }
+        }
+
+        // Migration : ancien settings.json a la racine -> themeperso
+        var legacySettings = Path.Combine(BaseDir, "settings.json");
+        if (!File.Exists(SettingsPath) && File.Exists(legacySettings))
+        {
+            try { File.Copy(legacySettings, SettingsPath, false); } catch { }
+        }
+
+        // Migration : anciennes images user-* dans assets/ -> themeperso/assets/
+        try
+        {
+            if (Directory.Exists(BuiltinAssetsDir))
+            {
+                foreach (var file in Directory.GetFiles(BuiltinAssetsDir, "user-*"))
+                {
+                    var name = Path.GetFileName(file);
+                    var dest = Path.Combine(UserAssetsDir, name);
+                    if (!File.Exists(dest))
+                    {
+                        try { File.Copy(file, dest, false); } catch { }
+                    }
+                }
+            }
+        }
+        catch { }
+    }
+
+    static string ResolveAssetPath(string name)
+    {
+        if (name.StartsWith("user-", StringComparison.OrdinalIgnoreCase))
+        {
+            var perso = Path.Combine(UserAssetsDir, name);
+            if (File.Exists(perso)) return perso;
+            // fallback legacy
+            return Path.Combine(BuiltinAssetsDir, name);
+        }
+        return Path.Combine(BuiltinAssetsDir, name);
     }
 
     static void EnsureSettingsFile()
@@ -280,7 +357,7 @@ internal static class Program
                     tcp.Close();
                     return;
                 }
-                filePath = Path.Combine(BaseDir, "assets", name);
+                filePath = ResolveAssetPath(name);
                 var ext = Path.GetExtension(name).ToLowerInvariant();
                 if (ext == ".jpg" || ext == ".jpeg") contentType = "image/jpeg";
                 else if (ext == ".png") contentType = "image/png";
@@ -420,9 +497,8 @@ internal static class Program
         }
         var safe = "user-" + DateTime.UtcNow.ToString("yyyyMMddHHmmssfff") + "-" +
                    Guid.NewGuid().ToString("N").Substring(0, 8) + ext;
-        var dir = Path.Combine(BaseDir, "assets");
-        try { Directory.CreateDirectory(dir); } catch { }
-        var path = Path.Combine(dir, safe);
+        try { Directory.CreateDirectory(UserAssetsDir); } catch { }
+        var path = Path.Combine(UserAssetsDir, safe);
         try
         {
             File.WriteAllBytes(path, bytes);
@@ -442,10 +518,12 @@ internal static class Program
         if (string.IsNullOrEmpty(file)) return false;
         file = Path.GetFileName(file);
         if (!file.StartsWith("user-", StringComparison.OrdinalIgnoreCase)) return false;
-        var path = Path.Combine(BaseDir, "assets", file);
+        var path = Path.Combine(UserAssetsDir, file);
+        var legacy = Path.Combine(BuiltinAssetsDir, file);
         try
         {
             if (File.Exists(path)) File.Delete(path);
+            if (File.Exists(legacy)) File.Delete(legacy);
             return true;
         }
         catch { return false; }
@@ -653,6 +731,9 @@ internal static class Program
         if (!RegisterRawInputDevices(devices, 2, Marshal.SizeOf(typeof(RAWINPUTDEVICE))))
             Console.WriteLine("Echec RegisterRawInputDevices");
 
+        // Flush coalesced mouse deltas off the hot Raw Input path
+        SetTimer(hwnd, new UIntPtr(TIMER_MOUSE_FLUSH), MouseFlushMs, IntPtr.Zero);
+
         MSG msg;
         while (GetMessage(out msg, IntPtr.Zero, 0, 0) > 0)
         {
@@ -664,6 +745,7 @@ internal static class Program
     static IntPtr WindowProc(IntPtr hWnd, uint msg, IntPtr wParam, IntPtr lParam)
     {
         if (msg == WM_INPUT) HandleRawInput(lParam);
+        else if (msg == WM_TIMER && wParam.ToInt32() == TIMER_MOUSE_FLUSH) FlushPendingMouse();
         return DefWindowProc(hWnd, msg, wParam, lParam);
     }
 
@@ -672,36 +754,56 @@ internal static class Program
         uint size = 0;
         GetRawInputData(lParam, RID_INPUT, IntPtr.Zero, ref size, Marshal.SizeOf(typeof(RAWINPUTHEADER)));
         if (size == 0) return;
-        var buf = Marshal.AllocHGlobal((int)size);
-        try
+        if (size > RawBufCap)
         {
-            if (GetRawInputData(lParam, RID_INPUT, buf, ref size, Marshal.SizeOf(typeof(RAWINPUTHEADER))) != size)
-                return;
-            var header = (RAWINPUTHEADER)Marshal.PtrToStructure(buf, typeof(RAWINPUTHEADER));
-            if (header.dwType == RIM_TYPEMOUSE)
-            {
-                var mouse = (RAWMOUSE)Marshal.PtrToStructure(
-                    new IntPtr(buf.ToInt64() + Marshal.SizeOf(typeof(RAWINPUTHEADER))), typeof(RAWMOUSE));
-                OnMouse(mouse);
-            }
-            else if (header.dwType == RIM_TYPEKEYBOARD)
-            {
-                var kb = (RAWKEYBOARD)Marshal.PtrToStructure(
-                    new IntPtr(buf.ToInt64() + Marshal.SizeOf(typeof(RAWINPUTHEADER))), typeof(RAWKEYBOARD));
-                OnKey(kb);
-            }
+            if (RawBuf != IntPtr.Zero) Marshal.FreeHGlobal(RawBuf);
+            RawBuf = Marshal.AllocHGlobal((int)size);
+            RawBufCap = size;
         }
-        finally { Marshal.FreeHGlobal(buf); }
+        var buf = RawBuf;
+        if (GetRawInputData(lParam, RID_INPUT, buf, ref size, Marshal.SizeOf(typeof(RAWINPUTHEADER))) != size)
+            return;
+        var header = (RAWINPUTHEADER)Marshal.PtrToStructure(buf, typeof(RAWINPUTHEADER));
+        if (header.dwType == RIM_TYPEMOUSE)
+        {
+            var mouse = (RAWMOUSE)Marshal.PtrToStructure(
+                new IntPtr(buf.ToInt64() + Marshal.SizeOf(typeof(RAWINPUTHEADER))), typeof(RAWMOUSE));
+            OnMouse(mouse);
+        }
+        else if (header.dwType == RIM_TYPEKEYBOARD)
+        {
+            var kb = (RAWKEYBOARD)Marshal.PtrToStructure(
+                new IntPtr(buf.ToInt64() + Marshal.SizeOf(typeof(RAWINPUTHEADER))), typeof(RAWKEYBOARD));
+            OnKey(kb);
+        }
+    }
+
+    static void FlushPendingMouse()
+    {
+        if (!HasPendingMouse) return;
+        var dx = PendingDx;
+        var dy = PendingDy;
+        PendingDx = 0;
+        PendingDy = 0;
+        HasPendingMouse = false;
+        if (dx == 0 && dy == 0) return;
+        Broadcast("{\"event_type\":\"mouse_moved\",\"delta_x\":" + dx + ",\"delta_y\":" + dy + "}");
     }
 
     static void OnMouse(RAWMOUSE m)
     {
+        // Accumulate moves; timer (or button/wheel) flushes one coalesced WS message
         if (m.lLastX != 0 || m.lLastY != 0)
-            Broadcast("{\"event_type\":\"mouse_moved\",\"delta_x\":" + m.lLastX + ",\"delta_y\":" + m.lLastY + "}");
+        {
+            PendingDx += m.lLastX;
+            PendingDy += m.lLastY;
+            HasPendingMouse = true;
+        }
 
         var flags = m.usButtonFlags;
         if ((flags & RI_MOUSE_WHEEL) != 0)
         {
+            FlushPendingMouse();
             var delta = (short)m.usButtonData;
             var rot = delta > 0 ? 1 : -1;
             Broadcast("{\"event_type\":\"mouse_wheel\",\"rotation\":" + rot + "}");
@@ -709,6 +811,7 @@ internal static class Program
         if ((flags & RI_MOUSE_LEFT_DOWN) != 0 || (flags & RI_MOUSE_LEFT_UP) != 0 ||
             (flags & RI_MOUSE_RIGHT_DOWN) != 0 || (flags & RI_MOUSE_RIGHT_UP) != 0)
         {
+            FlushPendingMouse();
             if ((flags & RI_MOUSE_LEFT_DOWN) != 0) MouseMask |= 1 << 8;
             if ((flags & RI_MOUSE_LEFT_UP) != 0) MouseMask &= ~(1 << 8);
             if ((flags & RI_MOUSE_RIGHT_DOWN) != 0) MouseMask |= 1 << 9;
@@ -812,4 +915,6 @@ internal static class Program
     static extern bool RegisterRawInputDevices([In] RAWINPUTDEVICE[] pRawInputDevices, uint uiNumDevices, int cbSize);
     [DllImport("user32.dll")]
     static extern uint GetRawInputData(IntPtr hRawInput, int uiCommand, IntPtr pData, ref uint pcbSize, int cbSizeHeader);
+    [DllImport("user32.dll")]
+    static extern UIntPtr SetTimer(IntPtr hWnd, UIntPtr nIDEvent, uint uElapse, IntPtr lpTimerFunc);
 }

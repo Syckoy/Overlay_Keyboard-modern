@@ -9,18 +9,20 @@
   <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg0: #121416;
-      --bg1: #1a1d22;
-      --bg2: #242830;
-      --line: rgba(255,255,255,0.11);
-      --text: #e9ecef;
-      --muted: rgba(233,236,239,0.58);
+      --bg0: #141018;
+      --bg1: rgba(36, 28, 34, 0.72);
+      --bg2: rgba(52, 38, 46, 0.55);
+      --line: rgba(255, 220, 230, 0.12);
+      --text: #f4ecef;
+      --muted: rgba(244, 236, 239, 0.58);
       --accent: #e56b8a;
-      --ok: #5fbf8f;
+      --ok: #6dbf98;
       --danger: #e57373;
-      --radius: 6px;
+      --radius: 18px;
+      --radius-sm: 12px;
       --font: "IBM Plex Sans", ui-sans-serif, sans-serif;
       --display: "Syne", ui-sans-serif, sans-serif;
+      --soft: 0 18px 40px rgba(20, 8, 14, 0.35);
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -33,18 +35,78 @@
       font-family: var(--font);
       font-weight: 500;
       line-height: 1.45;
-      background:
-        linear-gradient(180deg, #181b20 0%, var(--bg0) 180px),
-        var(--bg0);
+      background-color: var(--bg0);
+      background-image:
+        radial-gradient(ellipse 70% 55% at 8% -10%, rgba(229, 107, 138, 0.28), transparent 55%),
+        radial-gradient(ellipse 55% 45% at 92% 8%, rgba(196, 120, 150, 0.18), transparent 50%),
+        radial-gradient(ellipse 50% 40% at 70% 95%, rgba(120, 70, 90, 0.22), transparent 55%),
+        linear-gradient(165deg, #1a1218 0%, #121016 45%, #161018 100%);
+      background-attachment: fixed;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
+      inset: -20% auto auto -10%;
+      width: min(520px, 70vw);
+      height: min(520px, 70vw);
+      border-radius: 58% 42% 63% 37% / 48% 55% 45% 52%;
+      background: radial-gradient(circle, rgba(229, 107, 138, 0.16), transparent 68%);
+      filter: blur(8px);
+      pointer-events: none;
+      z-index: 0;
+      animation: blobDrift 18s ease-in-out infinite alternate;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      right: -8%;
+      bottom: 5%;
+      width: min(420px, 55vw);
+      height: min(420px, 55vw);
+      border-radius: 42% 58% 48% 52% / 55% 40% 60% 45%;
+      background: radial-gradient(circle, rgba(180, 90, 120, 0.12), transparent 70%);
+      filter: blur(10px);
+      pointer-events: none;
+      z-index: 0;
+      animation: blobDrift 22s ease-in-out infinite alternate-reverse;
+    }
+
+    @keyframes blobDrift {
+      from { transform: translate(0, 0) rotate(0deg); }
+      to { transform: translate(24px, 18px) rotate(8deg); }
     }
 
     .app {
-      width: min(1120px, 100%);
+      position: relative;
+      z-index: 1;
+      width: min(1480px, 100%);
       margin: 0 auto;
       padding: 28px 28px 44px;
       display: flex;
       flex-direction: column;
+      gap: 20px;
+    }
+
+    .workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) minmax(360px, 440px);
+      gap: 16px;
+      align-items: start;
+    }
+
+    .workspace-main {
+      display: flex;
+      flex-direction: column;
       gap: 18px;
+      min-width: 0;
+    }
+
+    .live-preview {
+      position: sticky;
+      top: 12px;
+      align-self: start;
     }
 
     .top {
@@ -52,26 +114,31 @@
       align-items: center;
       justify-content: space-between;
       gap: 16px;
-      padding: 18px 20px;
-      background: var(--bg1);
+      padding: 22px 24px;
+      background: linear-gradient(135deg, rgba(48, 32, 40, 0.75), rgba(28, 22, 28, 0.55));
       border: 1px solid var(--line);
-      border-radius: var(--radius);
-      border-left: 3px solid var(--accent);
+      border-radius: 28px 22px 24px 30px;
+      backdrop-filter: blur(14px);
+      box-shadow: var(--soft);
     }
 
     .brand {
       display: flex;
       flex-direction: column;
-      gap: 4px;
+      gap: 6px;
       min-width: 0;
     }
 
     .brand strong {
       font-family: var(--display);
-      font-size: 1.45rem;
+      font-size: clamp(1.55rem, 2.4vw, 1.9rem);
       font-weight: 800;
-      letter-spacing: -0.03em;
-      line-height: 1.1;
+      letter-spacing: -0.04em;
+      line-height: 1.05;
+      background: linear-gradient(120deg, #fff 20%, var(--accent) 120%);
+      -webkit-background-clip: text;
+      background-clip: text;
+      color: transparent;
     }
 
     .brand span {
@@ -86,10 +153,10 @@
       display: inline-flex;
       align-items: center;
       gap: 9px;
-      padding: 10px 14px;
-      border-radius: var(--radius);
+      padding: 11px 16px;
+      border-radius: 18px 22px 16px 20px;
       border: 1px solid var(--line);
-      background: var(--bg2);
+      background: rgba(20, 14, 18, 0.45);
       font-size: 0.9rem;
       font-weight: 600;
       color: var(--muted);
@@ -97,9 +164,9 @@
     }
 
     .live .dot {
-      width: 9px;
-      height: 9px;
-      border-radius: 2px;
+      width: 8px;
+      height: 8px;
+      border-radius: 40%;
       background: var(--danger);
     }
 
@@ -108,12 +175,13 @@
 
     .tabs {
       display: grid;
-      grid-template-columns: repeat(4, 1fr);
-      gap: 8px;
-      padding: 8px;
-      background: var(--bg1);
+      grid-template-columns: repeat(2, 1fr);
+      gap: 6px;
+      padding: 6px;
+      background: rgba(24, 18, 22, 0.55);
       border: 1px solid var(--line);
-      border-radius: var(--radius);
+      border-radius: 22px;
+      backdrop-filter: blur(10px);
     }
 
     .tab {
@@ -124,19 +192,67 @@
       font: inherit;
       font-size: 1rem;
       font-weight: 650;
-      padding: 14px 10px;
-      border-radius: 4px;
+      padding: 13px 12px;
+      border-radius: 16px;
       cursor: pointer;
+      transition: color 160ms ease, background 160ms ease, transform 160ms ease;
     }
 
     .tab:hover { color: var(--text); background: rgba(255,255,255,0.04); }
     .tab.active {
       color: #fff;
-      background: color-mix(in srgb, var(--accent) 82%, #1a1014);
+      background: color-mix(in srgb, var(--accent) 78%, #2a1018);
+      box-shadow: 0 8px 22px color-mix(in srgb, var(--accent) 28%, transparent);
     }
 
     .panel { display: none; }
-    .panel.active { display: flex; flex-direction: column; gap: 16px; }
+    .panel.active { display: flex; flex-direction: column; gap: 18px; }
+
+    /* —— Accueil organique —— */
+    .home-themes {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      padding: 4px 0 0;
+      max-width: 760px;
+      animation: homeIn 420ms ease both;
+    }
+
+    @keyframes homeIn {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .home-hero {
+      max-width: 28rem;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .home-eyebrow {
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: color-mix(in srgb, var(--accent) 75%, #fff);
+    }
+
+    .home-title {
+      font-family: var(--display);
+      font-size: clamp(1.55rem, 2.8vw, 2rem);
+      font-weight: 800;
+      letter-spacing: -0.04em;
+      line-height: 1.08;
+      color: var(--text);
+    }
+
+    .home-lead {
+      font-size: 0.95rem;
+      color: var(--muted);
+      line-height: 1.45;
+      max-width: 36ch;
+    }
 
     .look-grid {
       display: grid;
@@ -149,10 +265,12 @@
     }
 
     .card {
-      background: var(--bg1);
+      background: linear-gradient(160deg, rgba(42, 30, 36, 0.78), rgba(26, 20, 24, 0.62));
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      padding: 20px;
+      padding: 22px;
+      backdrop-filter: blur(12px);
+      box-shadow: var(--soft);
     }
 
     .card h2 {
@@ -180,11 +298,14 @@
     .swatch {
       width: 34px;
       height: 34px;
-      border-radius: 4px;
+      border-radius: 40% 60% 55% 45% / 50% 45% 55% 50%;
       border: 2px solid rgba(255,255,255,0.22);
       cursor: pointer;
       padding: 0;
+      transition: transform 160ms ease;
     }
+
+    .swatch:hover { transform: scale(1.08); }
 
     .swatch.active {
       outline: 2px solid #fff;
@@ -310,51 +431,375 @@
 
     .theme-grid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fill, 148px);
       gap: 10px;
-    }
-
-    @media (min-width: 900px) {
-      .theme-grid { grid-template-columns: repeat(2, 1fr); }
-      .look-grid .theme-grid { grid-template-columns: repeat(2, 1fr); }
-    }
-
-    @media (min-width: 1100px) {
-      .look-grid .theme-grid { grid-template-columns: repeat(3, 1fr); }
+      justify-content: start;
     }
 
     @media (max-width: 640px) {
-      .theme-grid { grid-template-columns: repeat(2, 1fr); }
-      .tabs { grid-template-columns: repeat(2, 1fr); }
+      .theme-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
       .app { padding: 18px 14px 32px; }
       html { font-size: 16px; }
+      .home-themes { max-width: none; }
+      .home-title { font-size: 1.55rem; }
+    }
+
+    .theme-create-card {
+      border-style: dashed;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      min-height: 118px;
+      background:
+        radial-gradient(ellipse at 50% 30%, color-mix(in srgb, var(--accent) 18%, transparent), transparent 65%),
+        rgba(28, 20, 24, 0.35);
+    }
+
+    .theme-create-card .plus {
+      font-family: var(--display);
+      font-size: 1.75rem;
+      font-weight: 800;
+      line-height: 1;
+      color: var(--accent);
+      transition: transform 220ms ease;
+    }
+
+    .theme-create-card:hover .plus { transform: scale(1.12) rotate(8deg); }
+
+    .theme-create-card strong { margin-top: 2px; }
+    .theme-create-card.active {
+      border-style: solid;
+    }
+
+    .create-back {
+      margin-bottom: 12px;
+      border-radius: 16px 20px 14px 18px;
+    }
+
+    .home-create[hidden] { display: none !important; }
+    .home-themes[hidden] { display: none !important; }
+
+    .mouse-editor-wrap {
+      margin-top: 12px;
+      overflow: auto;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 0);
+      background-size: 16px 16px;
+      background-color: #101318;
+      max-height: 420px;
+      position: relative;
+    }
+
+    .mouse-workspace {
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) 168px;
+      gap: 12px;
+      align-items: start;
+    }
+
+    .mouse-editor {
+      position: relative;
+      min-width: 280px;
+      min-height: 280px;
+      outline: none;
+      margin: 28px 22px 22px;
+      background: rgba(8, 10, 14, 0.55);
+      border: 1px dashed rgba(255,255,255,0.14);
+      border-radius: 2px;
+      touch-action: none;
+      user-select: none;
+      cursor: default;
+    }
+
+    .mouse-editor::before {
+      content: "Artboard souris · 1:1 px · SHIFT = grille 8";
+      position: absolute;
+      left: 0;
+      top: -20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      white-space: nowrap;
+    }
+
+    .mouse-editor.disabled {
+      opacity: 0.45;
+      pointer-events: none;
+    }
+
+    .mouse-editor .fig-guides {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 40;
+      overflow: visible;
+    }
+
+    .emouse {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-sizing: border-box;
+      border: 1px solid rgba(255,255,255,0.22);
+      border-radius: 8px;
+      background: rgba(24, 26, 32, 0.94);
+      color: #e9ecef;
+      font-size: 13px;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      z-index: 2;
+    }
+
+    .emouse:active { cursor: grabbing; }
+
+    .emouse.pad {
+      z-index: 1;
+      background:
+        linear-gradient(145deg, rgba(32, 36, 44, 0.96), rgba(16, 18, 22, 0.96));
+      color: rgba(233,236,239,0.55);
+      font-size: 12px;
+      letter-spacing: 0.12em;
+    }
+
+    .emouse.pad::after {
+      content: "";
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: var(--accent);
+      box-shadow: 0 0 12px color-mix(in srgb, var(--accent) 70%, transparent);
+      opacity: 0.85;
+      pointer-events: none;
+    }
+
+    .emouse.wheel {
+      flex-direction: column;
+      padding: 0;
+      overflow: hidden;
+      gap: 0;
+      font-size: 11px;
+    }
+
+    .emouse.wheel .emouse-half {
+      flex: 1;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: rgba(255,255,255,0.45);
+    }
+
+    .emouse.wheel .emouse-half + .emouse-half {
+      border-top: 1px solid rgba(255,255,255,0.16);
+    }
+
+    .emouse.selected {
+      outline: 1.5px solid #4da3ff;
+      outline-offset: 1px;
+      z-index: 6;
+    }
+
+    .emouse .fig-handle {
+      position: absolute;
+      width: 8px;
+      height: 8px;
+      border-radius: 1px;
+      background: #fff;
+      border: 1px solid #4da3ff;
+      pointer-events: auto;
+      z-index: 8;
+      box-sizing: border-box;
+    }
+
+    .emouse .fig-handle.br { right: -4px; bottom: -4px; cursor: nwse-resize; }
+    .emouse .fig-handle.bl { left: -4px; bottom: -4px; cursor: nesw-resize; }
+    .emouse .fig-handle.tr { right: -4px; top: -4px; cursor: nesw-resize; }
+    .emouse .fig-handle.tl { left: -4px; top: -4px; cursor: nwse-resize; }
+
+    .mouse-layers-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--bg2);
+      padding: 12px;
+      margin-top: 12px;
+    }
+
+    .mouse-layers-card h3 {
+      font-size: 0.85rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .mouse-layers {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .mouse-layer {
+      appearance: none;
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--line);
+      background: var(--bg1);
+      color: var(--text);
+      border-radius: var(--radius);
+      padding: 9px 10px;
+      font: inherit;
+      font-size: 0.92rem;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    .mouse-layer.active {
+      border-color: #4da3ff;
+      background: color-mix(in srgb, #4da3ff 16%, var(--bg1));
+    }
+
+    .mouse-layer small {
+      display: block;
+      margin-top: 2px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    @media (max-width: 720px) {
+      .mouse-workspace {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .create-shell,
+    .create-main {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      min-width: 0;
+    }
+
+    .preview-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+    }
+
+    .preview-head h2 {
+      margin: 0;
+    }
+
+    .preview-zoom-tools {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .preview-zoom-tools .btn {
+      min-width: 34px;
+      padding: 6px 10px;
+    }
+
+    .preview-zoom-tools .zoom-val {
+      min-width: 3.2em;
+      text-align: center;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .preview-frame-wrap {
+      position: relative;
+      height: min(58vh, 560px);
+      min-height: 360px;
+      overflow: hidden;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      cursor: grab;
+      background:
+        linear-gradient(135deg, rgba(229, 107, 138, 0.08), transparent 42%),
+        repeating-conic-gradient(#1f232a 0% 25%, #15181d 0% 50%) 50% / 18px 18px;
+      touch-action: none;
+    }
+
+    .preview-frame-wrap.is-panning {
+      cursor: grabbing;
+    }
+
+    .preview-frame-wrap iframe {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 1100px;
+      height: 620px;
+      border: 0;
+      background: transparent;
+      transform-origin: 0 0;
+      pointer-events: none;
+      will-change: transform;
+    }
+
+    @media (max-width: 980px) {
+      .workspace {
+        grid-template-columns: 1fr;
+      }
+      .live-preview {
+        position: static;
+        order: -1;
+      }
+      .preview-frame-wrap {
+        height: 300px;
+        min-height: 260px;
+      }
     }
 
     .theme {
       appearance: none;
       border: 1px solid var(--line);
-      background: var(--bg2);
+      background: linear-gradient(165deg, rgba(48, 34, 40, 0.7), rgba(24, 18, 22, 0.55));
       color: var(--text);
-      border-radius: var(--radius);
-      padding: 12px 12px 11px;
+      border-radius: 16px 14px 18px 12px;
+      padding: 10px 10px 11px;
       cursor: pointer;
       text-align: left;
       display: flex;
       flex-direction: column;
-      gap: 10px;
-      min-height: 108px;
-      transition: border-color 120ms ease, background 120ms ease;
+      gap: 8px;
+      width: 148px;
+      min-height: 118px;
+      backdrop-filter: blur(8px);
+      transition: border-color 180ms ease, transform 220ms ease, box-shadow 220ms ease, background 180ms ease;
     }
 
-    .theme:hover { border-color: rgba(255,255,255,0.28); }
+    .theme:hover {
+      border-color: color-mix(in srgb, var(--accent) 45%, rgba(255,255,255,0.25));
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px rgba(18, 8, 12, 0.3);
+    }
+
     .theme.active {
-      border-color: var(--accent);
-      background: color-mix(in srgb, var(--accent) 14%, var(--bg2));
+      border-color: color-mix(in srgb, var(--accent) 70%, #fff);
+      background: linear-gradient(165deg, color-mix(in srgb, var(--accent) 22%, rgba(48,34,40,0.75)), rgba(28, 18, 24, 0.7));
+      box-shadow: 0 10px 22px color-mix(in srgb, var(--accent) 16%, transparent);
     }
 
     .theme-preview {
       height: 42px;
-      border-radius: 4px;
+      border-radius: 10px 12px 9px 11px;
       border: 1px solid rgba(255,255,255,0.12);
       overflow: hidden;
       position: relative;
@@ -363,31 +808,37 @@
     .theme-preview .chip {
       position: absolute;
       inset: 9px auto auto 9px;
-      width: 22px;
-      height: 22px;
-      border-radius: 4px;
-      background: rgba(255,255,255,0.18);
-      border: 1px solid rgba(255,255,255,0.25);
+      width: 18px;
+      height: 18px;
+      border-radius: 40% 60% 55% 45%;
+      background: rgba(255,255,255,0.2);
+      border: 1px solid rgba(255,255,255,0.28);
     }
 
-    .theme-preview .chip.b { left: 34px; }
+    .theme-preview .chip.b { left: 30px; }
     .theme-preview .chip.c {
-      right: 10px;
+      right: 9px;
       left: auto;
-      width: 40px;
-      border-radius: 4px;
+      width: 34px;
+      border-radius: 8px;
     }
 
     .theme strong {
-      font-size: 1rem;
-      font-weight: 700;
+      font-family: var(--display);
+      font-size: 0.92rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
       line-height: 1.15;
     }
 
     .theme small {
-      font-size: 0.85rem;
+      font-size: 0.75rem;
       color: var(--muted);
-      line-height: 1.3;
+      line-height: 1.25;
+    }
+
+    @media (max-width: 640px) {
+      .theme { width: auto; }
     }
 
     .choice-grid {
@@ -399,18 +850,22 @@
     .choice {
       appearance: none;
       border: 1px solid var(--line);
-      background: var(--bg2);
+      background: rgba(48, 34, 40, 0.55);
       color: var(--text);
-      border-radius: var(--radius);
+      border-radius: 16px 14px 18px 12px;
       padding: 16px 12px;
       font: inherit;
       font-size: 1rem;
       font-weight: 650;
       cursor: pointer;
       text-align: center;
+      transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
     }
 
-    .choice:hover { border-color: rgba(255,255,255,0.28); }
+    .choice:hover {
+      border-color: rgba(255,255,255,0.28);
+      transform: translateY(-2px);
+    }
     .choice.active {
       border-color: var(--accent);
       background: color-mix(in srgb, var(--accent) 18%, transparent);
@@ -425,13 +880,16 @@
     .layout-card {
       appearance: none;
       border: 1px solid var(--line);
-      background: var(--bg2);
+      background: rgba(48, 34, 40, 0.55);
       color: var(--text);
-      border-radius: var(--radius);
+      border-radius: 18px 16px 20px 14px;
       padding: 18px 16px;
       cursor: pointer;
       text-align: left;
+      transition: border-color 160ms ease, transform 160ms ease, background 160ms ease;
     }
+
+    .layout-card:hover { transform: translateY(-2px); }
 
     .layout-card.active {
       border-color: var(--accent);
@@ -506,18 +964,24 @@
     .btn {
       appearance: none;
       border: 1px solid var(--line);
-      background: var(--bg2);
+      background: rgba(48, 34, 40, 0.65);
       color: var(--text);
-      border-radius: var(--radius);
+      border-radius: 14px 16px 12px 15px;
       padding: 12px 18px;
       font: inherit;
       font-size: 0.98rem;
       font-weight: 650;
       cursor: pointer;
+      transition: transform 160ms ease, border-color 160ms ease, background 160ms ease;
+    }
+
+    .btn:hover {
+      border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+      transform: translateY(-1px);
     }
 
     .btn.primary {
-      background: var(--accent);
+      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 92%, #fff), var(--accent));
       border-color: transparent;
       color: #fff;
     }
@@ -755,6 +1219,23 @@
       right: -4px;
       bottom: -4px;
       cursor: nwse-resize;
+    }
+
+    .ekey .fig-handle.radius,
+    .emouse .fig-handle.radius {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #f24ee4;
+      border: 1.5px solid #fff;
+      box-shadow: 0 0 0 1px rgba(0,0,0,0.35);
+      cursor: ew-resize;
+      z-index: 9;
+      top: -5px;
+      left: 0;
+      right: auto;
+      bottom: auto;
+      transform: translateX(-50%);
     }
 
     .editor-meta {
@@ -1142,6 +1623,8 @@
     .tp-valorant { background: linear-gradient(135deg, #0f1923, #ff4655); }
     .tp-minecraft { background: linear-gradient(180deg, #5a9e3a 35%, #8b5a2b 35%); }
     .tp-neon { background: linear-gradient(135deg, #05070f, var(--accent)); }
+    .tp-custom { background: linear-gradient(135deg, #1a1d22, var(--accent)); }
+
   </style>
 </head>
 <body>
@@ -1155,22 +1638,28 @@
     </header>
 
     <nav class="tabs" role="tablist">
-      <button class="tab active" type="button" data-tab="look">Apparence</button>
-      <button class="tab" type="button" data-tab="mouse">Souris</button>
-      <button class="tab" type="button" data-tab="keys">Clavier</button>
-      <button class="tab" type="button" data-tab="sg">Super Glide</button>
+      <button class="tab active" type="button" data-tab="home">Accueil</button>
+      <button class="tab" type="button" data-tab="settings">Settings</button>
     </nav>
 
-    <section class="panel active" id="panel-look">
-      <div class="look-grid">
-        <div class="card">
-          <h2>Thème</h2>
-          <div class="theme-grid" id="designGrid"></div>
-          <p class="hint">Le thème change le clavier + la forme M1 / molette / M2 / pad.</p>
-        </div>
+    <div class="workspace">
+      <div class="workspace-main">
+    <section class="panel active" id="panel-home">
+      <div class="home-themes" id="homeThemes">
+        <header class="home-hero">
+          <p class="home-eyebrow">Accueil</p>
+          <h1 class="home-title">Choisis ton ambiance</h1>
+          <p class="home-lead">Thèmes prêts à l’emploi, ou crée le tien — couleur, touches, souris et images.</p>
+        </header>
+        <div class="theme-grid" id="designGrid"></div>
+      </div>
 
+      <div class="home-create" id="homeCreate" hidden>
+        <button class="btn create-back" type="button" id="btnBackThemes">← Retour aux thèmes</button>
+
+        <div class="create-main">
         <div class="card">
-          <h2>Couleur</h2>
+          <h2>Couleur du thème</h2>
           <div class="swatches" id="swatches"></div>
           <div class="picker">
             <div class="sv-wrap" id="svWrap">
@@ -1191,94 +1680,128 @@
             <input type="text" id="hexInput" maxlength="7" spellcheck="false" value="#E56B8A" />
           </div>
         </div>
+
+        <div class="card">
+          <h2>Organisation des touches</h2>
+          <div class="editor-toolbar">
+            <label class="check">
+              <input type="checkbox" id="keyCustom" />
+              Mode custom (placement libre)
+            </label>
+            <div class="editor-toolbar-actions">
+              <button class="btn" type="button" id="btnSnapGrid">Recaler défaut</button>
+              <button class="btn" type="button" id="btnKeyReset">Disposition défaut</button>
+            </div>
+          </div>
+          <div class="editor-workspace" id="editorWorkspace">
+            <div class="editor-main">
+              <div class="key-editor-wrap" id="keyEditorWrap">
+                <div class="key-editor" id="keyEditor" tabindex="0">
+                  <div class="fig-guides" id="figGuides"></div>
+                </div>
+              </div>
+              <div class="editor-meta" id="editorMeta" hidden>
+                <label class="field">X (px)<input type="number" id="keyX" step="1" /></label>
+                <label class="field">Y (px)<input type="number" id="keyY" step="1" /></label>
+                <label class="field">Largeur<input type="number" id="keyW" min="16" step="1" /></label>
+                <label class="field">Hauteur<input type="number" id="keyH" min="16" step="1" /></label>
+                <label class="field" id="keyRadiusField">Arrondi<input type="number" id="keyR" min="0" step="1" /></label>
+                <label class="field" id="mediaRotField" hidden>Rotation°<input type="number" id="mediaRot" step="1" /></label>
+                <label class="field media-opacity-field" id="mediaOpacityField" hidden>
+                  Opacité
+                  <div class="opacity-row">
+                    <input type="range" id="mediaOpacity" min="0" max="100" step="1" />
+                    <span class="val" id="mediaOpacityVal">100%</span>
+                  </div>
+                </label>
+                <label class="check media-mask-check" id="mediaMaskField" hidden>
+                  <input type="checkbox" id="mediaMask" />
+                  Masque touches (visible seulement sur les touches)
+                </label>
+                <label class="check media-mask-check" id="mediaOverLettersField" hidden>
+                  <input type="checkbox" id="mediaOverLetters" />
+                  Couvrir les lettres des touches
+                </label>
+              </div>
+              <div class="key-actions" id="keyActions" hidden>
+                <button class="btn danger" type="button" id="btnKeyDelete">Supprimer la touche</button>
+                <button class="btn" type="button" id="btnAddFullKb">Ajouter clavier complet</button>
+                <label class="btn file-btn" for="mediaFileInput">Ajouter image / GIF</label>
+                <input type="file" id="mediaFileInput" accept="image/png,image/jpeg,image/gif,image/webp,.png,.jpg,.jpeg,.gif,.webp" hidden />
+              </div>
+              <div class="key-palette" id="keyPaletteWrap" hidden>
+                <h3 id="keyPaletteTitle">Ajouter une touche</h3>
+                <div class="palette-board" id="keyPalette"></div>
+              </div>
+            </div>
+            <aside class="media-layers-card" id="mediaLayersCard" hidden>
+              <h3>Calques images</h3>
+              <div class="media-layers" id="mediaLayersList"></div>
+              <p class="hint"><strong>Masque</strong> = pochoir. Décoche <strong>Couvrir les lettres</strong> pour lire les touches. Opacité + coins/rotation. ▲▼ = ordre.</p>
+            </aside>
+          </div>
+          <p class="hint" id="keyEditHint">Lasso / SHIFT+clic · <strong>point rose = arrondi</strong> · images · rotation · masque · calques · <span id="layoutNameHint">AZERTY</span>.</p>
+        </div>
+
+        <div class="card">
+          <h2>Organisation de la souris</h2>
+          <div class="editor-toolbar">
+            <label class="check">
+              <input type="checkbox" id="mouseCustom" />
+              Mode custom (placement libre)
+            </label>
+            <div class="editor-toolbar-actions">
+              <button class="btn" type="button" id="btnMouseSnap">Recaler défaut</button>
+              <button class="btn" type="button" id="btnMouseReset">Disposition défaut</button>
+            </div>
+          </div>
+          <div class="mouse-workspace">
+            <div class="mouse-editor-wrap" id="mouseEditorWrap">
+              <div class="mouse-editor" id="mouseEditor" tabindex="0">
+                <div class="fig-guides" id="mouseFigGuides"></div>
+              </div>
+            </div>
+            <aside class="mouse-layers-card" id="mouseLayersCard">
+              <h3>Éléments</h3>
+              <div class="mouse-layers" id="mouseLayersList"></div>
+            </aside>
+          </div>
+          <div class="editor-meta" id="mouseEditorMeta" hidden>
+            <label class="field">X (px)<input type="number" id="mouseX" step="1" /></label>
+            <label class="field">Y (px)<input type="number" id="mouseY" step="1" /></label>
+            <label class="field">Largeur<input type="number" id="mouseW" min="24" step="1" /></label>
+            <label class="field">Hauteur<input type="number" id="mouseH" min="24" step="1" /></label>
+            <label class="field">Arrondi<input type="number" id="mouseR" min="0" step="1" /></label>
+          </div>
+          <p class="hint">Glisser · 4 coins = resize · <strong>point rose = arrondi</strong> (Figma) · SHIFT = grille 8 px.</p>
+        </div>
+        </div>
       </div>
     </section>
 
-    <section class="panel" id="panel-mouse">
+    <section class="panel" id="panel-settings">
       <div class="card">
-        <h2>Sensibilité</h2>
+        <h2>Sensibilité souris</h2>
         <div class="sliders">
           <label class="slider-row">Pad <input type="range" id="mouseSens" min="5" max="1000" step="1" /><span class="val" id="mouseSensVal">100%</span></label>
         </div>
         <p class="hint">De 5 % (très lente) à 1000 % (très rapide). 100 % = réglage de base.</p>
       </div>
+
       <div class="card">
         <h2>Style de traînée</h2>
         <div class="choice-grid" id="mouseGrid"></div>
-        <p class="hint">Change seulement le curseur / la traînée sur le pad, pas la forme des boutons.</p>
+        <p class="hint">Change seulement le curseur / la traînée sur le pad.</p>
       </div>
-    </section>
 
-    <section class="panel" id="panel-keys">
       <div class="card">
-        <h2>Disposition</h2>
+        <h2>Disposition clavier</h2>
         <div class="layout-row" id="layoutRow"></div>
+        <p class="hint">AZERTY ou QWERTY — utilisé pour les labels et la palette de touches.</p>
       </div>
-      <div class="card">
-        <h2>Organisation des touches</h2>
-        <div class="editor-toolbar">
-          <label class="check">
-            <input type="checkbox" id="keyCustom" />
-            Mode custom (placement libre)
-          </label>
-          <div class="editor-toolbar-actions">
-            <button class="btn" type="button" id="btnSnapGrid">Recaler défaut</button>
-            <button class="btn" type="button" id="btnKeyReset">Disposition défaut</button>
-          </div>
-        </div>
-        <div class="editor-workspace" id="editorWorkspace">
-          <div class="editor-main">
-            <div class="key-editor-wrap" id="keyEditorWrap">
-              <div class="key-editor" id="keyEditor" tabindex="0">
-                <div class="fig-guides" id="figGuides"></div>
-              </div>
-            </div>
-            <div class="editor-meta" id="editorMeta" hidden>
-              <label class="field">X (px)<input type="number" id="keyX" step="1" /></label>
-              <label class="field">Y (px)<input type="number" id="keyY" step="1" /></label>
-              <label class="field">Largeur<input type="number" id="keyW" min="16" step="1" /></label>
-              <label class="field">Hauteur<input type="number" id="keyH" min="16" step="1" /></label>
-              <label class="field" id="mediaRotField" hidden>Rotation°<input type="number" id="mediaRot" step="1" /></label>
-              <label class="field media-opacity-field" id="mediaOpacityField" hidden>
-                Opacité
-                <div class="opacity-row">
-                  <input type="range" id="mediaOpacity" min="0" max="100" step="1" />
-                  <span class="val" id="mediaOpacityVal">100%</span>
-                </div>
-              </label>
-              <label class="check media-mask-check" id="mediaMaskField" hidden>
-                <input type="checkbox" id="mediaMask" />
-                Masque touches (visible seulement sur les touches)
-              </label>
-              <label class="check media-mask-check" id="mediaOverLettersField" hidden>
-                <input type="checkbox" id="mediaOverLetters" />
-                Couvrir les lettres des touches
-              </label>
-            </div>
-            <div class="key-actions" id="keyActions" hidden>
-              <button class="btn danger" type="button" id="btnKeyDelete">Supprimer la touche</button>
-              <button class="btn" type="button" id="btnAddFullKb">Ajouter clavier complet</button>
-              <label class="btn file-btn" for="mediaFileInput">Ajouter image / GIF</label>
-              <input type="file" id="mediaFileInput" accept="image/png,image/jpeg,image/gif,image/webp,.png,.jpg,.jpeg,.gif,.webp" hidden />
-            </div>
-            <div class="key-palette" id="keyPaletteWrap" hidden>
-              <h3 id="keyPaletteTitle">Ajouter une touche</h3>
-              <div class="palette-board" id="keyPalette"></div>
-            </div>
-          </div>
-          <aside class="media-layers-card" id="mediaLayersCard" hidden>
-            <h3>Calques images</h3>
-            <div class="media-layers" id="mediaLayersList"></div>
-            <p class="hint"><strong>Masque</strong> = pochoir. Décoche <strong>Couvrir les lettres</strong> pour lire les touches. Opacité + coins/rotation. ▲▼ = ordre.</p>
-          </aside>
-        </div>
-        <p class="hint" id="keyEditHint">Lasso / SHIFT+clic · images PNG JPG GIF · poignée orange = rotation · <strong>Masque touches</strong> · calques à droite · clavier <span id="layoutNameHint">AZERTY</span>.</p>
-      </div>
-    </section>
 
-    <section class="panel" id="panel-sg">
       <div class="card">
-        <h2>Détection Super Glide</h2>
+        <h2>Super Glide</h2>
         <label class="check sg-enable">
           <input type="checkbox" id="sgEnabled" checked />
           Activer l’effet Super Glide
@@ -1310,6 +1833,24 @@
         <button class="btn primary" type="button" id="btnSave">Enregistrer</button>
       </div>
     </div>
+      </div>
+
+      <aside class="card live-preview" id="livePreview">
+        <div class="preview-head">
+          <h2>Aperçu live</h2>
+          <div class="preview-zoom-tools">
+            <button class="btn" type="button" id="previewZoomOut" title="Dézoomer">−</button>
+            <span class="zoom-val" id="previewZoomLabel">70%</span>
+            <button class="btn" type="button" id="previewZoomIn" title="Zoomer">+</button>
+            <button class="btn" type="button" id="previewZoomReset" title="Réinitialiser">Reset</button>
+          </div>
+        </div>
+        <div class="preview-frame-wrap" id="previewFrameWrap">
+          <iframe id="overlayPreview" title="Aperçu overlay" loading="eager"></iframe>
+        </div>
+        <p class="hint">Toujours visible — même rendu qu’OBS. Molette = zoom · glisser = déplacer.</p>
+      </aside>
+    </div>
   </div>
 
   <script>
@@ -1322,6 +1863,8 @@
       keyCustom: false,
       keyLayout: null,
       mediaLayers: [],
+      mouseCustom: false,
+      mouseLayout: null,
       sgEnabled: true,
       sgJump: "space",
       sgCrouch: "KeyC",
@@ -1332,6 +1875,48 @@
     const KEY_UNIT = 34; // = --ku overlay
     const KEY_GAP = 2;   // = --kgap classic overlay
     const FIG_SNAP = 6;  // seuil guides type Figma (px)
+    const MOUSE_PART_IDS = ["m1", "m2", "wheel", "pad"];
+    const MOUSE_PART_LABELS = { m1: "M1", m2: "M2", wheel: "Molette", pad: "Pad" };
+    const MOUSE_U = 50;
+    const MOUSE_GAP = 3;
+    const MOUSE_BOX = MOUSE_U * 4 + MOUSE_GAP * 3;
+
+    function buildDefaultMouseLayout() {
+      const box = MOUSE_BOX;
+      const gap = MOUSE_GAP;
+      const u = MOUSE_U;
+      const btnW = Math.floor((box - gap * 2) / 3);
+      const wheelW = box - gap * 2 - btnW * 2;
+      return [
+        { id: "m1", x: 0, y: 0, w: btnW, h: u, r: 10 },
+        { id: "wheel", x: btnW + gap, y: 0, w: wheelW, h: u, r: 10 },
+        { id: "m2", x: btnW + gap + wheelW + gap, y: 0, w: btnW, h: u, r: 10 },
+        { id: "pad", x: 0, y: u + gap, w: box, h: box - u - gap, r: 14 },
+      ];
+    }
+
+    function normalizeMouseLayout(raw) {
+      const byId = Object.create(null);
+      if (Array.isArray(raw)) {
+        for (const p of raw) {
+          if (!p || !MOUSE_PART_IDS.includes(String(p.id))) continue;
+          const id = String(p.id);
+          const minW = id === "pad" ? 80 : id === "wheel" ? 36 : 40;
+          const minH = id === "pad" ? 80 : 36;
+          const w = Math.max(minW, Math.round(Number(p.w) || 34));
+          const h = Math.max(minH, Math.round(Number(p.h) || 34));
+          byId[id] = {
+            id,
+            x: Math.round(Number(p.x) || 0),
+            y: Math.round(Number(p.y) || 0),
+            w,
+            h,
+            r: clampCornerRadius(w, h, p.r, defaultMouseRadius(id)),
+          };
+        }
+      }
+      return buildDefaultMouseLayout().map((d) => byId[d.id] || { ...d });
+    }
 
     function snap(v, grid) {
       return Math.round(Number(v) / grid) * grid;
@@ -1446,6 +2031,54 @@
       return keyboardRows(layout).flat();
     }
 
+    function maxCornerRadius(w, h) {
+      return Math.max(0, Math.floor(Math.min(Number(w) || 0, Number(h) || 0) / 2));
+    }
+
+    function clampCornerRadius(w, h, r, fallback) {
+      const fb = fallback != null ? fallback : 8;
+      const raw = Number(r);
+      const base = Number.isFinite(raw) ? raw : fb;
+      return Math.max(0, Math.min(maxCornerRadius(w, h), Math.round(base)));
+    }
+
+    function defaultMouseRadius(id) {
+      return id === "pad" ? 14 : 10;
+    }
+
+    function serializeKeyItem(k) {
+      return {
+        id: k.id,
+        x: k.x,
+        y: k.y,
+        w: k.w,
+        h: k.h,
+        r: clampCornerRadius(k.w, k.h, k.r, 8),
+      };
+    }
+
+    function serializeMouseItem(m) {
+      return {
+        id: m.id,
+        x: m.x,
+        y: m.y,
+        w: m.w,
+        h: m.h,
+        r: clampCornerRadius(m.w, m.h, m.r, defaultMouseRadius(m.id)),
+      };
+    }
+
+    function placeRadiusHandle(el, r) {
+      const handle = document.createElement("span");
+      handle.className = "fig-handle radius";
+      handle.dataset.radius = "1";
+      handle.title = "Arrondi " + r + " px";
+      const x = Math.max(0, Math.min((parseFloat(el.style.width) || 34) / 2, r));
+      handle.style.left = x + "px";
+      el.appendChild(handle);
+      return handle;
+    }
+
     function buildKeyLayoutFromRows(rows) {
       const out = [];
       let y = 0;
@@ -1454,7 +2087,7 @@
         let rowH = KEY_UNIT;
         for (const k of row) {
           const sz = keySize(k.cls);
-          out.push({ id: k.id, x, y, w: sz.w, h: sz.h, label: k.label });
+          out.push({ id: k.id, x, y, w: sz.w, h: sz.h, r: 8, label: k.label });
           x += sz.w + KEY_GAP;
           rowH = Math.max(rowH, sz.h);
         }
@@ -1497,6 +2130,12 @@
           y: Math.round(Number(item.y) || 0),
           w: Math.max(16, Math.round(Number(item.w) || def.w)),
           h: Math.max(16, Math.round(Number(item.h) || def.h)),
+          r: clampCornerRadius(
+            Math.max(16, Math.round(Number(item.w) || def.w)),
+            Math.max(16, Math.round(Number(item.h) || def.h)),
+            item.r,
+            8
+          ),
           label: def.label,
         });
       }
@@ -1566,6 +2205,8 @@
       ["minecraft", "Minecraft", "Blocs + stickers MC", "tp-minecraft"],
       ["neon", "Néon", "Glow gaming", "tp-neon"],
     ];
+    const DESIGN_CUSTOM = "custom";
+    const ALL_DESIGNS = DESIGNS.concat([[DESIGN_CUSTOM, "Perso", "Thème créé", "tp-custom"]]);
 
     const MOUSE_STYLES = [
       ["ribbon", "Ruban"],
@@ -1680,12 +2321,25 @@
     const mouseSens = document.getElementById("mouseSens");
     const mouseSensVal = document.getElementById("mouseSensVal");
     const keyCustom = document.getElementById("keyCustom");
+    const mouseCustom = document.getElementById("mouseCustom");
+    const mouseEditor = document.getElementById("mouseEditor");
+    const mouseEditorMeta = document.getElementById("mouseEditorMeta");
+    const mouseLayersList = document.getElementById("mouseLayersList");
+    const mouseX = document.getElementById("mouseX");
+    const mouseY = document.getElementById("mouseY");
+    const mouseW = document.getElementById("mouseW");
+    const mouseH = document.getElementById("mouseH");
+    const mouseR = document.getElementById("mouseR");
+    const btnMouseReset = document.getElementById("btnMouseReset");
+    const btnMouseSnap = document.getElementById("btnMouseSnap");
     const keyEditor = document.getElementById("keyEditor");
     const editorMeta = document.getElementById("editorMeta");
     const keyX = document.getElementById("keyX");
     const keyY = document.getElementById("keyY");
     const keyW = document.getElementById("keyW");
     const keyH = document.getElementById("keyH");
+    const keyR = document.getElementById("keyR");
+    const keyRadiusField = document.getElementById("keyRadiusField");
     const btnKeyReset = document.getElementById("btnKeyReset");
     const btnSnapGrid = document.getElementById("btnSnapGrid");
     const btnKeyDelete = document.getElementById("btnKeyDelete");
@@ -1883,8 +2537,166 @@
       }
     }
 
+    const overlayPreviewUrl = (location.protocol === "http:" || location.protocol === "https:")
+      ? (location.origin + "/overlay.html?preview=1")
+      : "http://127.0.0.1:7689/overlay.html?preview=1";
+    const overlayPreview = document.getElementById("overlayPreview");
+    const previewFrameWrap = document.getElementById("previewFrameWrap");
+    const previewZoomLabel = document.getElementById("previewZoomLabel");
+    const appEl = document.querySelector(".app");
+
+    const PREVIEW_ZOOM_MIN = 0.25;
+    const PREVIEW_ZOOM_MAX = 2.8;
+    const PREVIEW_ZOOM_DEFAULT = 0.72;
+    let previewZoom = PREVIEW_ZOOM_DEFAULT;
+    let previewPanX = 18;
+    let previewPanY = 22;
+    let previewPanning = false;
+    let previewPanLastX = 0;
+    let previewPanLastY = 0;
+    let previewWanted = true;
+
+    function applyPreviewTransform() {
+      if (!overlayPreview) return;
+      overlayPreview.style.transform =
+        "translate(" + previewPanX + "px," + previewPanY + "px) scale(" + previewZoom + ")";
+      if (previewZoomLabel) previewZoomLabel.textContent = Math.round(previewZoom * 100) + "%";
+    }
+
+    function setPreviewZoom(next, originX, originY) {
+      const z = clamp(next, PREVIEW_ZOOM_MIN, PREVIEW_ZOOM_MAX);
+      if (!previewFrameWrap) {
+        previewZoom = z;
+        applyPreviewTransform();
+        return;
+      }
+      const rect = previewFrameWrap.getBoundingClientRect();
+      const mx = originX == null ? rect.width / 2 : originX;
+      const my = originY == null ? rect.height / 2 : originY;
+      const cx = (mx - previewPanX) / previewZoom;
+      const cy = (my - previewPanY) / previewZoom;
+      previewZoom = z;
+      previewPanX = mx - cx * previewZoom;
+      previewPanY = my - cy * previewZoom;
+      applyPreviewTransform();
+    }
+
+    function resetPreviewView() {
+      previewZoom = PREVIEW_ZOOM_DEFAULT;
+      previewPanX = 18;
+      previewPanY = 22;
+      applyPreviewTransform();
+    }
+
+    function pauseOverlayPreview() {
+      if (!overlayPreview) return;
+      const src = overlayPreview.getAttribute("src") || "";
+      if (src && src !== "about:blank") {
+        overlayPreview.src = "about:blank";
+      }
+    }
+
+    function ensureOverlayPreview() {
+      if (!overlayPreview) return;
+      previewWanted = true;
+      if (document.hidden) return;
+      const src = overlayPreview.getAttribute("src") || "";
+      if (!src || src === "about:blank") {
+        overlayPreview.src = overlayPreviewUrl;
+      }
+      applyPreviewTransform();
+    }
+
+    if (previewFrameWrap && overlayPreview) {
+      ensureOverlayPreview();
+
+      document.addEventListener("visibilitychange", () => {
+        if (document.hidden) pauseOverlayPreview();
+        else if (previewWanted) ensureOverlayPreview();
+      });
+
+      previewFrameWrap.addEventListener("wheel", (e) => {
+        e.preventDefault();
+        const rect = previewFrameWrap.getBoundingClientRect();
+        const factor = e.deltaY < 0 ? 1.12 : 1 / 1.12;
+        setPreviewZoom(previewZoom * factor, e.clientX - rect.left, e.clientY - rect.top);
+      }, { passive: false });
+
+      previewFrameWrap.addEventListener("pointerdown", (e) => {
+        if (e.button !== 0 && e.button !== 1) return;
+        previewPanning = true;
+        previewPanLastX = e.clientX;
+        previewPanLastY = e.clientY;
+        previewFrameWrap.classList.add("is-panning");
+        previewFrameWrap.setPointerCapture(e.pointerId);
+      });
+
+      previewFrameWrap.addEventListener("pointermove", (e) => {
+        if (!previewPanning) return;
+        previewPanX += e.clientX - previewPanLastX;
+        previewPanY += e.clientY - previewPanLastY;
+        previewPanLastX = e.clientX;
+        previewPanLastY = e.clientY;
+        applyPreviewTransform();
+      });
+
+      const endPan = (e) => {
+        if (!previewPanning) return;
+        previewPanning = false;
+        previewFrameWrap.classList.remove("is-panning");
+        try { previewFrameWrap.releasePointerCapture(e.pointerId); } catch (_) {}
+      };
+      previewFrameWrap.addEventListener("pointerup", endPan);
+      previewFrameWrap.addEventListener("pointercancel", endPan);
+
+      document.getElementById("previewZoomIn").addEventListener("click", () => setPreviewZoom(previewZoom * 1.2));
+      document.getElementById("previewZoomOut").addEventListener("click", () => setPreviewZoom(previewZoom / 1.2));
+      document.getElementById("previewZoomReset").addEventListener("click", resetPreviewView);
+    }
+
+    let homeView = "themes"; // "themes" | "create"
+
+    function showHomeThemes() {
+      homeView = "themes";
+      document.getElementById("homeThemes").hidden = false;
+      document.getElementById("homeCreate").hidden = true;
+      if (appEl) appEl.classList.remove("create-mode");
+      ensureOverlayPreview();
+    }
+
+    function showHomeCreate() {
+      homeView = "create";
+      document.getElementById("homeThemes").hidden = true;
+      document.getElementById("homeCreate").hidden = false;
+      if (appEl) appEl.classList.add("create-mode");
+      ensureOverlayPreview();
+      syncingPicker = true;
+      updatePickerUi();
+      syncingPicker = false;
+      renderKeyEditor();
+    }
+
+    function syncHomeView() {
+      if (homeView === "create") showHomeCreate();
+      else showHomeThemes();
+    }
+
     function renderDesigns() {
       designGrid.innerHTML = "";
+
+      const createBtn = document.createElement("button");
+      createBtn.type = "button";
+      createBtn.className = "theme theme-create-card" + (settings.design === DESIGN_CUSTOM ? " active" : "");
+      createBtn.innerHTML =
+        '<div class="plus">+</div><strong>Créer mon thème</strong><small>Couleur, touches, souris, images</small>';
+      createBtn.addEventListener("click", () => {
+        settings.design = DESIGN_CUSTOM;
+        showHomeCreate();
+        render();
+        queueSave();
+      });
+      designGrid.appendChild(createBtn);
+
       for (const [value, label, desc, preview] of DESIGNS) {
         const btn = document.createElement("button");
         btn.type = "button";
@@ -1895,6 +2707,7 @@
           "</div><strong>" + label + "</strong><small>" + desc + "</small>";
         btn.addEventListener("click", () => {
           settings.design = value;
+          showHomeThemes();
           render();
           queueSave();
         });
@@ -1929,7 +2742,7 @@
           settings.layout = value;
           if (settings.keyCustom) {
             settings.keyLayout = normalizeKeyLayout(settings.keyLayout, value, { fillMissing: false })
-              .map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+              .map(serializeKeyItem);
           }
           render();
           queueSave();
@@ -1965,14 +2778,17 @@
       renderMouse();
       renderLayouts();
       renderKeyEditor();
+      renderMouseEditor();
       mouseSens.value = String(Math.round(settings.mouseSens * 100));
       mouseSensVal.textContent = Math.round(settings.mouseSens * 100) + "%";
       keyCustom.checked = !!settings.keyCustom;
+      mouseCustom.checked = !!settings.mouseCustom;
       ensureSgOption(sgJump, settings.sgJump);
       ensureSgOption(sgCrouch, settings.sgCrouch);
       sgFps.value = String(settings.sgFps);
       sgEnabled.checked = settings.sgEnabled !== false;
       sgFields.classList.toggle("is-disabled", !sgEnabled.checked);
+      syncHomeView();
     }
 
     let selectedKeyId = null;
@@ -1982,6 +2798,9 @@
     let mediaItems = [];
     let savedKeyLayout = null;
     let savedMediaLayers = null;
+    let mouseEditorItems = [];
+    let selectedMouseId = null;
+    let savedMouseLayout = null;
 
     const mediaApiBase = settingsUrl.replace(/\/settings$/, "");
 
@@ -2066,7 +2885,7 @@
         } else {
           editorItems = normalizeKeyLayout(settings.keyLayout, settings.layout, { fillMissing: false });
         }
-        settings.keyLayout = editorItems.map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+        settings.keyLayout = editorItems.map(serializeKeyItem);
       } else {
         editorItems = Array.isArray(savedKeyLayout)
           ? normalizeKeyLayout(savedKeyLayout, settings.layout, { fillMissing: false })
@@ -2111,6 +2930,7 @@
       mediaMaskField.hidden = !mediaItem;
       mediaOpacityField.hidden = !mediaItem;
       mediaOverLettersField.hidden = !mediaItem;
+      if (keyRadiusField) keyRadiusField.hidden = !!mediaItem || multi || !keyItem;
 
       if (mediaItem) {
         btnKeyDelete.disabled = false;
@@ -2137,10 +2957,14 @@
       if (document.activeElement !== keyY) keyY.value = String(keyItem.y);
       if (document.activeElement !== keyW) keyW.value = String(keyItem.w);
       if (document.activeElement !== keyH) keyH.value = String(keyItem.h);
+      if (keyR && document.activeElement !== keyR) {
+        keyR.value = String(clampCornerRadius(keyItem.w, keyItem.h, keyItem.r, 8));
+        keyR.max = String(maxCornerRadius(keyItem.w, keyItem.h));
+      }
     }
 
     function commitEditorLayout(save) {
-      settings.keyLayout = editorItems.map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+      settings.keyLayout = editorItems.map(serializeKeyItem);
       savedKeyLayout = settings.keyLayout;
       commitMediaLayout(false);
       if (save !== false) queueSave();
@@ -2223,7 +3047,7 @@
       settings.keyCustom = true;
       keyCustom.checked = true;
       settings.keyLayout = buildDefaultKeyLayout(settings.layout)
-        .map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+        .map(serializeKeyItem);
       savedKeyLayout = settings.keyLayout;
       clearAllSelection();
       editorItems = settings.keyLayout.map((k) => {
@@ -2306,11 +3130,11 @@
       }
     }
 
-    function collectKnownGaps(excludeIds) {
+    function collectKnownGaps(excludeIds, itemsPool) {
       const exclude = excludeIds instanceof Set
         ? excludeIds
         : new Set(excludeIds != null ? [excludeIds] : []);
-      const others = editorItems.filter((o) => !exclude.has(o.id));
+      const others = (itemsPool || editorItems).filter((o) => !exclude.has(o.id));
       const hGaps = new Set([KEY_GAP, 3, 4, 6, 8]);
       const vGaps = new Set([KEY_GAP, 3, 4, 6, 8]);
       for (let i = 0; i < others.length; i++) {
@@ -2335,7 +3159,7 @@
     }
 
     /** Snap type Figma : alignement + même espacement (ex. 3 px) + labels px. */
-    function figSnapPosition(x, y, w, h, selfId, hardGrid, excludeIds) {
+    function figSnapPosition(x, y, w, h, selfId, hardGrid, excludeIds, itemsPool) {
       if (hardGrid) {
         return {
           x: Math.max(0, snap(x, KEY_GRID)),
@@ -2349,8 +3173,9 @@
       const guides = { v: [], h: [], measures: [] };
       const exclude = excludeIds instanceof Set ? new Set(excludeIds) : new Set();
       if (selfId) exclude.add(selfId);
-      const others = editorItems.filter((o) => !exclude.has(o.id));
-      const { hGaps, vGaps } = collectKnownGaps(exclude);
+      const pool = itemsPool || editorItems;
+      const others = pool.filter((o) => !exclude.has(o.id));
+      const { hGaps, vGaps } = collectKnownGaps(exclude, pool);
 
       // 1) Snap d’alignement bords / centres
       const candidatesX = [0];
@@ -2711,13 +3536,17 @@
         el.style.top = k.y + "px";
         el.style.width = k.w + "px";
         el.style.height = k.h + "px";
+        const kr = clampCornerRadius(k.w, k.h, k.r, 8);
+        k.r = kr;
+        el.style.borderRadius = kr + "px";
         el.style.zIndex = "18";
-        el.title = k.label + " · " + k.x + "," + k.y + " · " + k.w + "×" + k.h;
+        el.title = k.label + " · " + k.x + "," + k.y + " · " + k.w + "×" + k.h + " · r" + kr;
         if (sel && !multi && k.id === selectedKeyId) {
           const handle = document.createElement("div");
           handle.className = "fig-handle br";
           handle.dataset.resize = "br";
           el.appendChild(handle);
+          placeRadiusHandle(el, kr);
         }
         keyEditor.appendChild(el);
       }
@@ -2956,6 +3785,309 @@
       paintKeyEditor();
       savedLabel.textContent = "Image ajoutée ✓";
       setTimeout(() => { if (savedLabel.textContent === "Image ajoutée ✓") savedLabel.textContent = ""; }, 1400);
+    }
+
+    function clearMouseFigGuides() {
+      const g = document.getElementById("mouseFigGuides");
+      if (g) g.innerHTML = "";
+    }
+
+    function showMouseFigGuides(guides) {
+      let g = document.getElementById("mouseFigGuides");
+      if (!g && mouseEditor) {
+        g = document.createElement("div");
+        g.className = "fig-guides";
+        g.id = "mouseFigGuides";
+        mouseEditor.appendChild(g);
+      }
+      if (!g) return;
+      g.innerHTML = "";
+      for (const x of (guides.v || [])) {
+        const el = document.createElement("div");
+        el.className = "fig-guide-v";
+        el.style.left = x + "px";
+        g.appendChild(el);
+      }
+      for (const y of (guides.h || [])) {
+        const el = document.createElement("div");
+        el.className = "fig-guide-h";
+        el.style.top = y + "px";
+        g.appendChild(el);
+      }
+      for (const m of (guides.measures || [])) {
+        const wrap = document.createElement("div");
+        wrap.className = "fig-measure " + m.axis;
+        const line = document.createElement("div");
+        line.className = "fig-measure-line";
+        const lab = document.createElement("span");
+        lab.className = "fig-measure-label";
+        lab.textContent = String(m.value);
+        wrap.appendChild(line);
+        wrap.appendChild(lab);
+        if (m.axis === "h") {
+          const x1 = Math.min(m.a, m.b);
+          const x2 = Math.max(m.a, m.b);
+          wrap.style.left = x1 + "px";
+          wrap.style.width = Math.max(1, x2 - x1) + "px";
+          wrap.style.top = (m.pos - 7) + "px";
+          wrap.style.height = "14px";
+        } else {
+          const y1 = Math.min(m.a, m.b);
+          const y2 = Math.max(m.a, m.b);
+          wrap.style.top = y1 + "px";
+          wrap.style.height = Math.max(1, y2 - y1) + "px";
+          wrap.style.left = (m.pos - 10) + "px";
+          wrap.style.width = "20px";
+        }
+        g.appendChild(wrap);
+      }
+    }
+
+    function minMouseSize(id) {
+      if (id === "pad") return { w: 80, h: 80 };
+      if (id === "wheel") return { w: 36, h: 36 };
+      return { w: 40, h: 36 };
+    }
+
+    function ensureMouseEditorLayout() {
+      if (settings.mouseCustom) {
+        if (!Array.isArray(settings.mouseLayout)) {
+          mouseEditorItems = Array.isArray(savedMouseLayout) && savedMouseLayout.length
+            ? normalizeMouseLayout(savedMouseLayout)
+            : buildDefaultMouseLayout();
+        } else {
+          mouseEditorItems = normalizeMouseLayout(settings.mouseLayout);
+        }
+        settings.mouseLayout = mouseEditorItems.map(serializeMouseItem);
+        savedMouseLayout = settings.mouseLayout;
+      } else {
+        mouseEditorItems = buildDefaultMouseLayout();
+      }
+    }
+
+    function commitMouseLayout(save) {
+      settings.mouseLayout = mouseEditorItems.map(serializeMouseItem);
+      savedMouseLayout = settings.mouseLayout;
+      if (save !== false) queueSave();
+    }
+
+    function updateMouseMetaFields() {
+      const item = mouseEditorItems.find((k) => k.id === selectedMouseId);
+      if (!item || !settings.mouseCustom) {
+        mouseEditorMeta.hidden = true;
+        return;
+      }
+      mouseEditorMeta.hidden = false;
+      mouseX.value = String(item.x);
+      mouseY.value = String(item.y);
+      mouseW.value = String(item.w);
+      mouseH.value = String(item.h);
+      if (mouseR) {
+        const mr = clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.id));
+        item.r = mr;
+        mouseR.value = String(mr);
+        mouseR.max = String(maxCornerRadius(item.w, item.h));
+      }
+    }
+
+    function paintMouseLayers() {
+      if (!mouseLayersList) return;
+      mouseLayersList.innerHTML = "";
+      const order = ["pad", "m1", "wheel", "m2"];
+      for (const id of order) {
+        const p = mouseEditorItems.find((k) => k.id === id);
+        if (!p) continue;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "mouse-layer" + (selectedMouseId === id ? " active" : "");
+        btn.innerHTML = "<strong>" + (MOUSE_PART_LABELS[id] || id) + "</strong>"
+          + "<small>" + p.w + "×" + p.h + " · " + p.x + "," + p.y + "</small>";
+        btn.addEventListener("click", () => {
+          if (!settings.mouseCustom) return;
+          selectedMouseId = id;
+          paintMouseEditor();
+        });
+        mouseLayersList.appendChild(btn);
+      }
+    }
+
+    function paintMouseEditor() {
+      if (!mouseEditor) return;
+      ensureMouseEditorLayout();
+      mouseEditor.classList.toggle("disabled", !settings.mouseCustom);
+      const guidesEl = document.getElementById("mouseFigGuides");
+      mouseEditor.querySelectorAll(".emouse").forEach((n) => n.remove());
+      if (!guidesEl) {
+        const g = document.createElement("div");
+        g.className = "fig-guides";
+        g.id = "mouseFigGuides";
+        mouseEditor.appendChild(g);
+      }
+      let maxR = MOUSE_BOX + 40;
+      let maxB = MOUSE_BOX + 40;
+      const paintOrder = ["pad", "m1", "wheel", "m2"];
+      for (const id of paintOrder) {
+        const p = mouseEditorItems.find((k) => k.id === id);
+        if (!p) continue;
+        maxR = Math.max(maxR, p.x + p.w + 48);
+        maxB = Math.max(maxB, p.y + p.h + 48);
+        const el = document.createElement("div");
+        el.className = "emouse " + p.id + (selectedMouseId === p.id ? " selected" : "");
+        el.dataset.mouseId = p.id;
+        el.style.left = p.x + "px";
+        el.style.top = p.y + "px";
+        el.style.width = p.w + "px";
+        el.style.height = p.h + "px";
+        const pr = clampCornerRadius(p.w, p.h, p.r, defaultMouseRadius(p.id));
+        p.r = pr;
+        el.style.borderRadius = pr + "px";
+        if (p.id === "wheel") {
+          el.innerHTML = '<span class="emouse-half">▲</span><span class="emouse-half">▼</span>';
+        } else {
+          el.textContent = MOUSE_PART_LABELS[p.id] || p.id;
+        }
+        if (settings.mouseCustom && selectedMouseId === p.id) {
+          for (const corner of ["tl", "tr", "bl", "br"]) {
+            const handle = document.createElement("span");
+            handle.className = "fig-handle " + corner;
+            handle.dataset.corner = corner;
+            el.appendChild(handle);
+          }
+          placeRadiusHandle(el, pr);
+        }
+        mouseEditor.appendChild(el);
+      }
+      mouseEditor.style.width = maxR + "px";
+      mouseEditor.style.height = maxB + "px";
+      updateMouseMetaFields();
+      paintMouseLayers();
+    }
+
+    function renderMouseEditor() {
+      paintMouseEditor();
+    }
+
+    function applyLiveMouseEl(item) {
+      const live = mouseEditor && mouseEditor.querySelector('.emouse[data-mouse-id="' + item.id + '"]');
+      if (!live) return;
+      live.style.left = item.x + "px";
+      live.style.top = item.y + "px";
+      live.style.width = item.w + "px";
+      live.style.height = item.h + "px";
+      const r = clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.id));
+      item.r = r;
+      live.style.borderRadius = r + "px";
+      const rh = live.querySelector(".fig-handle.radius");
+      if (rh) rh.style.left = Math.min(item.w / 2, r) + "px";
+    }
+
+    function bindMouseEditorDrag() {
+      if (!mouseEditor) return;
+      let mode = null; // move | resize
+      let corner = null;
+      let startX = 0;
+      let startY = 0;
+      let origin = null;
+
+      mouseEditor.addEventListener("pointerdown", (e) => {
+        if (!settings.mouseCustom) return;
+        const handle = e.target.closest(".fig-handle");
+        const el = e.target.closest(".emouse");
+        if (!el) {
+          selectedMouseId = null;
+          clearMouseFigGuides();
+          paintMouseEditor();
+          return;
+        }
+        const id = el.dataset.mouseId;
+        const item = mouseEditorItems.find((k) => k.id === id);
+        if (!item) return;
+        const wasSelected = el.classList.contains("selected") && !!el.querySelector(".fig-handle");
+        selectedMouseId = id;
+        const isRadius = !!(handle && handle.dataset.radius === "1");
+        mode = isRadius ? "radius" : (handle ? "resize" : "move");
+        corner = handle && !isRadius ? (handle.dataset.corner || "br") : null;
+        startX = e.clientX;
+        startY = e.clientY;
+        origin = { x: item.x, y: item.y, w: item.w, h: item.h, r: clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.id)) };
+        if (!wasSelected) paintMouseEditor();
+        else {
+          mouseEditor.querySelectorAll(".emouse").forEach((n) => n.classList.toggle("selected", n.dataset.mouseId === id));
+          updateMouseMetaFields();
+          paintMouseLayers();
+        }
+        mouseEditor.setPointerCapture(e.pointerId);
+        e.preventDefault();
+      });
+
+      mouseEditor.addEventListener("pointermove", (e) => {
+        if (!mode || !origin || !selectedMouseId) return;
+        const item = mouseEditorItems.find((k) => k.id === selectedMouseId);
+        if (!item) return;
+        const dx = Math.round(e.clientX - startX);
+        const dy = Math.round(e.clientY - startY);
+        const hardGrid = e.shiftKey;
+        const mins = minMouseSize(item.id);
+
+        if (mode === "radius") {
+          item.r = clampCornerRadius(item.w, item.h, origin.r + dx, defaultMouseRadius(item.id));
+          applyLiveMouseEl(item);
+          updateMouseMetaFields();
+          return;
+        }
+
+        if (mode === "move") {
+          let nx = origin.x + dx;
+          let ny = origin.y + dy;
+          const snapped = figSnapPosition(nx, ny, item.w, item.h, item.id, hardGrid, null, mouseEditorItems);
+          item.x = snapped.x;
+          item.y = snapped.y;
+          showMouseFigGuides(snapped.guides);
+        } else {
+          let x = origin.x;
+          let y = origin.y;
+          let w = origin.w;
+          let h = origin.h;
+          if (corner === "br") { w = origin.w + dx; h = origin.h + dy; }
+          else if (corner === "bl") { x = origin.x + dx; w = origin.w - dx; h = origin.h + dy; }
+          else if (corner === "tr") { y = origin.y + dy; w = origin.w + dx; h = origin.h - dy; }
+          else if (corner === "tl") { x = origin.x + dx; y = origin.y + dy; w = origin.w - dx; h = origin.h - dy; }
+          if (hardGrid) {
+            x = snap(x, KEY_GRID);
+            y = snap(y, KEY_GRID);
+            w = Math.max(mins.w, snap(w, KEY_GRID));
+            h = Math.max(mins.h, snap(h, KEY_GRID));
+          } else {
+            w = Math.max(mins.w, Math.round(w));
+            h = Math.max(mins.h, Math.round(h));
+            x = Math.round(x);
+            y = Math.round(y);
+          }
+          if (w === mins.w && corner && corner.indexOf("l") >= 0) x = origin.x + origin.w - mins.w;
+          if (h === mins.h && corner && corner.indexOf("t") >= 0) y = origin.y + origin.h - mins.h;
+          item.x = Math.max(0, x);
+          item.y = Math.max(0, y);
+          item.w = w;
+          item.h = h;
+          item.r = clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.id));
+          clearMouseFigGuides();
+        }
+        applyLiveMouseEl(item);
+        updateMouseMetaFields();
+      });
+
+      const endDrag = (e) => {
+        if (!mode) return;
+        mode = null;
+        corner = null;
+        origin = null;
+        clearMouseFigGuides();
+        commitMouseLayout(true);
+        paintMouseEditor();
+        try { mouseEditor.releasePointerCapture(e.pointerId); } catch (_) {}
+      };
+      mouseEditor.addEventListener("pointerup", endDrag);
+      mouseEditor.addEventListener("pointercancel", endDrag);
     }
 
     function bindKeyEditorDrag() {
@@ -3204,8 +4336,9 @@
         const item = editorItems.find((k) => k.id === id);
         if (!item) return;
         const resizing = !!(handle && handle.dataset.resize === "br");
+        const rounding = !!(handle && handle.dataset.radius === "1");
 
-        if (e.shiftKey && !resizing) {
+        if (e.shiftKey && !resizing && !rounding) {
           selectKey(id, true);
           return;
         }
@@ -3221,7 +4354,14 @@
         const live = keyEditor.querySelector('.ekey[data-id="' + id + '"]');
         if (!live) return;
 
-        if (resizing && selectedIds.size === 1) {
+        if (rounding && selectedIds.size === 1) {
+          drag = {
+            mode: "radius",
+            id,
+            startX: e.clientX,
+            origR: clampCornerRadius(item.w, item.h, item.r, 8),
+          };
+        } else if (resizing && selectedIds.size === 1) {
           drag = {
             mode: "resize",
             id,
@@ -3305,6 +4445,20 @@
         const item = editorItems.find((k) => k.id === drag.id);
         if (!item) return;
 
+        if (drag.mode === "radius") {
+          item.r = clampCornerRadius(item.w, item.h, drag.origR + (e.clientX - drag.startX), 8);
+          clearFigGuides();
+          const live = keyEditor.querySelector('.ekey[data-id="' + drag.id + '"]');
+          if (live) {
+            live.style.borderRadius = item.r + "px";
+            const rh = live.querySelector(".fig-handle.radius");
+            if (rh) rh.style.left = Math.min(item.w / 2, item.r) + "px";
+            live.title = item.label + " · " + item.x + "," + item.y + " · " + item.w + "×" + item.h + " · r" + item.r;
+          }
+          syncEditorMeta();
+          return;
+        }
+
         if (drag.mode === "resize") {
           let w = drag.origW + (e.clientX - drag.startX);
           let h = drag.origH + (e.clientY - drag.startY);
@@ -3314,12 +4468,16 @@
           }
           item.w = Math.max(16, Math.round(w));
           item.h = Math.max(16, Math.round(h));
+          item.r = clampCornerRadius(item.w, item.h, item.r, 8);
           clearFigGuides();
           const live = keyEditor.querySelector('.ekey[data-id="' + drag.id + '"]');
           if (live) {
             live.style.width = item.w + "px";
             live.style.height = item.h + "px";
-            live.title = item.label + " · " + item.x + "," + item.y + " · " + item.w + "×" + item.h;
+            live.style.borderRadius = item.r + "px";
+            const rh = live.querySelector(".fig-handle.radius");
+            if (rh) rh.style.left = Math.min(item.w / 2, item.r) + "px";
+            live.title = item.label + " · " + item.x + "," + item.y + " · " + item.w + "×" + item.h + " · r" + item.r;
           }
         } else {
           let x = e.clientX - pt.rect.left - drag.ox;
@@ -3396,7 +4554,7 @@
       const s = { ...DEFAULTS, ...(raw || {}) };
       s.accent = String(s.accent || DEFAULTS.accent);
       if (!/^#[0-9a-fA-F]{6}$/.test(s.accent)) s.accent = DEFAULTS.accent;
-      if (!DESIGNS.some(([v]) => v === s.design)) {
+      if (!ALL_DESIGNS.some(([v]) => v === s.design)) {
         const legacy = { soft: "kawaii", sharp: "gothic", glass: "iphone" };
         s.design = legacy[s.design] || DEFAULTS.design;
       }
@@ -3407,12 +4565,21 @@
       if (s.keyCustom) {
         const rawLayout = Array.isArray(s.keyLayout) ? s.keyLayout : [];
         s.keyLayout = normalizeKeyLayout(rawLayout, s.layout, { fillMissing: false })
-          .map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+          .map(serializeKeyItem);
         s.mediaLayers = normalizeMediaLayers(s.mediaLayers);
       } else {
         s.keyLayout = null;
         s.mediaLayers = [];
       }
+      s.mouseCustom = !!s.mouseCustom;
+      if (s.mouseCustom) {
+        s.mouseLayout = normalizeMouseLayout(s.mouseLayout);
+      } else {
+        s.mouseLayout = null;
+      }
+      delete s.contour;
+      delete s.contourWidth;
+      delete s.contourColor;
       s.sgEnabled = s.sgEnabled !== false;
       s.sgJump = migrateSgKey(s.sgJump);
       s.sgCrouch = migrateSgKey(s.sgCrouch);
@@ -3428,10 +4595,12 @@
         if (!res.ok) throw new Error("bad status");
         settings = normalize(await res.json());
         setOnline(true);
+        homeView = "themes";
         render();
       } catch (e) {
         settings = normalize(DEFAULTS);
         setOnline(false);
+        homeView = "themes";
         render();
       }
     }
@@ -3472,7 +4641,12 @@
         document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
         tab.classList.add("active");
         document.getElementById("panel-" + tab.dataset.tab).classList.add("active");
+        if (tab.dataset.tab === "home") showHomeThemes();
       });
+    });
+
+    document.getElementById("btnBackThemes").addEventListener("click", () => {
+      showHomeThemes();
     });
 
     fillSelect(sgJump, SG_KEYS);
@@ -3600,10 +4774,10 @@
       if (settings.keyCustom) {
         if (savedKeyLayout && savedKeyLayout.length) {
           settings.keyLayout = normalizeKeyLayout(savedKeyLayout, settings.layout, { fillMissing: false })
-            .map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+            .map(serializeKeyItem);
         } else {
           settings.keyLayout = buildDefaultKeyLayout(settings.layout)
-            .map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+            .map(serializeKeyItem);
         }
         savedKeyLayout = settings.keyLayout;
         settings.mediaLayers = normalizeMediaLayers(savedMediaLayers);
@@ -3626,6 +4800,82 @@
       render();
       queueSave();
     });
+
+    mouseCustom.addEventListener("change", () => {
+      settings.mouseCustom = mouseCustom.checked;
+      if (settings.mouseCustom) {
+        mouseEditorItems = Array.isArray(savedMouseLayout) && savedMouseLayout.length
+          ? normalizeMouseLayout(savedMouseLayout)
+          : buildDefaultMouseLayout();
+        settings.mouseLayout = mouseEditorItems.map(serializeMouseItem);
+        savedMouseLayout = settings.mouseLayout;
+      } else {
+        if (Array.isArray(settings.mouseLayout) && settings.mouseLayout.length) {
+          savedMouseLayout = settings.mouseLayout;
+        } else if (mouseEditorItems.length) {
+          savedMouseLayout = mouseEditorItems.map(serializeMouseItem);
+        }
+        settings.mouseLayout = null;
+        selectedMouseId = null;
+      }
+      render();
+      queueSave();
+    });
+
+    btnMouseReset.addEventListener("click", () => {
+      mouseEditorItems = buildDefaultMouseLayout();
+      settings.mouseCustom = true;
+      mouseCustom.checked = true;
+      selectedMouseId = null;
+      clearMouseFigGuides();
+      commitMouseLayout(true);
+      renderMouseEditor();
+    });
+
+    btnMouseSnap.addEventListener("click", () => {
+      if (!settings.mouseCustom) {
+        settings.mouseCustom = true;
+        mouseCustom.checked = true;
+      }
+      mouseEditorItems = buildDefaultMouseLayout();
+      selectedMouseId = null;
+      clearMouseFigGuides();
+      commitMouseLayout(true);
+      renderMouseEditor();
+    });
+
+    function applyMouseMetaField(field, value) {
+      if (!settings.mouseCustom) return;
+      if (value === "" || value === "-") return;
+      const n = Math.round(Number(value));
+      if (!Number.isFinite(n)) return;
+      const item = mouseEditorItems.find((k) => k.id === selectedMouseId);
+      if (!item) return;
+      const mins = minMouseSize(item.id);
+      if (field === "x" || field === "y") item[field] = Math.max(0, n);
+      else if (field === "w") {
+        item.w = Math.max(mins.w, n);
+        item.r = clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.id));
+      } else if (field === "h") {
+        item.h = Math.max(mins.h, n);
+        item.r = clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.id));
+      } else if (field === "r") {
+        item.r = clampCornerRadius(item.w, item.h, n, defaultMouseRadius(item.id));
+      }
+      commitMouseLayout(true);
+      paintMouseEditor();
+    }
+
+    mouseX.addEventListener("change", () => applyMouseMetaField("x", mouseX.value));
+    mouseY.addEventListener("change", () => applyMouseMetaField("y", mouseY.value));
+    mouseW.addEventListener("change", () => applyMouseMetaField("w", mouseW.value));
+    mouseH.addEventListener("change", () => applyMouseMetaField("h", mouseH.value));
+    mouseR.addEventListener("change", () => applyMouseMetaField("r", mouseR.value));
+    mouseX.addEventListener("input", () => applyMouseMetaField("x", mouseX.value));
+    mouseY.addEventListener("input", () => applyMouseMetaField("y", mouseY.value));
+    mouseW.addEventListener("input", () => applyMouseMetaField("w", mouseW.value));
+    mouseH.addEventListener("input", () => applyMouseMetaField("h", mouseH.value));
+    mouseR.addEventListener("input", () => applyMouseMetaField("r", mouseR.value));
 
     btnKeyReset.addEventListener("click", () => {
       settings.keyCustom = false;
@@ -3665,7 +4915,12 @@
       const item = editorItems.find((k) => k.id === selectedKeyId);
       if (!item) return;
       if (field === "x" || field === "y") item[field] = Math.max(0, n);
-      else item[field] = Math.max(16, n);
+      else if (field === "w" || field === "h") {
+        item[field] = Math.max(16, n);
+        item.r = clampCornerRadius(item.w, item.h, item.r, 8);
+      } else if (field === "r") {
+        item.r = clampCornerRadius(item.w, item.h, n, 8);
+      }
       commitEditorLayout(true);
       paintKeyEditor();
     }
@@ -3674,10 +4929,12 @@
     keyY.addEventListener("change", () => applyMetaField("y", keyY.value));
     keyW.addEventListener("change", () => applyMetaField("w", keyW.value));
     keyH.addEventListener("change", () => applyMetaField("h", keyH.value));
+    keyR.addEventListener("change", () => applyMetaField("r", keyR.value));
     keyX.addEventListener("input", () => applyMetaField("x", keyX.value));
     keyY.addEventListener("input", () => applyMetaField("y", keyY.value));
     keyW.addEventListener("input", () => applyMetaField("w", keyW.value));
     keyH.addEventListener("input", () => applyMetaField("h", keyH.value));
+    keyR.addEventListener("input", () => applyMetaField("r", keyR.value));
     mediaRot.addEventListener("change", () => applyMetaField("rot", mediaRot.value));
     mediaRot.addEventListener("input", () => applyMetaField("rot", mediaRot.value));
     mediaMask.addEventListener("change", () => {
@@ -3712,12 +4969,17 @@
     });
 
     bindKeyEditorDrag();
+    bindMouseEditorDrag();
 
     document.getElementById("btnSave").addEventListener("click", () => saveSettings(true));
     document.getElementById("btnReset").addEventListener("click", () => {
       settings = normalize(DEFAULTS);
       clearAllSelection();
       mediaItems = [];
+      mouseEditorItems = [];
+      selectedMouseId = null;
+      savedMouseLayout = null;
+      homeView = "themes";
       render();
       saveSettings(true);
     });

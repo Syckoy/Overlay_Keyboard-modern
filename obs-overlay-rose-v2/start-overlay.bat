@@ -17,7 +17,15 @@ if not exist "%CSC%" (
   pause
   exit /b 1
 )
+echo Arret du bridge en cours (si ouvert)...
+taskkill /F /IM bridge.exe >nul 2>&1
+timeout /t 1 /nobreak >nul
 if exist "bridge.exe" del /f /q "bridge.exe" >nul 2>&1
+if exist "bridge.exe" (
+  echo Impossible de remplacer bridge.exe — ferme la fenetre bridge / OBS qui le bloque, puis relance.
+  pause
+  exit /b 1
+)
 "%CSC%" /nologo /t:exe /out:bridge.exe /optimize+ bridge.cs
 if errorlevel 1 (
   echo Echec compilation.

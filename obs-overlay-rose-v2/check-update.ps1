@@ -1,6 +1,6 @@
 # Vérifie GitHub pour une mise à jour au lancement de start-overlay.
 # Repo : https://github.com/Syckoy/Overlay_Keyboard-modern
-# Préserve : settings.json + assets/user-*
+# Préserve : themeperso/** (+ legacy settings.json / assets/user-*)
 
 $ErrorActionPreference = "Stop"
 $Root = Split-Path -Parent $MyInvocation.MyCommand.Path
@@ -44,6 +44,9 @@ function Get-GitHubJson([string]$url) {
 
 function Test-PreservedPath([string]$rel) {
   $n = $rel -replace "\\", "/"
+  # Dossier perso complet : themes, settings, images — jamais ecrase a la maj
+  if ($n -ieq "themeperso" -or $n -like "themeperso/*") { return $true }
+  # Legacy (anciennes installs avant themeperso)
   if ($n -ieq "settings.json") { return $true }
   if ($n -like "assets/user-*") { return $true }
   if ($n -ieq ".update-state.json") { return $true }
@@ -144,7 +147,7 @@ try {
   if ($remoteDate) { Write-Host "${dim}  Date   :  $remoteDate${off}" }
   Write-Host "${dim}  Repo   :  https://github.com/$repo${off}"
   Write-Host ""
-  Write-Host "${warn}Tes reglages (settings.json) et images perso (assets/user-*) seront conserves.${off}"
+  Write-Host "${warn}Ton dossier themeperso\ (themes, reglages, images) sera conserve.${off}"
   Write-Host ""
 
   $answer = Read-Host "Mettre a jour maintenant ? (O/N)"
