@@ -4,67 +4,78 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Config Overlay V2</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet" />
   <style>
     :root {
-      --bg0: #0e1014;
-      --bg1: #161a22;
-      --bg2: #1e2430;
-      --line: rgba(255,255,255,0.09);
-      --text: #f4f1ea;
-      --muted: rgba(244,241,234,0.55);
+      --bg0: #121416;
+      --bg1: #1a1d22;
+      --bg2: #242830;
+      --line: rgba(255,255,255,0.11);
+      --text: #e9ecef;
+      --muted: rgba(233,236,239,0.58);
       --accent: #e56b8a;
-      --ok: #6fcea0;
+      --ok: #5fbf8f;
       --danger: #e57373;
-      --radius: 14px;
-      --font: "Segoe UI", Bahnschrift, sans-serif;
+      --radius: 6px;
+      --font: "IBM Plex Sans", ui-sans-serif, sans-serif;
+      --display: "Syne", ui-sans-serif, sans-serif;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; }
+
+    html { font-size: 17px; }
 
     body {
       min-height: 100vh;
       color: var(--text);
       font-family: var(--font);
+      font-weight: 500;
+      line-height: 1.45;
       background:
-        radial-gradient(900px 420px at 0% -10%, color-mix(in srgb, var(--accent) 28%, transparent), transparent 60%),
-        radial-gradient(700px 380px at 100% 0%, rgba(90,140,200,0.12), transparent 55%),
+        linear-gradient(180deg, #181b20 0%, var(--bg0) 180px),
         var(--bg0);
     }
 
     .app {
-      width: min(560px, 100%);
+      width: min(1120px, 100%);
       margin: 0 auto;
-      padding: 16px 14px 28px;
+      padding: 28px 28px 44px;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 18px;
     }
 
     .top {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      padding: 12px 14px;
-      background: color-mix(in srgb, var(--bg1) 88%, black);
+      gap: 16px;
+      padding: 18px 20px;
+      background: var(--bg1);
       border: 1px solid var(--line);
       border-radius: var(--radius);
+      border-left: 3px solid var(--accent);
     }
 
     .brand {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 4px;
       min-width: 0;
     }
 
     .brand strong {
-      font-size: 1.05rem;
-      letter-spacing: 0.02em;
+      font-family: var(--display);
+      font-size: 1.45rem;
+      font-weight: 800;
+      letter-spacing: -0.03em;
+      line-height: 1.1;
     }
 
     .brand span {
-      font-size: 0.8rem;
+      font-size: 0.95rem;
       color: var(--muted);
       white-space: nowrap;
       overflow: hidden;
@@ -74,21 +85,21 @@
     .live {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      padding: 7px 10px;
-      border-radius: 999px;
+      gap: 9px;
+      padding: 10px 14px;
+      border-radius: var(--radius);
       border: 1px solid var(--line);
-      background: rgba(255,255,255,0.03);
-      font-size: 0.78rem;
-      font-weight: 650;
+      background: var(--bg2);
+      font-size: 0.9rem;
+      font-weight: 600;
       color: var(--muted);
       flex: 0 0 auto;
     }
 
     .live .dot {
-      width: 8px;
-      height: 8px;
-      border-radius: 50%;
+      width: 9px;
+      height: 9px;
+      border-radius: 2px;
       background: var(--danger);
     }
 
@@ -98,11 +109,11 @@
     .tabs {
       display: grid;
       grid-template-columns: repeat(4, 1fr);
-      gap: 6px;
-      padding: 6px;
+      gap: 8px;
+      padding: 8px;
       background: var(--bg1);
       border: 1px solid var(--line);
-      border-radius: 12px;
+      border-radius: var(--radius);
     }
 
     .tab {
@@ -111,54 +122,65 @@
       background: transparent;
       color: var(--muted);
       font: inherit;
-      font-size: 0.84rem;
-      font-weight: 700;
-      padding: 10px 6px;
-      border-radius: 9px;
+      font-size: 1rem;
+      font-weight: 650;
+      padding: 14px 10px;
+      border-radius: 4px;
       cursor: pointer;
     }
 
     .tab:hover { color: var(--text); background: rgba(255,255,255,0.04); }
     .tab.active {
       color: #fff;
-      background: color-mix(in srgb, var(--accent) 78%, black);
+      background: color-mix(in srgb, var(--accent) 82%, #1a1014);
     }
 
     .panel { display: none; }
-    .panel.active { display: flex; flex-direction: column; gap: 12px; }
+    .panel.active { display: flex; flex-direction: column; gap: 16px; }
+
+    .look-grid {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 16px;
+    }
+
+    @media (min-width: 900px) {
+      .look-grid { grid-template-columns: 1.05fr 0.95fr; align-items: start; }
+    }
 
     .card {
-      background: color-mix(in srgb, var(--bg1) 92%, black);
+      background: var(--bg1);
       border: 1px solid var(--line);
       border-radius: var(--radius);
-      padding: 14px;
+      padding: 20px;
     }
 
     .card h2 {
-      font-size: 0.72rem;
-      text-transform: uppercase;
-      letter-spacing: 0.14em;
-      color: var(--muted);
-      margin-bottom: 10px;
+      font-family: var(--display);
+      font-size: 1.2rem;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      color: var(--text);
+      margin-bottom: 14px;
     }
 
     .hint {
-      margin-top: 8px;
-      font-size: 0.78rem;
-      line-height: 1.35;
+      margin-top: 12px;
+      font-size: 0.92rem;
+      line-height: 1.45;
       color: var(--muted);
     }
 
     .swatches {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 10px;
     }
 
     .swatch {
-      width: 28px;
-      height: 28px;
-      border-radius: 50%;
+      width: 34px;
+      height: 34px;
+      border-radius: 4px;
       border: 2px solid rgba(255,255,255,0.22);
       cursor: pointer;
       padding: 0;
@@ -170,22 +192,22 @@
     }
 
     .picker {
-      margin-top: 12px;
+      margin-top: 14px;
       display: grid;
-      grid-template-columns: 1fr 48px;
-      gap: 10px;
+      grid-template-columns: 1fr 56px;
+      gap: 12px;
     }
 
     .sv-wrap, .hue-wrap {
       position: relative;
-      border-radius: 12px;
+      border-radius: var(--radius);
       overflow: hidden;
       border: 1px solid var(--line);
       touch-action: none;
     }
 
     .sv-wrap {
-      height: 148px;
+      height: 200px;
       cursor: crosshair;
     }
 
@@ -228,43 +250,45 @@
     }
 
     .sliders {
-      margin-top: 10px;
+      margin-top: 14px;
       display: grid;
-      gap: 8px;
+      gap: 12px;
     }
 
     .slider-row {
       display: grid;
-      grid-template-columns: 22px 1fr 38px;
-      gap: 8px;
+      grid-template-columns: 28px 1fr 52px;
+      gap: 10px;
       align-items: center;
       color: var(--muted);
-      font-size: 0.75rem;
+      font-size: 0.9rem;
       font-weight: 700;
     }
 
     .slider-row input[type="range"] {
       width: 100%;
       accent-color: var(--accent);
+      height: 28px;
     }
 
     .slider-row .val {
       text-align: right;
       color: var(--text);
       font-variant-numeric: tabular-nums;
+      font-size: 0.95rem;
     }
 
     .color-meta {
-      margin-top: 10px;
+      margin-top: 12px;
       display: flex;
-      gap: 8px;
+      gap: 10px;
       align-items: center;
     }
 
     .color-preview {
-      width: 40px;
-      height: 34px;
-      border-radius: 10px;
+      width: 48px;
+      height: 42px;
+      border-radius: var(--radius);
       border: 1px solid var(--line);
       flex: 0 0 auto;
     }
@@ -272,26 +296,38 @@
     .color-meta input[type="text"] {
       appearance: none;
       border: 1px solid var(--line);
-      background: rgba(255,255,255,0.04);
+      background: var(--bg2);
       color: var(--text);
-      border-radius: 10px;
-      padding: 8px 10px;
+      border-radius: var(--radius);
+      padding: 11px 14px;
       font: inherit;
       font-weight: 700;
       letter-spacing: 0.04em;
-      width: 118px;
+      width: 140px;
       text-transform: uppercase;
+      font-size: 1rem;
     }
 
     .theme-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: 10px;
     }
 
-    @media (max-width: 520px) {
+    @media (min-width: 900px) {
+      .theme-grid { grid-template-columns: repeat(2, 1fr); }
+      .look-grid .theme-grid { grid-template-columns: repeat(2, 1fr); }
+    }
+
+    @media (min-width: 1100px) {
+      .look-grid .theme-grid { grid-template-columns: repeat(3, 1fr); }
+    }
+
+    @media (max-width: 640px) {
       .theme-grid { grid-template-columns: repeat(2, 1fr); }
       .tabs { grid-template-columns: repeat(2, 1fr); }
+      .app { padding: 18px 14px 32px; }
+      html { font-size: 16px; }
     }
 
     .theme {
@@ -299,28 +335,26 @@
       border: 1px solid var(--line);
       background: var(--bg2);
       color: var(--text);
-      border-radius: 12px;
-      padding: 10px 8px 9px;
+      border-radius: var(--radius);
+      padding: 12px 12px 11px;
       cursor: pointer;
       text-align: left;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      min-height: 88px;
-      transition: border-color 120ms ease, transform 80ms ease, background 120ms ease;
+      gap: 10px;
+      min-height: 108px;
+      transition: border-color 120ms ease, background 120ms ease;
     }
 
     .theme:hover { border-color: rgba(255,255,255,0.28); }
-    .theme:active { transform: scale(0.98); }
     .theme.active {
       border-color: var(--accent);
-      background: color-mix(in srgb, var(--accent) 16%, var(--bg2));
-      box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--accent) 35%, transparent);
+      background: color-mix(in srgb, var(--accent) 14%, var(--bg2));
     }
 
     .theme-preview {
-      height: 34px;
-      border-radius: 8px;
+      height: 42px;
+      border-radius: 4px;
       border: 1px solid rgba(255,255,255,0.12);
       overflow: hidden;
       position: relative;
@@ -328,50 +362,50 @@
 
     .theme-preview .chip {
       position: absolute;
-      inset: 7px auto auto 7px;
-      width: 18px;
-      height: 18px;
-      border-radius: 5px;
+      inset: 9px auto auto 9px;
+      width: 22px;
+      height: 22px;
+      border-radius: 4px;
       background: rgba(255,255,255,0.18);
       border: 1px solid rgba(255,255,255,0.25);
     }
 
-    .theme-preview .chip.b { left: 28px; }
+    .theme-preview .chip.b { left: 34px; }
     .theme-preview .chip.c {
-      right: 8px;
+      right: 10px;
       left: auto;
-      width: 34px;
-      border-radius: 999px;
+      width: 40px;
+      border-radius: 4px;
     }
 
     .theme strong {
-      font-size: 0.86rem;
-      font-weight: 750;
+      font-size: 1rem;
+      font-weight: 700;
       line-height: 1.15;
     }
 
     .theme small {
-      font-size: 0.72rem;
+      font-size: 0.85rem;
       color: var(--muted);
-      line-height: 1.25;
+      line-height: 1.3;
     }
 
     .choice-grid {
       display: grid;
       grid-template-columns: repeat(3, 1fr);
-      gap: 8px;
+      gap: 10px;
     }
 
     .choice {
       appearance: none;
       border: 1px solid var(--line);
-      background: rgba(255,255,255,0.03);
+      background: var(--bg2);
       color: var(--text);
-      border-radius: 11px;
-      padding: 12px 10px;
+      border-radius: var(--radius);
+      padding: 16px 12px;
       font: inherit;
-      font-size: 0.88rem;
-      font-weight: 700;
+      font-size: 1rem;
+      font-weight: 650;
       cursor: pointer;
       text-align: center;
     }
@@ -379,54 +413,56 @@
     .choice:hover { border-color: rgba(255,255,255,0.28); }
     .choice.active {
       border-color: var(--accent);
-      background: color-mix(in srgb, var(--accent) 20%, transparent);
+      background: color-mix(in srgb, var(--accent) 18%, transparent);
     }
 
     .layout-row {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 8px;
+      gap: 12px;
     }
 
     .layout-card {
       appearance: none;
       border: 1px solid var(--line);
-      background: rgba(255,255,255,0.03);
+      background: var(--bg2);
       color: var(--text);
-      border-radius: 12px;
-      padding: 14px 12px;
+      border-radius: var(--radius);
+      padding: 18px 16px;
       cursor: pointer;
       text-align: left;
     }
 
     .layout-card.active {
       border-color: var(--accent);
-      background: color-mix(in srgb, var(--accent) 18%, transparent);
+      background: color-mix(in srgb, var(--accent) 16%, transparent);
     }
 
     .layout-card strong {
       display: block;
-      font-size: 1rem;
-      margin-bottom: 4px;
+      font-family: var(--display);
+      font-size: 1.15rem;
+      margin-bottom: 6px;
+      letter-spacing: -0.02em;
     }
 
     .layout-card span {
-      font-size: 0.78rem;
+      font-size: 0.92rem;
       color: var(--muted);
-      line-height: 1.35;
+      line-height: 1.4;
     }
 
     .fields {
       display: grid;
       grid-template-columns: 1fr 1fr;
-      gap: 10px;
+      gap: 14px;
     }
 
     label.field {
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      font-size: 0.8rem;
+      gap: 8px;
+      font-size: 0.92rem;
       color: var(--muted);
     }
 
@@ -435,45 +471,48 @@
     select, input[type="number"] {
       appearance: none;
       border: 1px solid var(--line);
-      background: rgba(255,255,255,0.04);
+      background: var(--bg2);
       color: var(--text);
-      border-radius: 10px;
-      padding: 11px 12px;
+      border-radius: var(--radius);
+      padding: 13px 14px;
       font: inherit;
-      font-size: 0.95rem;
-      font-weight: 650;
+      font-size: 1rem;
+      font-weight: 600;
     }
 
     .footer {
       display: flex;
-      gap: 8px;
+      gap: 12px;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      padding-top: 2px;
+      padding: 16px 0 0;
+      border-top: 1px solid var(--line);
+      margin-top: 4px;
     }
 
     .saved {
-      min-height: 1.1em;
-      font-size: 0.8rem;
+      min-height: 1.2em;
+      font-size: 0.95rem;
       color: var(--ok);
     }
 
     .actions {
       display: flex;
-      gap: 8px;
+      gap: 10px;
       margin-left: auto;
     }
 
     .btn {
       appearance: none;
       border: 1px solid var(--line);
-      background: rgba(255,255,255,0.04);
+      background: var(--bg2);
       color: var(--text);
-      border-radius: 10px;
-      padding: 10px 14px;
+      border-radius: var(--radius);
+      padding: 12px 18px;
       font: inherit;
-      font-weight: 700;
+      font-size: 0.98rem;
+      font-weight: 650;
       cursor: pointer;
     }
 
@@ -481,6 +520,616 @@
       background: var(--accent);
       border-color: transparent;
       color: #fff;
+    }
+
+    .btn.capture {
+      margin-top: 8px;
+      width: 100%;
+      font-size: 0.95rem;
+      padding: 11px 12px;
+    }
+
+    .btn.capture.listening {
+      background: color-mix(in srgb, var(--accent) 70%, black);
+      border-color: transparent;
+      color: #fff;
+    }
+
+    label.field .btn.capture { align-self: stretch; }
+
+    .editor-toolbar {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+    }
+
+    .editor-toolbar-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .check {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 1rem;
+      font-weight: 600;
+      color: var(--text);
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .check input { accent-color: var(--accent); width: 18px; height: 18px; }
+
+    .sg-enable {
+      margin: 0 0 14px;
+      padding: 14px 16px;
+      border-radius: var(--radius);
+      border: 1px solid var(--line);
+      background: var(--bg2);
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    #sgFields.is-disabled {
+      opacity: 0.4;
+      pointer-events: none;
+    }
+
+    .key-editor-wrap {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background:
+        radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 0);
+      background-size: 16px 16px;
+      background-color: #101318;
+      overflow: auto;
+      max-height: 520px;
+      position: relative;
+    }
+
+    .key-editor {
+      position: relative;
+      min-width: 320px;
+      min-height: 200px;
+      outline: none;
+      margin: 28px 22px 22px;
+      background: rgba(8, 10, 14, 0.55);
+      border: 1px dashed rgba(255,255,255,0.14);
+      border-radius: 2px;
+      box-shadow: none;
+      touch-action: none;
+      user-select: none;
+      cursor: crosshair;
+    }
+
+    .key-editor .ekey { cursor: grab; }
+
+    .key-editor::before {
+      content: "Artboard overlay · 1:1 px";
+      position: absolute;
+      left: 0;
+      top: -20px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      color: rgba(233,236,239,0.42);
+      pointer-events: none;
+    }
+
+    .key-editor.disabled {
+      opacity: 0.45;
+      pointer-events: none;
+      filter: grayscale(0.35);
+    }
+
+    .fig-guides {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 20;
+      overflow: hidden;
+    }
+
+    .fig-guide-v,
+    .fig-guide-h {
+      position: absolute;
+      background: #f24ee4;
+      box-shadow: 0 0 0 0.5px rgba(242,78,228,0.35);
+    }
+
+    .fig-guide-v {
+      top: 0;
+      bottom: 0;
+      width: 1px;
+    }
+
+    .fig-guide-h {
+      left: 0;
+      right: 0;
+      height: 1px;
+    }
+
+    .fig-measure {
+      position: absolute;
+      pointer-events: none;
+      z-index: 21;
+    }
+
+    .fig-measure-line {
+      position: absolute;
+      background: #f24ee4;
+    }
+
+    .fig-measure.h .fig-measure-line {
+      height: 1px;
+      left: 0;
+      right: 0;
+      top: 50%;
+    }
+
+    .fig-measure.v .fig-measure-line {
+      width: 1px;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+    }
+
+    .fig-measure-label {
+      position: absolute;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      background: #f24ee4;
+      color: #fff;
+      font-size: 11px;
+      font-weight: 800;
+      font-variant-numeric: tabular-nums;
+      line-height: 1;
+      padding: 3px 5px;
+      border-radius: 2px;
+      white-space: nowrap;
+    }
+
+    .ekey {
+      position: absolute;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(24, 26, 32, 0.94);
+      border: 1px solid rgba(255,255,255,0.16);
+      border-radius: 6px;
+      color: #e9ecef;
+      font-size: 12px;
+      font-weight: 650;
+      text-transform: uppercase;
+      cursor: grab;
+      user-select: none;
+      touch-action: none;
+      box-shadow: none;
+      z-index: 2;
+    }
+
+    .ekey.space,
+    .ekey.shift,
+    .ekey.mod,
+    .ekey.tab { font-size: 9px; letter-spacing: 0.05em; }
+
+    .ekey:active { cursor: grabbing; }
+    .ekey.selected {
+      outline: 1.5px solid #4da3ff;
+      outline-offset: 1px;
+      z-index: 5;
+    }
+
+    .ekey.selected.multi {
+      outline-color: #6bb6ff;
+    }
+
+    .fig-lasso {
+      position: absolute;
+      border: 1px solid #4da3ff;
+      background: rgba(77, 163, 255, 0.16);
+      pointer-events: none;
+      z-index: 30;
+      box-sizing: border-box;
+    }
+
+    .ekey .fig-handle {
+      position: absolute;
+      width: 7px;
+      height: 7px;
+      border-radius: 1px;
+      background: #fff;
+      border: 1px solid #4da3ff;
+      pointer-events: auto;
+      z-index: 6;
+    }
+
+    .ekey .fig-handle.br {
+      right: -4px;
+      bottom: -4px;
+      cursor: nwse-resize;
+    }
+
+    .editor-meta {
+      margin-top: 10px;
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 8px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+
+    .editor-meta[hidden] {
+      display: none !important;
+    }
+
+    @media (min-width: 560px) {
+      .editor-meta { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+    }
+
+    .editor-meta .field {
+      margin: 0;
+      min-width: 0;
+      max-width: 100%;
+    }
+
+    .editor-meta input[type="number"] {
+      width: 100%;
+      min-width: 0;
+      max-width: 100%;
+      box-sizing: border-box;
+    }
+    .hint strong { color: var(--text); font-weight: 750; }
+
+    .key-actions {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .key-actions[hidden],
+    .key-palette[hidden] {
+      display: none !important;
+    }
+
+    .btn.danger {
+      background: color-mix(in srgb, var(--danger) 22%, var(--bg2));
+      border-color: color-mix(in srgb, var(--danger) 45%, var(--line));
+      color: #ffd5d5;
+    }
+
+    .btn.danger:hover {
+      background: color-mix(in srgb, var(--danger) 40%, var(--bg2));
+    }
+
+    .btn.danger:disabled,
+    .btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    .key-palette {
+      margin-top: 12px;
+      padding-top: 12px;
+      border-top: 1px solid var(--line);
+    }
+
+    .key-palette h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .palette-board {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      overflow-x: auto;
+      padding-bottom: 2px;
+    }
+
+    .palette-row {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 5px;
+      align-items: stretch;
+    }
+
+    .palette-row button {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: var(--bg2);
+      color: var(--text);
+      border-radius: 4px;
+      padding: 9px 8px;
+      min-width: 34px;
+      height: 36px;
+      font: inherit;
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-transform: uppercase;
+      flex: 0 0 auto;
+      line-height: 1;
+    }
+
+    .palette-row button.wide { min-width: 52px; }
+    .palette-row button.wider { min-width: 68px; }
+    .palette-row button.space { min-width: 112px; }
+
+    .palette-row button:hover:not(:disabled) {
+      border-color: var(--accent);
+      background: color-mix(in srgb, var(--accent) 16%, var(--bg2));
+    }
+
+    .palette-row button:disabled,
+    .palette-row button.used {
+      opacity: 0.28;
+      cursor: default;
+      pointer-events: none;
+    }
+
+    .palette-empty {
+      font-size: 0.92rem;
+      color: var(--muted);
+    }
+
+    .file-btn {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .media-layers-card {
+      margin-top: 0;
+      padding: 14px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--bg2);
+      align-self: stretch;
+      min-height: 200px;
+      max-height: 560px;
+      overflow: auto;
+    }
+
+    .editor-workspace {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      align-items: start;
+    }
+
+    @media (min-width: 900px) {
+      .editor-workspace {
+        grid-template-columns: minmax(0, 1fr) 240px;
+      }
+    }
+
+    .editor-main {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .media-layers-card h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin-bottom: 10px;
+    }
+
+    .media-layers {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .media-layer-row {
+      display: grid;
+      grid-template-columns: 36px 1fr;
+      gap: 8px;
+      align-items: center;
+      padding: 8px 10px;
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--bg1);
+      cursor: pointer;
+    }
+
+    .media-layer-row.active {
+      border-color: #4da3ff;
+      background: color-mix(in srgb, #4da3ff 12%, var(--bg1));
+    }
+
+    .media-layer-row img {
+      width: 36px;
+      height: 36px;
+      object-fit: cover;
+      border-radius: 3px;
+      background: #000;
+    }
+
+    .media-layer-row .meta {
+      min-width: 0;
+    }
+
+    .media-layer-row .meta strong {
+      display: block;
+      font-size: 0.86rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .media-layer-row .meta span {
+      font-size: 0.74rem;
+      color: var(--muted);
+    }
+
+    .media-layer-actions {
+      grid-column: 1 / -1;
+      display: flex;
+      gap: 4px;
+    }
+
+    .media-layer-actions .btn {
+      padding: 6px 8px;
+      font-size: 0.85rem;
+      flex: 1;
+    }
+
+    .check.media-mask-check {
+      grid-column: 1 / -1;
+      margin-top: 4px;
+    }
+
+    .media-opacity-field {
+      grid-column: 1 / -1;
+    }
+
+    .opacity-row {
+      display: grid;
+      grid-template-columns: 1fr 52px;
+      gap: 8px;
+      align-items: center;
+    }
+
+    .opacity-row input[type="range"] {
+      width: 100%;
+      accent-color: var(--accent);
+    }
+
+    .opacity-row .val {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+      color: var(--text);
+      font-weight: 700;
+    }
+
+    .key-editor.has-under-letters .ekey {
+      background: rgba(24, 26, 32, 0.28);
+    }
+
+    .emedia {
+      position: absolute;
+      display: block;
+      border: 1px solid rgba(255,255,255,0.28);
+      background: rgba(0,0,0,0.12);
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      z-index: 3;
+      box-sizing: border-box;
+      transform-origin: center center;
+      overflow: visible;
+    }
+
+    .emedia img {
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      pointer-events: none;
+      display: block;
+    }
+
+    .emedia.selected {
+      border-color: #4da3ff;
+      outline: 1px solid #4da3ff;
+      outline-offset: 0;
+      z-index: 50 !important;
+      background: rgba(77,163,255,0.06);
+    }
+
+    .emedia.mask-on {
+      background: rgba(77,163,255,0.08);
+      border-style: dashed;
+    }
+
+    .emedia.mask-on.selected {
+      border-style: solid;
+    }
+
+    .emedia.mask-on::after {
+      content: "MASQUE";
+      position: absolute;
+      left: 4px;
+      top: 4px;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      color: #fff;
+      background: rgba(77,163,255,0.85);
+      padding: 2px 4px;
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .emedia-mask-vis {
+      position: absolute;
+      left: 0;
+      top: 0;
+      pointer-events: none !important;
+      z-index: 15;
+      overflow: visible;
+    }
+
+    .emedia .fig-handle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 1px;
+      background: #fff;
+      border: 1.5px solid #4da3ff;
+      pointer-events: auto;
+      z-index: 6;
+      box-sizing: border-box;
+    }
+
+    .emedia .fig-handle.br { right: -5px; bottom: -5px; cursor: nwse-resize; }
+    .emedia .fig-handle.bl { left: -5px; bottom: -5px; cursor: nesw-resize; }
+    .emedia .fig-handle.tr { right: -5px; top: -5px; cursor: nesw-resize; }
+    .emedia .fig-handle.tl { left: -5px; top: -5px; cursor: nwse-resize; }
+
+    .emedia .fig-handle.rot {
+      left: 50%;
+      top: -22px;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ffb347;
+      border-color: #c77d1a;
+      cursor: grab;
+    }
+
+    .emedia .fig-handle.rot::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 10px;
+      width: 1px;
+      height: 12px;
+      background: #4da3ff;
+      transform: translateX(-50%);
+      pointer-events: none;
+    }
+
+    .palette-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
     }
 
     /* Theme preview palettes */
@@ -499,8 +1148,8 @@
   <div class="app">
     <header class="top">
       <div class="brand">
-        <strong>Config Overlay</strong>
-        <span>Appliqué en direct sur OBS / TikTok</span>
+        <strong>Overlay Rose</strong>
+        <span>Config live · OBS / TikTok</span>
       </div>
       <div class="live" id="status"><span class="dot"></span><span id="statusLabel">Connexion…</span></div>
     </header>
@@ -513,37 +1162,46 @@
     </nav>
 
     <section class="panel active" id="panel-look">
-      <div class="card">
-        <h2>Thème</h2>
-        <div class="theme-grid" id="designGrid"></div>
-        <p class="hint">Le thème change le clavier + la forme M1 / molette / M2 / pad.</p>
-      </div>
+      <div class="look-grid">
+        <div class="card">
+          <h2>Thème</h2>
+          <div class="theme-grid" id="designGrid"></div>
+          <p class="hint">Le thème change le clavier + la forme M1 / molette / M2 / pad.</p>
+        </div>
 
-      <div class="card">
-        <h2>Couleur</h2>
-        <div class="swatches" id="swatches"></div>
-        <div class="picker">
-          <div class="sv-wrap" id="svWrap">
-            <canvas id="svCanvas" width="320" height="160"></canvas>
-            <div class="sv-cursor" id="svCursor"></div>
+        <div class="card">
+          <h2>Couleur</h2>
+          <div class="swatches" id="swatches"></div>
+          <div class="picker">
+            <div class="sv-wrap" id="svWrap">
+              <canvas id="svCanvas" width="320" height="160"></canvas>
+              <div class="sv-cursor" id="svCursor"></div>
+            </div>
+            <div class="hue-wrap" id="hueWrap">
+              <div class="hue-cursor" id="hueCursor"></div>
+            </div>
           </div>
-          <div class="hue-wrap" id="hueWrap">
-            <div class="hue-cursor" id="hueCursor"></div>
+          <div class="sliders">
+            <label class="slider-row">H <input type="range" id="hRange" min="0" max="360" step="1" /><span class="val" id="hVal">0</span></label>
+            <label class="slider-row">S <input type="range" id="sRange" min="0" max="100" step="1" /><span class="val" id="sVal">0</span></label>
+            <label class="slider-row">V <input type="range" id="vRange" min="0" max="100" step="1" /><span class="val" id="vVal">0</span></label>
           </div>
-        </div>
-        <div class="sliders">
-          <label class="slider-row">H <input type="range" id="hRange" min="0" max="360" step="1" /><span class="val" id="hVal">0</span></label>
-          <label class="slider-row">S <input type="range" id="sRange" min="0" max="100" step="1" /><span class="val" id="sVal">0</span></label>
-          <label class="slider-row">V <input type="range" id="vRange" min="0" max="100" step="1" /><span class="val" id="vVal">0</span></label>
-        </div>
-        <div class="color-meta">
-          <div class="color-preview" id="colorPreview"></div>
-          <input type="text" id="hexInput" maxlength="7" spellcheck="false" value="#E56B8A" />
+          <div class="color-meta">
+            <div class="color-preview" id="colorPreview"></div>
+            <input type="text" id="hexInput" maxlength="7" spellcheck="false" value="#E56B8A" />
+          </div>
         </div>
       </div>
     </section>
 
     <section class="panel" id="panel-mouse">
+      <div class="card">
+        <h2>Sensibilité</h2>
+        <div class="sliders">
+          <label class="slider-row">Pad <input type="range" id="mouseSens" min="5" max="1000" step="1" /><span class="val" id="mouseSensVal">100%</span></label>
+        </div>
+        <p class="hint">De 5 % (très lente) à 1000 % (très rapide). 100 % = réglage de base.</p>
+      </div>
       <div class="card">
         <h2>Style de traînée</h2>
         <div class="choice-grid" id="mouseGrid"></div>
@@ -556,26 +1214,92 @@
         <h2>Disposition</h2>
         <div class="layout-row" id="layoutRow"></div>
       </div>
+      <div class="card">
+        <h2>Organisation des touches</h2>
+        <div class="editor-toolbar">
+          <label class="check">
+            <input type="checkbox" id="keyCustom" />
+            Mode custom (placement libre)
+          </label>
+          <div class="editor-toolbar-actions">
+            <button class="btn" type="button" id="btnSnapGrid">Recaler défaut</button>
+            <button class="btn" type="button" id="btnKeyReset">Disposition défaut</button>
+          </div>
+        </div>
+        <div class="editor-workspace" id="editorWorkspace">
+          <div class="editor-main">
+            <div class="key-editor-wrap" id="keyEditorWrap">
+              <div class="key-editor" id="keyEditor" tabindex="0">
+                <div class="fig-guides" id="figGuides"></div>
+              </div>
+            </div>
+            <div class="editor-meta" id="editorMeta" hidden>
+              <label class="field">X (px)<input type="number" id="keyX" step="1" /></label>
+              <label class="field">Y (px)<input type="number" id="keyY" step="1" /></label>
+              <label class="field">Largeur<input type="number" id="keyW" min="16" step="1" /></label>
+              <label class="field">Hauteur<input type="number" id="keyH" min="16" step="1" /></label>
+              <label class="field" id="mediaRotField" hidden>Rotation°<input type="number" id="mediaRot" step="1" /></label>
+              <label class="field media-opacity-field" id="mediaOpacityField" hidden>
+                Opacité
+                <div class="opacity-row">
+                  <input type="range" id="mediaOpacity" min="0" max="100" step="1" />
+                  <span class="val" id="mediaOpacityVal">100%</span>
+                </div>
+              </label>
+              <label class="check media-mask-check" id="mediaMaskField" hidden>
+                <input type="checkbox" id="mediaMask" />
+                Masque touches (visible seulement sur les touches)
+              </label>
+              <label class="check media-mask-check" id="mediaOverLettersField" hidden>
+                <input type="checkbox" id="mediaOverLetters" />
+                Couvrir les lettres des touches
+              </label>
+            </div>
+            <div class="key-actions" id="keyActions" hidden>
+              <button class="btn danger" type="button" id="btnKeyDelete">Supprimer la touche</button>
+              <button class="btn" type="button" id="btnAddFullKb">Ajouter clavier complet</button>
+              <label class="btn file-btn" for="mediaFileInput">Ajouter image / GIF</label>
+              <input type="file" id="mediaFileInput" accept="image/png,image/jpeg,image/gif,image/webp,.png,.jpg,.jpeg,.gif,.webp" hidden />
+            </div>
+            <div class="key-palette" id="keyPaletteWrap" hidden>
+              <h3 id="keyPaletteTitle">Ajouter une touche</h3>
+              <div class="palette-board" id="keyPalette"></div>
+            </div>
+          </div>
+          <aside class="media-layers-card" id="mediaLayersCard" hidden>
+            <h3>Calques images</h3>
+            <div class="media-layers" id="mediaLayersList"></div>
+            <p class="hint"><strong>Masque</strong> = pochoir. Décoche <strong>Couvrir les lettres</strong> pour lire les touches. Opacité + coins/rotation. ▲▼ = ordre.</p>
+          </aside>
+        </div>
+        <p class="hint" id="keyEditHint">Lasso / SHIFT+clic · images PNG JPG GIF · poignée orange = rotation · <strong>Masque touches</strong> · calques à droite · clavier <span id="layoutNameHint">AZERTY</span>.</p>
+      </div>
     </section>
 
     <section class="panel" id="panel-sg">
       <div class="card">
         <h2>Détection Super Glide</h2>
-        <div class="fields">
+        <label class="check sg-enable">
+          <input type="checkbox" id="sgEnabled" checked />
+          Activer l’effet Super Glide
+        </label>
+        <div class="fields" id="sgFields">
           <label class="field">
             Jump
             <select id="sgJump"></select>
+            <button class="btn capture" type="button" id="capJump">Capturer</button>
           </label>
           <label class="field">
             Crouch
             <select id="sgCrouch"></select>
+            <button class="btn capture" type="button" id="capCrouch">Capturer</button>
           </label>
           <label class="field full">
             FPS du jeu
             <input type="number" id="sgFps" min="30" max="360" step="1" value="138" />
           </label>
         </div>
-        <p class="hint">Combo = jump puis crouch ≈ 1 frame (selon le FPS).</p>
+        <p class="hint" id="sgHint">Combo = jump puis crouch ≈ 1 frame. Tu peux choisir n’importe quelle touche (même hors overlay) ou la capturer.</p>
       </div>
     </section>
 
@@ -594,10 +1318,231 @@
       design: "classic",
       mouse: "ribbon",
       layout: "azerty",
+      mouseSens: 1,
+      keyCustom: false,
+      keyLayout: null,
+      mediaLayers: [],
+      sgEnabled: true,
       sgJump: "space",
-      sgCrouch: "kC",
+      sgCrouch: "KeyC",
       sgFps: 138,
     };
+
+    const KEY_GRID = 8;
+    const KEY_UNIT = 34; // = --ku overlay
+    const KEY_GAP = 2;   // = --kgap classic overlay
+    const FIG_SNAP = 6;  // seuil guides type Figma (px)
+
+    function snap(v, grid) {
+      return Math.round(Number(v) / grid) * grid;
+    }
+
+    function keySize(cls) {
+      // Identique aux calc() de overlay.html
+      if (cls === "tab") return { w: Math.round(KEY_UNIT * 1.18), h: KEY_UNIT };
+      if (cls === "shift") return { w: Math.round(KEY_UNIT * 1.38), h: KEY_UNIT };
+      if (cls === "mod") return { w: Math.round(KEY_UNIT * 1.14), h: KEY_UNIT };
+      if (cls === "space") return { w: Math.round(KEY_UNIT * 3.1 + KEY_GAP * 2), h: KEY_UNIT };
+      if (cls === "caps" || cls === "enter" || cls === "backspace") return { w: Math.round(KEY_UNIT * 1.55), h: KEY_UNIT };
+      return { w: KEY_UNIT, h: KEY_UNIT };
+    }
+
+    /** Rangées type clavier complet selon AZERTY / QWERTY (ids = positions physiques). */
+    function keyboardRows(layout) {
+      const q = layout === "qwerty";
+      return [
+        [
+          { id: "esc", label: "ESC", cls: "mod" },
+          { id: "n1", label: q ? "1" : "&", cls: "sym" },
+          { id: "n2", label: q ? "2" : "é", cls: "sym" },
+          { id: "n3", label: q ? "3" : '"', cls: "sym" },
+          { id: "n4", label: q ? "4" : "'", cls: "sym" },
+          { id: "n5", label: q ? "5" : "(", cls: "sym" },
+          { id: "n6", label: q ? "6" : "-", cls: "sym" },
+          { id: "n7", label: q ? "7" : "è", cls: "sym" },
+          { id: "n8", label: q ? "8" : "_", cls: "sym" },
+          { id: "n9", label: q ? "9" : "ç", cls: "sym" },
+          { id: "n0", label: q ? "0" : "à", cls: "sym" },
+          { id: "backspace", label: "BKSP", cls: "backspace" },
+        ],
+        [
+          { id: "tab", label: "TAB", cls: "tab" },
+          { id: "kA", label: q ? "Q" : "A" },
+          { id: "kZ", label: q ? "W" : "Z" },
+          { id: "kE", label: "E" },
+          { id: "kR", label: "R" },
+          { id: "kT", label: "T" },
+          { id: "kY", label: "Y" },
+          { id: "kU", label: "U" },
+          { id: "kI", label: "I" },
+          { id: "kO", label: "O" },
+          { id: "kP", label: "P" },
+        ],
+        [
+          { id: "caps", label: "CAPS", cls: "caps" },
+          { id: "kQ", label: q ? "A" : "Q" },
+          { id: "kS", label: "S" },
+          { id: "kD", label: "D" },
+          { id: "kF", label: "F" },
+          { id: "kG", label: "G" },
+          { id: "kH", label: "H" },
+          { id: "kJ", label: "J" },
+          { id: "kK", label: "K" },
+          { id: "kL", label: "L" },
+          { id: "enter", label: "ENTER", cls: "enter" },
+        ],
+        [
+          { id: "shift", label: "SHIFT", cls: "shift" },
+          { id: "kW", label: q ? "Z" : "W" },
+          { id: "kX", label: "X" },
+          { id: "kC", label: "C" },
+          { id: "kV", label: "V" },
+          { id: "kB", label: "B" },
+          { id: "kN", label: "N" },
+          { id: "kM", label: "M" },
+        ],
+        [
+          { id: "ctrl", label: "CTRL", cls: "mod" },
+          { id: "alt", label: "ALT", cls: "mod" },
+          { id: "space", label: "SPACE", cls: "space" },
+        ],
+      ];
+    }
+
+    /** Sous-ensemble compact = mêmes rangées que l’overlay par défaut. */
+    function defaultKeyDefs(layout) {
+      const q = layout === "qwerty";
+      return [
+        [
+          { id: "n1", label: q ? "1" : "&", cls: "sym" },
+          { id: "n2", label: q ? "2" : "é", cls: "sym" },
+          { id: "n3", label: q ? "3" : '"', cls: "sym" },
+          { id: "n4", label: q ? "4" : "'", cls: "sym" },
+        ],
+        [
+          { id: "tab", label: "TAB", cls: "tab" },
+          { id: "kA", label: q ? "Q" : "A" },
+          { id: "kZ", label: q ? "W" : "Z" },
+          { id: "kE", label: "E" },
+          { id: "kR", label: "R" },
+        ],
+        [
+          { id: "shift", label: "SHIFT", cls: "shift" },
+          { id: "kQ", label: q ? "A" : "Q" },
+          { id: "kS", label: "S" },
+          { id: "kD", label: "D" },
+          { id: "kC", label: "C" },
+          { id: "kV", label: "V" },
+        ],
+        [
+          { id: "ctrl", label: "CTRL", cls: "mod" },
+          { id: "alt", label: "ALT", cls: "mod" },
+          { id: "space", label: "SPACE", cls: "space" },
+        ],
+      ];
+    }
+
+    function allKeyCatalog(layout) {
+      return keyboardRows(layout).flat();
+    }
+
+    function buildKeyLayoutFromRows(rows) {
+      const out = [];
+      let y = 0;
+      for (const row of rows) {
+        let x = 0;
+        let rowH = KEY_UNIT;
+        for (const k of row) {
+          const sz = keySize(k.cls);
+          out.push({ id: k.id, x, y, w: sz.w, h: sz.h, label: k.label });
+          x += sz.w + KEY_GAP;
+          rowH = Math.max(rowH, sz.h);
+        }
+        y += rowH + KEY_GAP;
+      }
+      return out;
+    }
+
+    function buildDefaultKeyLayout(layout) {
+      return buildKeyLayoutFromRows(defaultKeyDefs(layout));
+    }
+
+    function buildFullKeyLayout(layout) {
+      return buildKeyLayoutFromRows(keyboardRows(layout));
+    }
+
+    function naturalKeyPos(id, layout) {
+      return buildFullKeyLayout(layout).find((k) => k.id === id) || null;
+    }
+
+    function normalizeKeyLayout(raw, layout, opts) {
+      const fillMissing = !!(opts && opts.fillMissing);
+      const catalog = allKeyCatalog(layout || "azerty");
+      const byId = Object.fromEntries(catalog.map((k) => {
+        const sz = keySize(k.cls);
+        return [k.id, { id: k.id, label: k.label, cls: k.cls, w: sz.w, h: sz.h }];
+      }));
+      if (!Array.isArray(raw) || !raw.length) {
+        return fillMissing ? buildDefaultKeyLayout(layout) : [];
+      }
+      const out = [];
+      const seen = new Set();
+      for (const item of raw) {
+        if (!item || !byId[item.id] || seen.has(item.id)) continue;
+        seen.add(item.id);
+        const def = byId[item.id];
+        out.push({
+          id: item.id,
+          x: Math.round(Number(item.x) || 0),
+          y: Math.round(Number(item.y) || 0),
+          w: Math.max(16, Math.round(Number(item.w) || def.w)),
+          h: Math.max(16, Math.round(Number(item.h) || def.h)),
+          label: def.label,
+        });
+      }
+      if (fillMissing) {
+        for (const def of buildDefaultKeyLayout(layout)) {
+          if (seen.has(def.id)) continue;
+          out.push({ ...def });
+        }
+      }
+      return out;
+    }
+
+    function normalizeMediaLayers(raw) {
+      if (!Array.isArray(raw)) return [];
+      const out = [];
+      const seen = new Set();
+      for (const item of raw) {
+        if (!item || !item.id || !item.file) continue;
+        const id = String(item.id);
+        if (seen.has(id)) continue;
+        seen.add(id);
+        const file = String(item.file).replace(/^.*[\\/]/, "");
+        if (!file.startsWith("user-")) continue;
+        out.push({
+          id,
+          file,
+          name: String(item.name || file).slice(0, 80),
+          x: Math.round(Number(item.x) || 0),
+          y: Math.round(Number(item.y) || 0),
+          w: Math.max(16, Math.round(Number(item.w) || 120)),
+          h: Math.max(16, Math.round(Number(item.h) || 120)),
+          rot: Math.round(Number(item.rot) || 0) % 360,
+          z: Math.round(Number(item.z) || 0),
+          mask: !!item.mask,
+          opacity: Math.max(0, Math.min(1, Number(item.opacity) != null ? Number(item.opacity) : 1)),
+          overLetters: !!item.overLetters,
+        });
+      }
+      out.sort((a, b) => a.z - b.z || a.id.localeCompare(b.id));
+      out.forEach((m, i) => { m.z = i; });
+      return out;
+    }
+
+    function mediaUrl(file) {
+      return "/assets/" + encodeURIComponent(file);
+    }
 
     const COLORS = [
       ["#e56b8a", "Rose"],
@@ -637,21 +1582,82 @@
     ];
 
     const SG_KEYS = [
-      ["space", "SPACE"],
-      ["kC", "C"],
-      ["kV", "V"],
-      ["kQ", "Q / A (physique)"],
-      ["kS", "S"],
-      ["kD", "D"],
-      ["kA", "A / Q (physique)"],
-      ["kZ", "Z / W (physique)"],
-      ["kE", "E"],
-      ["kR", "R"],
-      ["ctrl", "CTRL"],
-      ["alt", "ALT"],
-      ["shift", "SHIFT"],
-      ["tab", "TAB"],
+      ["space", "Espace"],
+      ["KeyC", "C"],
+      ["KeyV", "V"],
+      ["KeyX", "X"],
+      ["KeyZ", "Z"],
+      ["KeyB", "B"],
+      ["KeyN", "N"],
+      ["KeyM", "M"],
+      ["KeyF", "F"],
+      ["KeyG", "G"],
+      ["KeyH", "H"],
+      ["KeyT", "T"],
+      ["KeyY", "Y"],
+      ["KeyU", "U"],
+      ["KeyI", "I"],
+      ["KeyO", "O"],
+      ["KeyP", "P"],
+      ["KeyJ", "J"],
+      ["KeyK", "K"],
+      ["KeyL", "L"],
+      ["KeyQ", "Q (physique)"],
+      ["KeyW", "W (physique)"],
+      ["KeyE", "E"],
+      ["KeyR", "R"],
+      ["KeyA", "A (physique)"],
+      ["KeyS", "S"],
+      ["KeyD", "D"],
+      ["Digit1", "1"],
+      ["Digit2", "2"],
+      ["Digit3", "3"],
+      ["Digit4", "4"],
+      ["Digit5", "5"],
+      ["Digit6", "6"],
+      ["Digit7", "7"],
+      ["Digit8", "8"],
+      ["Digit9", "9"],
+      ["Digit0", "0"],
+      ["Tab", "Tab"],
+      ["CapsLock", "Caps Lock"],
+      ["ShiftLeft", "Shift"],
+      ["ControlLeft", "Ctrl"],
+      ["AltLeft", "Alt"],
+      ["Enter", "Entrée"],
+      ["Backspace", "Backspace"],
+      ["Escape", "Échap"],
+      // legacy overlay ids
+      ["kC", "C (ancien)"],
+      ["kV", "V (ancien)"],
+      ["kQ", "Q/A overlay (ancien)"],
+      ["kS", "S (ancien)"],
+      ["kD", "D (ancien)"],
+      ["kA", "A/Q overlay (ancien)"],
+      ["kZ", "Z/W overlay (ancien)"],
+      ["kE", "E (ancien)"],
+      ["kR", "R (ancien)"],
+      ["ctrl", "Ctrl (ancien)"],
+      ["alt", "Alt (ancien)"],
+      ["shift", "Shift (ancien)"],
+      ["tab", "Tab (ancien)"],
     ];
+
+    const CODE_TO_SG = {
+      Space: "space",
+      KeyA: "KeyA", KeyB: "KeyB", KeyC: "KeyC", KeyD: "KeyD", KeyE: "KeyE",
+      KeyF: "KeyF", KeyG: "KeyG", KeyH: "KeyH", KeyI: "KeyI", KeyJ: "KeyJ",
+      KeyK: "KeyK", KeyL: "KeyL", KeyM: "KeyM", KeyN: "KeyN", KeyO: "KeyO",
+      KeyP: "KeyP", KeyQ: "KeyQ", KeyR: "KeyR", KeyS: "KeyS", KeyT: "KeyT",
+      KeyU: "KeyU", KeyV: "KeyV", KeyW: "KeyW", KeyX: "KeyX", KeyY: "KeyY", KeyZ: "KeyZ",
+      Digit0: "Digit0", Digit1: "Digit1", Digit2: "Digit2", Digit3: "Digit3", Digit4: "Digit4",
+      Digit5: "Digit5", Digit6: "Digit6", Digit7: "Digit7", Digit8: "Digit8", Digit9: "Digit9",
+      Tab: "Tab", CapsLock: "CapsLock",
+      ShiftLeft: "ShiftLeft", ShiftRight: "ShiftLeft",
+      ControlLeft: "ControlLeft", ControlRight: "ControlLeft",
+      AltLeft: "AltLeft", AltRight: "AltLeft",
+      Enter: "Enter", Backspace: "Backspace", Escape: "Escape",
+    };
 
     const settingsUrl = (location.protocol === "http:" || location.protocol === "https:")
       ? (location.origin + "/settings")
@@ -669,6 +1675,36 @@
     const sgJump = document.getElementById("sgJump");
     const sgCrouch = document.getElementById("sgCrouch");
     const sgFps = document.getElementById("sgFps");
+    const sgEnabled = document.getElementById("sgEnabled");
+    const sgFields = document.getElementById("sgFields");
+    const mouseSens = document.getElementById("mouseSens");
+    const mouseSensVal = document.getElementById("mouseSensVal");
+    const keyCustom = document.getElementById("keyCustom");
+    const keyEditor = document.getElementById("keyEditor");
+    const editorMeta = document.getElementById("editorMeta");
+    const keyX = document.getElementById("keyX");
+    const keyY = document.getElementById("keyY");
+    const keyW = document.getElementById("keyW");
+    const keyH = document.getElementById("keyH");
+    const btnKeyReset = document.getElementById("btnKeyReset");
+    const btnSnapGrid = document.getElementById("btnSnapGrid");
+    const btnKeyDelete = document.getElementById("btnKeyDelete");
+    const btnAddFullKb = document.getElementById("btnAddFullKb");
+    const keyActions = document.getElementById("keyActions");
+    const keyPaletteWrap = document.getElementById("keyPaletteWrap");
+    const keyPalette = document.getElementById("keyPalette");
+    const mediaFileInput = document.getElementById("mediaFileInput");
+    const mediaLayersCard = document.getElementById("mediaLayersCard");
+    const mediaLayersList = document.getElementById("mediaLayersList");
+    const mediaRot = document.getElementById("mediaRot");
+    const mediaMask = document.getElementById("mediaMask");
+    const mediaRotField = document.getElementById("mediaRotField");
+    const mediaMaskField = document.getElementById("mediaMaskField");
+    const mediaOpacity = document.getElementById("mediaOpacity");
+    const mediaOpacityVal = document.getElementById("mediaOpacityVal");
+    const mediaOpacityField = document.getElementById("mediaOpacityField");
+    const mediaOverLetters = document.getElementById("mediaOverLetters");
+    const mediaOverLettersField = document.getElementById("mediaOverLettersField");
     const statusEl = document.getElementById("status");
     const statusLabel = document.getElementById("statusLabel");
     const savedLabel = document.getElementById("savedLabel");
@@ -891,6 +1927,10 @@
         btn.innerHTML = "<strong>" + label + "</strong><span>" + desc + "</span>";
         btn.addEventListener("click", () => {
           settings.layout = value;
+          if (settings.keyCustom) {
+            settings.keyLayout = normalizeKeyLayout(settings.keyLayout, value, { fillMissing: false })
+              .map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+          }
           render();
           queueSave();
         });
@@ -924,9 +1964,1432 @@
       renderDesigns();
       renderMouse();
       renderLayouts();
-      sgJump.value = settings.sgJump;
-      sgCrouch.value = settings.sgCrouch;
+      renderKeyEditor();
+      mouseSens.value = String(Math.round(settings.mouseSens * 100));
+      mouseSensVal.textContent = Math.round(settings.mouseSens * 100) + "%";
+      keyCustom.checked = !!settings.keyCustom;
+      ensureSgOption(sgJump, settings.sgJump);
+      ensureSgOption(sgCrouch, settings.sgCrouch);
       sgFps.value = String(settings.sgFps);
+      sgEnabled.checked = settings.sgEnabled !== false;
+      sgFields.classList.toggle("is-disabled", !sgEnabled.checked);
+    }
+
+    let selectedKeyId = null;
+    let selectedIds = new Set();
+    let selectedMediaId = null;
+    let editorItems = [];
+    let mediaItems = [];
+    let savedKeyLayout = null;
+    let savedMediaLayers = null;
+
+    const mediaApiBase = settingsUrl.replace(/\/settings$/, "");
+
+    function clearKeySelection() {
+      selectedIds.clear();
+      selectedKeyId = null;
+    }
+
+    function clearMediaSelection() {
+      selectedMediaId = null;
+    }
+
+    function clearAllSelection() {
+      clearKeySelection();
+      clearMediaSelection();
+    }
+
+    function setKeySelection(ids, primary) {
+      clearMediaSelection();
+      const list = (ids || []).filter((id) => editorItems.some((k) => k.id === id));
+      selectedIds = new Set(list);
+      if (primary && selectedIds.has(primary)) selectedKeyId = primary;
+      else selectedKeyId = list.length ? list[list.length - 1] : null;
+      if (selectedKeyId) selectedIds.add(selectedKeyId);
+    }
+
+    function setMediaSelection(id) {
+      clearKeySelection();
+      selectedMediaId = mediaItems.some((m) => m.id === id) ? id : null;
+    }
+
+    function pruneKeySelection() {
+      const keep = [...selectedIds].filter((id) => editorItems.some((k) => k.id === id));
+      selectedIds = new Set(keep);
+      if (selectedKeyId && !selectedIds.has(selectedKeyId)) {
+        selectedKeyId = keep.length ? keep[keep.length - 1] : null;
+      }
+      if (selectedMediaId && !mediaItems.some((m) => m.id === selectedMediaId)) {
+        selectedMediaId = null;
+      }
+    }
+
+    function ensureMediaItems() {
+      if (!settings.keyCustom) {
+        mediaItems = [];
+        return;
+      }
+      mediaItems = normalizeMediaLayers(settings.mediaLayers);
+      settings.mediaLayers = mediaItems.map(serializeMedia);
+    }
+
+    function serializeMedia(m) {
+      return {
+        id: m.id,
+        file: m.file,
+        name: m.name,
+        x: m.x,
+        y: m.y,
+        w: m.w,
+        h: m.h,
+        rot: m.rot,
+        z: m.z,
+        mask: !!m.mask,
+        opacity: Math.max(0, Math.min(1, Number(m.opacity) != null ? Number(m.opacity) : 1)),
+        overLetters: !!m.overLetters,
+      };
+    }
+
+    function commitMediaLayout(save) {
+      mediaItems.forEach((m, i) => { m.z = i; });
+      settings.mediaLayers = mediaItems.map(serializeMedia);
+      if (save !== false) queueSave();
+    }
+
+    function ensureEditorLayout() {
+      ensureMediaItems();
+      if (settings.keyCustom) {
+        if (!Array.isArray(settings.keyLayout)) {
+          editorItems = Array.isArray(savedKeyLayout) && savedKeyLayout.length
+            ? normalizeKeyLayout(savedKeyLayout, settings.layout, { fillMissing: false })
+            : buildDefaultKeyLayout(settings.layout);
+        } else {
+          editorItems = normalizeKeyLayout(settings.keyLayout, settings.layout, { fillMissing: false });
+        }
+        settings.keyLayout = editorItems.map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+      } else {
+        editorItems = Array.isArray(savedKeyLayout)
+          ? normalizeKeyLayout(savedKeyLayout, settings.layout, { fillMissing: false })
+          : buildDefaultKeyLayout(settings.layout);
+        if (!editorItems.length) editorItems = buildDefaultKeyLayout(settings.layout);
+      }
+    }
+
+    function layoutBounds(items, medias) {
+      let maxW = 120;
+      let maxH = 100;
+      for (const k of items || []) {
+        maxW = Math.max(maxW, k.x + k.w + 12);
+        maxH = Math.max(maxH, k.y + k.h + 12);
+      }
+      for (const m of medias || []) {
+        maxW = Math.max(maxW, m.x + m.w + 12);
+        maxH = Math.max(maxH, m.y + m.h + 12);
+      }
+      return { w: maxW, h: maxH };
+    }
+
+    function refreshEditorLabels() {
+      const catalog = Object.fromEntries(allKeyCatalog(settings.layout).map((k) => [k.id, k]));
+      for (const item of editorItems) {
+        if (catalog[item.id]) item.label = catalog[item.id].label;
+      }
+    }
+
+    function syncEditorMeta() {
+      pruneKeySelection();
+      const keyItem = editorItems.find((k) => k.id === selectedKeyId);
+      const mediaItem = mediaItems.find((m) => m.id === selectedMediaId);
+      const custom = !!settings.keyCustom;
+      const multi = selectedIds.size > 1;
+      const hasSel = !!(keyItem || mediaItem);
+      editorMeta.hidden = !hasSel || !custom || multi;
+      keyActions.hidden = !custom;
+      keyPaletteWrap.hidden = !custom;
+      mediaLayersCard.hidden = !custom;
+      mediaRotField.hidden = !mediaItem;
+      mediaMaskField.hidden = !mediaItem;
+      mediaOpacityField.hidden = !mediaItem;
+      mediaOverLettersField.hidden = !mediaItem;
+
+      if (mediaItem) {
+        btnKeyDelete.disabled = false;
+        btnKeyDelete.textContent = "Supprimer l'image";
+        if (document.activeElement !== keyX) keyX.value = String(mediaItem.x);
+        if (document.activeElement !== keyY) keyY.value = String(mediaItem.y);
+        if (document.activeElement !== keyW) keyW.value = String(mediaItem.w);
+        if (document.activeElement !== keyH) keyH.value = String(mediaItem.h);
+        if (document.activeElement !== mediaRot) mediaRot.value = String(mediaItem.rot);
+        const opPct = Math.round((mediaItem.opacity != null ? mediaItem.opacity : 1) * 100);
+        if (document.activeElement !== mediaOpacity) mediaOpacity.value = String(opPct);
+        mediaOpacityVal.textContent = opPct + "%";
+        mediaMask.checked = !!mediaItem.mask;
+        mediaOverLetters.checked = !!mediaItem.overLetters;
+        return;
+      }
+
+      btnKeyDelete.disabled = selectedIds.size === 0;
+      btnKeyDelete.textContent = multi
+        ? "Supprimer (" + selectedIds.size + ")"
+        : "Supprimer la touche";
+      if (!keyItem || multi) return;
+      if (document.activeElement !== keyX) keyX.value = String(keyItem.x);
+      if (document.activeElement !== keyY) keyY.value = String(keyItem.y);
+      if (document.activeElement !== keyW) keyW.value = String(keyItem.w);
+      if (document.activeElement !== keyH) keyH.value = String(keyItem.h);
+    }
+
+    function commitEditorLayout(save) {
+      settings.keyLayout = editorItems.map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+      savedKeyLayout = settings.keyLayout;
+      commitMediaLayout(false);
+      if (save !== false) queueSave();
+    }
+
+    function renderKeyPalette() {
+      keyPalette.innerHTML = "";
+      if (!settings.keyCustom) return;
+      const layoutLabel = settings.layout === "qwerty" ? "QWERTY" : "AZERTY";
+      const title = document.getElementById("keyPaletteTitle");
+      const layoutHint = document.getElementById("layoutNameHint");
+      if (title) title.textContent = "Ajouter une touche · clavier " + layoutLabel;
+      if (layoutHint) layoutHint.textContent = layoutLabel;
+
+      const used = new Set(editorItems.map((k) => k.id));
+      const rows = keyboardRows(settings.layout);
+      let anyFree = false;
+
+      for (const row of rows) {
+        const rowEl = document.createElement("div");
+        rowEl.className = "palette-row";
+        for (const def of row) {
+          const btn = document.createElement("button");
+          btn.type = "button";
+          btn.textContent = def.label;
+          btn.title = used.has(def.id)
+            ? def.label + " (déjà ajoutée)"
+            : "Ajouter " + def.label + " (" + layoutLabel + ")";
+          if (def.cls === "space") btn.classList.add("space");
+          else if (def.cls === "shift" || def.cls === "caps" || def.cls === "enter" || def.cls === "backspace" || def.cls === "tab") btn.classList.add("wider");
+          else if (def.cls === "mod") btn.classList.add("wide");
+          if (used.has(def.id)) {
+            btn.disabled = true;
+            btn.classList.add("used");
+          } else {
+            anyFree = true;
+            btn.addEventListener("click", () => addKeyToLayout(def.id));
+          }
+          rowEl.appendChild(btn);
+        }
+        keyPalette.appendChild(rowEl);
+      }
+
+      if (!anyFree) {
+        const empty = document.createElement("div");
+        empty.className = "palette-empty";
+        empty.textContent = "Toutes les touches " + layoutLabel + " sont déjà sur l’overlay.";
+        keyPalette.appendChild(empty);
+      }
+    }
+
+    function addKeyToLayout(id) {
+      if (!settings.keyCustom) return;
+      if (editorItems.some((k) => k.id === id)) return;
+      const def = allKeyCatalog(settings.layout).find((k) => k.id === id);
+      if (!def) return;
+      const natural = naturalKeyPos(id, settings.layout);
+      const sz = keySize(def.cls);
+      const item = natural
+        ? { id: def.id, x: natural.x, y: natural.y, w: natural.w, h: natural.h, label: def.label }
+        : {
+            id: def.id,
+            x: 0,
+            y: layoutBounds(editorItems, mediaItems).h,
+            w: sz.w,
+            h: sz.h,
+            label: def.label,
+          };
+      editorItems.push(item);
+      setKeySelection([item.id], item.id);
+      commitEditorLayout(true);
+      paintKeyEditor();
+    }
+
+    function snapAllToGrid() {
+      rebuildCustomFromDefault();
+    }
+
+    function rebuildCustomFromDefault() {
+      settings.keyCustom = true;
+      keyCustom.checked = true;
+      settings.keyLayout = buildDefaultKeyLayout(settings.layout)
+        .map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+      savedKeyLayout = settings.keyLayout;
+      clearAllSelection();
+      editorItems = settings.keyLayout.map((k) => {
+        const def = allKeyCatalog(settings.layout).find((d) => d.id === k.id);
+        return { ...k, label: def ? def.label : k.id };
+      });
+      commitEditorLayout(true);
+      paintKeyEditor();
+      render();
+    }
+
+    function addFullKeyboard() {
+      if (!settings.keyCustom) return;
+      const full = buildFullKeyLayout(settings.layout);
+      const byId = Object.fromEntries(editorItems.map((k) => [k.id, k]));
+      for (const k of full) {
+        if (!byId[k.id]) editorItems.push({ ...k });
+      }
+      clearAllSelection();
+      commitEditorLayout(true);
+      paintKeyEditor();
+    }
+
+    function clearFigGuides() {
+      const g = document.getElementById("figGuides");
+      if (g) g.innerHTML = "";
+    }
+
+    function rangesOverlap(a1, a2, b1, b2) {
+      return a1 < b2 && b1 < a2;
+    }
+
+    function showFigGuides(guides) {
+      let g = document.getElementById("figGuides");
+      if (!g) {
+        g = document.createElement("div");
+        g.className = "fig-guides";
+        g.id = "figGuides";
+        keyEditor.appendChild(g);
+      }
+      g.innerHTML = "";
+      for (const x of (guides.v || [])) {
+        const el = document.createElement("div");
+        el.className = "fig-guide-v";
+        el.style.left = x + "px";
+        g.appendChild(el);
+      }
+      for (const y of (guides.h || [])) {
+        const el = document.createElement("div");
+        el.className = "fig-guide-h";
+        el.style.top = y + "px";
+        g.appendChild(el);
+      }
+      for (const m of (guides.measures || [])) {
+        const wrap = document.createElement("div");
+        wrap.className = "fig-measure " + m.axis;
+        const line = document.createElement("div");
+        line.className = "fig-measure-line";
+        const lab = document.createElement("span");
+        lab.className = "fig-measure-label";
+        lab.textContent = String(m.value);
+        wrap.appendChild(line);
+        wrap.appendChild(lab);
+        if (m.axis === "h") {
+          const x1 = Math.min(m.a, m.b);
+          const x2 = Math.max(m.a, m.b);
+          wrap.style.left = x1 + "px";
+          wrap.style.width = Math.max(1, x2 - x1) + "px";
+          wrap.style.top = (m.pos - 7) + "px";
+          wrap.style.height = "14px";
+        } else {
+          const y1 = Math.min(m.a, m.b);
+          const y2 = Math.max(m.a, m.b);
+          wrap.style.top = y1 + "px";
+          wrap.style.height = Math.max(1, y2 - y1) + "px";
+          wrap.style.left = (m.pos - 10) + "px";
+          wrap.style.width = "20px";
+        }
+        g.appendChild(wrap);
+      }
+    }
+
+    function collectKnownGaps(excludeIds) {
+      const exclude = excludeIds instanceof Set
+        ? excludeIds
+        : new Set(excludeIds != null ? [excludeIds] : []);
+      const others = editorItems.filter((o) => !exclude.has(o.id));
+      const hGaps = new Set([KEY_GAP, 3, 4, 6, 8]);
+      const vGaps = new Set([KEY_GAP, 3, 4, 6, 8]);
+      for (let i = 0; i < others.length; i++) {
+        for (let j = i + 1; j < others.length; j++) {
+          const a = others[i];
+          const b = others[j];
+          if (rangesOverlap(a.y, a.y + a.h, b.y, b.y + b.h)) {
+            const left = a.x <= b.x ? a : b;
+            const right = a.x <= b.x ? b : a;
+            const gap = Math.round(right.x - (left.x + left.w));
+            if (gap >= 0 && gap <= 160) hGaps.add(gap);
+          }
+          if (rangesOverlap(a.x, a.x + a.w, b.x, b.x + b.w)) {
+            const top = a.y <= b.y ? a : b;
+            const bot = a.y <= b.y ? b : a;
+            const gap = Math.round(bot.y - (top.y + top.h));
+            if (gap >= 0 && gap <= 160) vGaps.add(gap);
+          }
+        }
+      }
+      return { hGaps: Array.from(hGaps), vGaps: Array.from(vGaps) };
+    }
+
+    /** Snap type Figma : alignement + même espacement (ex. 3 px) + labels px. */
+    function figSnapPosition(x, y, w, h, selfId, hardGrid, excludeIds) {
+      if (hardGrid) {
+        return {
+          x: Math.max(0, snap(x, KEY_GRID)),
+          y: Math.max(0, snap(y, KEY_GRID)),
+          guides: { v: [], h: [], measures: [] },
+        };
+      }
+
+      let nx = Math.round(x);
+      let ny = Math.round(y);
+      const guides = { v: [], h: [], measures: [] };
+      const exclude = excludeIds instanceof Set ? new Set(excludeIds) : new Set();
+      if (selfId) exclude.add(selfId);
+      const others = editorItems.filter((o) => !exclude.has(o.id));
+      const { hGaps, vGaps } = collectKnownGaps(exclude);
+
+      // 1) Snap d’alignement bords / centres
+      const candidatesX = [0];
+      const candidatesY = [0];
+      for (const o of others) {
+        candidatesX.push(o.x, o.x + o.w / 2, o.x + o.w);
+        candidatesY.push(o.y, o.y + o.h / 2, o.y + o.h);
+      }
+
+      let bestDx = FIG_SNAP + 1;
+      let bestDy = FIG_SNAP + 1;
+      let guideX = null;
+      let guideY = null;
+      let shiftX = 0;
+      let shiftY = 0;
+      const myX = [nx, nx + w / 2, nx + w];
+      const myY = [ny, ny + h / 2, ny + h];
+
+      for (const cx of candidatesX) {
+        for (let i = 0; i < 3; i++) {
+          const dx = cx - myX[i];
+          if (Math.abs(dx) < Math.abs(bestDx)) {
+            bestDx = dx;
+            guideX = cx;
+            shiftX = dx;
+          }
+        }
+      }
+      for (const cy of candidatesY) {
+        for (let i = 0; i < 3; i++) {
+          const dy = cy - myY[i];
+          if (Math.abs(dy) < Math.abs(bestDy)) {
+            bestDy = dy;
+            guideY = cy;
+            shiftY = dy;
+          }
+        }
+      }
+      if (Math.abs(bestDx) <= FIG_SNAP) {
+        nx += shiftX;
+        guides.v.push(guideX);
+      }
+      if (Math.abs(bestDy) <= FIG_SNAP) {
+        ny += shiftY;
+        guides.h.push(guideY);
+      }
+
+      // 2) Snap d’espacement égal (comme Figma : si 2 carrés ont 3 px, propose 3 px de l’autre côté)
+      let bestGapDx = FIG_SNAP + 1;
+      let gapShiftX = 0;
+      let bestGapDy = FIG_SNAP + 1;
+      let gapShiftY = 0;
+      let gapMeasureH = null;
+      let gapMeasureV = null;
+
+      for (const o of others) {
+        const vOverlap = rangesOverlap(ny, ny + h, o.y, o.y + o.h);
+        const hOverlap = rangesOverlap(nx, nx + w, o.x, o.x + o.w);
+
+        if (vOverlap) {
+          for (const gap of hGaps) {
+            // à droite de o
+            const rightX = o.x + o.w + gap;
+            const dRight = rightX - nx;
+            if (Math.abs(dRight) < Math.abs(bestGapDx)) {
+              bestGapDx = dRight;
+              gapShiftX = dRight;
+              gapMeasureH = {
+                axis: "h",
+                a: o.x + o.w,
+                b: rightX,
+                pos: Math.round((Math.max(ny, o.y) + Math.min(ny + h, o.y + o.h)) / 2),
+                value: gap,
+              };
+            }
+            // à gauche de o
+            const leftX = o.x - gap - w;
+            const dLeft = leftX - nx;
+            if (Math.abs(dLeft) < Math.abs(bestGapDx)) {
+              bestGapDx = dLeft;
+              gapShiftX = dLeft;
+              gapMeasureH = {
+                axis: "h",
+                a: leftX + w,
+                b: o.x,
+                pos: Math.round((Math.max(ny, o.y) + Math.min(ny + h, o.y + o.h)) / 2),
+                value: gap,
+              };
+            }
+          }
+        }
+
+        if (hOverlap) {
+          for (const gap of vGaps) {
+            const belowY = o.y + o.h + gap;
+            const dBelow = belowY - ny;
+            if (Math.abs(dBelow) < Math.abs(bestGapDy)) {
+              bestGapDy = dBelow;
+              gapShiftY = dBelow;
+              gapMeasureV = {
+                axis: "v",
+                a: o.y + o.h,
+                b: belowY,
+                pos: Math.round((Math.max(nx, o.x) + Math.min(nx + w, o.x + o.w)) / 2),
+                value: gap,
+              };
+            }
+            const aboveY = o.y - gap - h;
+            const dAbove = aboveY - ny;
+            if (Math.abs(dAbove) < Math.abs(bestGapDy)) {
+              bestGapDy = dAbove;
+              gapShiftY = dAbove;
+              gapMeasureV = {
+                axis: "v",
+                a: aboveY + h,
+                b: o.y,
+                pos: Math.round((Math.max(nx, o.x) + Math.min(nx + w, o.x + o.w)) / 2),
+                value: gap,
+              };
+            }
+          }
+        }
+      }
+
+      if (Math.abs(bestGapDx) <= FIG_SNAP) {
+        nx = Math.round(nx + gapShiftX);
+        if (gapMeasureH) guides.measures.push(gapMeasureH);
+      }
+      if (Math.abs(bestGapDy) <= FIG_SNAP) {
+        ny = Math.round(ny + gapShiftY);
+        if (gapMeasureV) guides.measures.push(gapMeasureV);
+      }
+
+      nx = Math.max(0, Math.round(nx));
+      ny = Math.max(0, Math.round(ny));
+
+      // 3) Labels de distance live vers les voisins proches (même sans snap)
+      for (const o of others) {
+        if (rangesOverlap(ny, ny + h, o.y, o.y + o.h)) {
+          const gapRight = Math.round(nx - (o.x + o.w));
+          const gapLeft = Math.round(o.x - (nx + w));
+          const midY = Math.round((Math.max(ny, o.y) + Math.min(ny + h, o.y + o.h)) / 2);
+          if (gapRight >= 0 && gapRight <= 120) {
+            const exists = guides.measures.some((m) => m.axis === "h" && m.value === gapRight
+              && Math.min(m.a, m.b) === o.x + o.w);
+            if (!exists) {
+              guides.measures.push({
+                axis: "h",
+                a: o.x + o.w,
+                b: nx,
+                pos: midY,
+                value: gapRight,
+              });
+            }
+          }
+          if (gapLeft >= 0 && gapLeft <= 120) {
+            const exists = guides.measures.some((m) => m.axis === "h" && m.value === gapLeft
+              && Math.max(m.a, m.b) === o.x);
+            if (!exists) {
+              guides.measures.push({
+                axis: "h",
+                a: nx + w,
+                b: o.x,
+                pos: midY,
+                value: gapLeft,
+              });
+            }
+          }
+        }
+        if (rangesOverlap(nx, nx + w, o.x, o.x + o.w)) {
+          const gapBelow = Math.round(ny - (o.y + o.h));
+          const gapAbove = Math.round(o.y - (ny + h));
+          const midX = Math.round((Math.max(nx, o.x) + Math.min(nx + w, o.x + o.w)) / 2);
+          if (gapBelow >= 0 && gapBelow <= 120) {
+            const exists = guides.measures.some((m) => m.axis === "v" && m.value === gapBelow
+              && Math.min(m.a, m.b) === o.y + o.h);
+            if (!exists) {
+              guides.measures.push({
+                axis: "v",
+                a: o.y + o.h,
+                b: ny,
+                pos: midX,
+                value: gapBelow,
+              });
+            }
+          }
+          if (gapAbove >= 0 && gapAbove <= 120) {
+            const exists = guides.measures.some((m) => m.axis === "v" && m.value === gapAbove
+              && Math.max(m.a, m.b) === o.y);
+            if (!exists) {
+              guides.measures.push({
+                axis: "v",
+                a: ny + h,
+                b: o.y,
+                pos: midX,
+                value: gapAbove,
+              });
+            }
+          }
+        }
+      }
+
+      return { x: nx, y: ny, guides };
+    }
+
+    function catalogCls(id) {
+      const def = allKeyCatalog(settings.layout).find((k) => k.id === id);
+      return def && def.cls ? def.cls : "";
+    }
+
+    function paintKeyEditor() {
+      refreshEditorLabels();
+      pruneKeySelection();
+      keyEditor.classList.toggle("disabled", !settings.keyCustom);
+      keyEditor.innerHTML = "";
+      const guides = document.createElement("div");
+      guides.className = "fig-guides";
+      guides.id = "figGuides";
+      keyEditor.appendChild(guides);
+
+      const box = layoutBounds(editorItems, mediaItems);
+      keyEditor.style.width = box.w + "px";
+      keyEditor.style.height = box.h + "px";
+      const multi = selectedIds.size > 1;
+
+      const sortedMedia = mediaItems.slice().sort((a, b) => a.z - b.z);
+      const art = layoutBounds(editorItems, mediaItems);
+      const maskUnder = [];
+      const maskOver = [];
+      keyEditor.classList.toggle(
+        "has-under-letters",
+        sortedMedia.some((m) => m.mask && !m.overLetters)
+      );
+
+      for (const m of sortedMedia) {
+        const el = document.createElement("div");
+        el.className = "emedia"
+          + (m.id === selectedMediaId ? " selected" : "")
+          + (m.mask ? " mask-on" : "");
+        el.dataset.mediaId = m.id;
+        el.style.left = m.x + "px";
+        el.style.top = m.y + "px";
+        el.style.width = m.w + "px";
+        el.style.height = m.h + "px";
+        el.style.transform = "rotate(" + (m.rot || 0) + "deg)";
+        if (!m.mask) el.style.opacity = String(m.opacity != null ? m.opacity : 1);
+        el.style.zIndex = m.id === selectedMediaId
+          ? "50"
+          : String((m.overLetters ? 22 : 12) + m.z);
+        el.title = m.name + " · " + m.w + "×" + m.h
+          + " · " + Math.round((m.opacity != null ? m.opacity : 1) * 100) + "%"
+          + (m.mask ? " · masque" : "")
+          + (m.overLetters ? " · sur lettres" : "");
+
+        if (m.mask && editorItems.length) {
+          el.style.background = m.id === selectedMediaId
+            ? "rgba(77,163,255,0.10)"
+            : "rgba(77,163,255,0.04)";
+          if (m.overLetters) maskOver.push(m);
+          else maskUnder.push(m);
+        } else {
+          const img = document.createElement("img");
+          img.src = mediaUrl(m.file);
+          img.alt = m.name;
+          img.draggable = false;
+          el.appendChild(img);
+        }
+
+        if (m.id === selectedMediaId) {
+          for (const corner of ["tl", "tr", "bl", "br"]) {
+            const handle = document.createElement("div");
+            handle.className = "fig-handle " + corner;
+            handle.dataset.resize = corner;
+            el.appendChild(handle);
+          }
+          const rot = document.createElement("div");
+          rot.className = "fig-handle rot";
+          rot.dataset.rotate = "1";
+          el.appendChild(rot);
+        }
+        keyEditor.appendChild(el);
+      }
+
+      function appendMaskSvg(list, zIndex) {
+        if (!list.length || !editorItems.length) return;
+        const NS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(NS, "svg");
+        svg.setAttribute("class", "emedia-mask-vis");
+        svg.setAttribute("width", String(art.w));
+        svg.setAttribute("height", String(art.h));
+        svg.style.width = art.w + "px";
+        svg.style.height = art.h + "px";
+        svg.style.zIndex = String(zIndex);
+        const defs = document.createElementNS(NS, "defs");
+        const mask = document.createElementNS(NS, "mask");
+        const maskId = "editorKeysMask_" + zIndex;
+        mask.setAttribute("id", maskId);
+        mask.setAttribute("maskUnits", "userSpaceOnUse");
+        mask.setAttribute("x", "0");
+        mask.setAttribute("y", "0");
+        mask.setAttribute("width", String(art.w));
+        mask.setAttribute("height", String(art.h));
+        const black = document.createElementNS(NS, "rect");
+        black.setAttribute("width", String(art.w));
+        black.setAttribute("height", String(art.h));
+        black.setAttribute("fill", "#000");
+        mask.appendChild(black);
+        for (const k of editorItems) {
+          const rect = document.createElementNS(NS, "rect");
+          rect.setAttribute("x", String(k.x));
+          rect.setAttribute("y", String(k.y));
+          rect.setAttribute("width", String(k.w));
+          rect.setAttribute("height", String(k.h));
+          rect.setAttribute("rx", "6");
+          rect.setAttribute("ry", "6");
+          rect.setAttribute("fill", "#fff");
+          mask.appendChild(rect);
+        }
+        defs.appendChild(mask);
+        svg.appendChild(defs);
+        const g = document.createElementNS(NS, "g");
+        g.setAttribute("mask", "url(#" + maskId + ")");
+        for (const m of list) {
+          const image = document.createElementNS(NS, "image");
+          const href = mediaUrl(m.file);
+          image.setAttributeNS("http://www.w3.org/1999/xlink", "href", href);
+          image.setAttribute("href", href);
+          image.setAttribute("data-media-vis", m.id);
+          image.setAttribute("x", String(m.x));
+          image.setAttribute("y", String(m.y));
+          image.setAttribute("width", String(m.w));
+          image.setAttribute("height", String(m.h));
+          image.setAttribute("preserveAspectRatio", "none");
+          image.setAttribute("opacity", String(m.opacity != null ? m.opacity : 1));
+          if (m.rot) {
+            image.setAttribute("transform", "rotate(" + m.rot + " " + (m.x + m.w / 2) + " " + (m.y + m.h / 2) + ")");
+          }
+          g.appendChild(image);
+        }
+        svg.appendChild(g);
+        keyEditor.appendChild(svg);
+      }
+
+      // Sous les lettres (derrière les touches)
+      appendMaskSvg(maskUnder, 14);
+
+      for (const k of editorItems) {
+        const el = document.createElement("div");
+        const cls = catalogCls(k.id);
+        const sel = selectedIds.has(k.id);
+        el.className = "ekey"
+          + (cls ? " " + cls : "")
+          + (sel ? " selected" : "")
+          + (sel && multi ? " multi" : "");
+        el.dataset.id = k.id;
+        el.textContent = k.label;
+        el.style.left = k.x + "px";
+        el.style.top = k.y + "px";
+        el.style.width = k.w + "px";
+        el.style.height = k.h + "px";
+        el.style.zIndex = "18";
+        el.title = k.label + " · " + k.x + "," + k.y + " · " + k.w + "×" + k.h;
+        if (sel && !multi && k.id === selectedKeyId) {
+          const handle = document.createElement("div");
+          handle.className = "fig-handle br";
+          handle.dataset.resize = "br";
+          el.appendChild(handle);
+        }
+        keyEditor.appendChild(el);
+      }
+
+      // Au-dessus des lettres
+      appendMaskSvg(maskOver, 25);
+
+      syncEditorMeta();
+      renderKeyPalette();
+      renderMediaLayersList();
+    }
+
+    function renderMediaLayersList() {
+      if (!mediaLayersList) return;
+      mediaLayersList.innerHTML = "";
+      if (!settings.keyCustom) return;
+      const sorted = mediaItems.slice().sort((a, b) => b.z - a.z);
+      if (!sorted.length) {
+        const empty = document.createElement("div");
+        empty.className = "palette-empty";
+        empty.textContent = "Aucune image — utilise « Ajouter image / GIF ».";
+        mediaLayersList.appendChild(empty);
+        return;
+      }
+      for (const m of sorted) {
+        const row = document.createElement("div");
+        row.className = "media-layer-row" + (m.id === selectedMediaId ? " active" : "");
+        row.innerHTML =
+          "<img src=\"" + mediaUrl(m.file) + "\" alt=\"\" />" +
+          "<div class=\"meta\"><strong></strong><span></span></div>" +
+          "<div class=\"media-layer-actions\"></div>";
+        row.querySelector("strong").textContent = m.name;
+        row.querySelector("span").textContent =
+          Math.round((m.opacity != null ? m.opacity : 1) * 100) + "%"
+          + (m.mask ? " · masque" : "")
+          + (m.overLetters ? " · lettres" : "")
+          + " · " + m.w + "×" + m.h;
+        const actions = row.querySelector(".media-layer-actions");
+        const up = document.createElement("button");
+        up.type = "button";
+        up.className = "btn";
+        up.textContent = "▲";
+        up.title = "Monter le calque";
+        up.addEventListener("click", (e) => {
+          e.stopPropagation();
+          moveMediaLayer(m.id, 1);
+        });
+        const down = document.createElement("button");
+        down.type = "button";
+        down.className = "btn";
+        down.textContent = "▼";
+        down.title = "Descendre le calque";
+        down.addEventListener("click", (e) => {
+          e.stopPropagation();
+          moveMediaLayer(m.id, -1);
+        });
+        actions.appendChild(up);
+        actions.appendChild(down);
+        row.addEventListener("click", () => {
+          setMediaSelection(m.id);
+          paintKeyEditor();
+          keyEditor.focus();
+        });
+        mediaLayersList.appendChild(row);
+      }
+    }
+
+    function moveMediaLayer(id, dir) {
+      const idx = mediaItems.findIndex((m) => m.id === id);
+      if (idx < 0) return;
+      const next = idx + dir;
+      if (next < 0 || next >= mediaItems.length) return;
+      const tmp = mediaItems[idx];
+      mediaItems[idx] = mediaItems[next];
+      mediaItems[next] = tmp;
+      mediaItems.forEach((m, i) => { m.z = i; });
+      commitMediaLayout(true);
+      paintKeyEditor();
+    }
+
+    function renderKeyEditor() {
+      ensureEditorLayout();
+      paintKeyEditor();
+    }
+
+    function selectKey(id, additive) {
+      clearMediaSelection();
+      if (additive) {
+        if (selectedIds.has(id)) {
+          selectedIds.delete(id);
+          if (selectedKeyId === id) {
+            selectedKeyId = selectedIds.size ? [...selectedIds].at(-1) : null;
+          }
+        } else {
+          selectedIds.add(id);
+          selectedKeyId = id;
+        }
+      } else {
+        setKeySelection([id], id);
+      }
+      paintKeyEditor();
+      keyEditor.focus();
+    }
+
+    function deleteSelectedKey() {
+      if (!settings.keyCustom) return;
+      if (selectedMediaId) {
+        const m = mediaItems.find((x) => x.id === selectedMediaId);
+        mediaItems = mediaItems.filter((x) => x.id !== selectedMediaId);
+        clearMediaSelection();
+        commitMediaLayout(true);
+        if (m && m.file) {
+          fetch(mediaApiBase + "/media/delete", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ file: m.file }),
+          }).catch(() => {});
+        }
+        paintKeyEditor();
+        return;
+      }
+      if (!selectedIds.size) return;
+      const kill = new Set(selectedIds);
+      editorItems = editorItems.filter((k) => !kill.has(k.id));
+      clearKeySelection();
+      commitEditorLayout(true);
+      paintKeyEditor();
+    }
+
+    function moveSelected(dx, dy, useSnap) {
+      if (!settings.keyCustom) return;
+      if (selectedMediaId) {
+        const m = mediaItems.find((x) => x.id === selectedMediaId);
+        if (!m) return;
+        m.x = Math.max(0, Math.round(m.x + dx));
+        m.y = Math.max(0, Math.round(m.y + dy));
+        if (useSnap) {
+          m.x = snap(m.x, KEY_GRID);
+          m.y = snap(m.y, KEY_GRID);
+        }
+        commitMediaLayout(true);
+        paintKeyEditor();
+        return;
+      }
+      if (!selectedIds.size) return;
+      const ids = [...selectedIds];
+      const primary = editorItems.find((k) => k.id === selectedKeyId) || editorItems.find((k) => k.id === ids[0]);
+      if (!primary) return;
+      const origins = Object.fromEntries(
+        ids.map((id) => {
+          const it = editorItems.find((k) => k.id === id);
+          return [id, { x: it.x, y: it.y }];
+        })
+      );
+      const snapped = figSnapPosition(primary.x + dx, primary.y + dy, primary.w, primary.h, primary.id, useSnap, new Set(ids));
+      const ox = origins[primary.id];
+      const adx = snapped.x - ox.x;
+      const ady = snapped.y - ox.y;
+      for (const id of ids) {
+        const it = editorItems.find((k) => k.id === id);
+        if (!it) continue;
+        it.x = origins[id].x + adx;
+        it.y = origins[id].y + ady;
+      }
+      commitEditorLayout(true);
+      paintKeyEditor();
+    }
+
+    function rectsIntersect(a, b) {
+      return a.x < b.x + b.w && a.x + a.w > b.x && a.y < b.y + b.h && a.y + a.h > b.y;
+    }
+
+    async function addMediaFromFile(file) {
+      if (!settings.keyCustom || !file) return;
+      const reader = new FileReader();
+      const dataUrl = await new Promise((resolve, reject) => {
+        reader.onload = () => resolve(reader.result);
+        reader.onerror = reject;
+        reader.readAsDataURL(file);
+      });
+      let natural = { w: 220, h: 220 };
+      try {
+        natural = await new Promise((resolve) => {
+          const probe = new Image();
+          probe.onload = () => resolve({
+            w: Math.max(32, probe.naturalWidth || 220),
+            h: Math.max(32, probe.naturalHeight || 220),
+          });
+          probe.onerror = () => resolve({ w: 220, h: 220 });
+          probe.src = dataUrl;
+        });
+      } catch (_) {}
+      const maxSide = 360;
+      let w = natural.w;
+      let h = natural.h;
+      if (w > maxSide || h > maxSide) {
+        const s = maxSide / Math.max(w, h);
+        w = Math.round(w * s);
+        h = Math.round(h * s);
+      }
+
+      let res;
+      try {
+        res = await fetch(mediaApiBase + "/media/upload", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ name: file.name || "image.png", data: dataUrl }),
+        });
+      } catch (e) {
+        savedLabel.textContent = "Upload impossible — relance start-overlay.bat";
+        return;
+      }
+      const json = await res.json().catch(() => null);
+      if (!res.ok || !json || !json.ok || !json.file) {
+        savedLabel.textContent = (json && json.error) ? json.error : "Upload échoué";
+        return;
+      }
+      const id = "media_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 7);
+      const item = {
+        id,
+        file: json.file,
+        name: (file.name || "image").replace(/\.[^.]+$/, "").slice(0, 40),
+        x: 12,
+        y: 12,
+        w,
+        h,
+        rot: 0,
+        z: mediaItems.length,
+        mask: false,
+        opacity: 1,
+        overLetters: false,
+      };
+      mediaItems.push(item);
+      setMediaSelection(id);
+      commitMediaLayout(true);
+      paintKeyEditor();
+      savedLabel.textContent = "Image ajoutée ✓";
+      setTimeout(() => { if (savedLabel.textContent === "Image ajoutée ✓") savedLabel.textContent = ""; }, 1400);
+    }
+
+    function bindKeyEditorDrag() {
+      let drag = null;
+
+      function editorPoint(e) {
+        const rect = keyEditor.getBoundingClientRect();
+        return { x: e.clientX - rect.left, y: e.clientY - rect.top, rect };
+      }
+
+      function updateLassoEl(box) {
+        let el = keyEditor.querySelector(".fig-lasso");
+        if (!el) {
+          el = document.createElement("div");
+          el.className = "fig-lasso";
+          keyEditor.appendChild(el);
+        }
+        el.style.left = box.x + "px";
+        el.style.top = box.y + "px";
+        el.style.width = box.w + "px";
+        el.style.height = box.h + "px";
+      }
+
+      function removeLassoEl() {
+        const el = keyEditor.querySelector(".fig-lasso");
+        if (el) el.remove();
+      }
+
+      function applyLassoSelection(box, additive) {
+        clearMediaSelection();
+        const hit = editorItems
+          .filter((k) => rectsIntersect(box, { x: k.x, y: k.y, w: k.w, h: k.h }))
+          .map((k) => k.id);
+        if (additive) {
+          const next = new Set(selectedIds);
+          for (const id of hit) next.add(id);
+          setKeySelection([...next], hit[hit.length - 1] || selectedKeyId);
+        } else {
+          setKeySelection(hit, hit[hit.length - 1] || null);
+        }
+      }
+
+      function rot2(x, y, deg) {
+        const r = (deg * Math.PI) / 180;
+        const c = Math.cos(r);
+        const s = Math.sin(r);
+        return { x: x * c - y * s, y: x * s + y * c };
+      }
+
+      function unrot2(x, y, deg) {
+        return rot2(x, y, -deg);
+      }
+
+      function syncMediaLive(m) {
+        const live = keyEditor.querySelector('.emedia[data-media-id="' + m.id + '"]');
+        if (live) {
+          live.style.left = m.x + "px";
+          live.style.top = m.y + "px";
+          live.style.width = m.w + "px";
+          live.style.height = m.h + "px";
+          live.style.transform = "rotate(" + (m.rot || 0) + "deg)";
+          live.title = m.name + " · " + m.w + "×" + m.h + (m.mask ? " · masque" : "");
+        }
+        const vis = keyEditor.querySelector('image[data-media-vis="' + m.id + '"]');
+        if (vis) {
+          vis.setAttribute("x", String(m.x));
+          vis.setAttribute("y", String(m.y));
+          vis.setAttribute("width", String(m.w));
+          vis.setAttribute("height", String(m.h));
+          vis.setAttribute("opacity", String(m.opacity != null ? m.opacity : 1));
+          const cx = m.x + m.w / 2;
+          const cy = m.y + m.h / 2;
+          if (m.rot) vis.setAttribute("transform", "rotate(" + m.rot + " " + cx + " " + cy + ")");
+          else vis.removeAttribute("transform");
+        } else if (live) {
+          live.style.opacity = String(m.opacity != null ? m.opacity : 1);
+        }
+      }
+
+      /** Resize type Figma : coin opposé fixe, ratio conservé (SHIFT = libre). */
+      function applyMediaCornerResize(item, corner, localDx, localDy, freeAspect) {
+        const rot = item.rot || 0;
+        const aspect = drag.aspect || (drag.origW / Math.max(1, drag.origH));
+        let w = drag.origW;
+        let h = drag.origH;
+        let anchorLocalX = 0;
+        let anchorLocalY = 0;
+
+        // Coins en local (origine = centre)
+        // TL (-w/2,-h/2) TR (w/2,-h/2) BL (-w/2,h/2) BR (w/2,h/2)
+        if (corner === "br") {
+          w = drag.origW + localDx;
+          h = drag.origH + localDy;
+          anchorLocalX = -drag.origW / 2;
+          anchorLocalY = -drag.origH / 2;
+        } else if (corner === "bl") {
+          w = drag.origW - localDx;
+          h = drag.origH + localDy;
+          anchorLocalX = drag.origW / 2;
+          anchorLocalY = -drag.origH / 2;
+        } else if (corner === "tr") {
+          w = drag.origW + localDx;
+          h = drag.origH - localDy;
+          anchorLocalX = -drag.origW / 2;
+          anchorLocalY = drag.origH / 2;
+        } else {
+          // tl
+          w = drag.origW - localDx;
+          h = drag.origH - localDy;
+          anchorLocalX = drag.origW / 2;
+          anchorLocalY = drag.origH / 2;
+        }
+
+        if (!freeAspect) {
+          // Comme Figma images : garder le ratio, suivre l'axe dominant
+          const dw = w - drag.origW;
+          const dh = h - drag.origH;
+          if (Math.abs(dw) >= Math.abs(dh * aspect)) {
+            w = Math.max(16, w);
+            h = w / aspect;
+          } else {
+            h = Math.max(16, h);
+            w = h * aspect;
+          }
+        }
+
+        w = Math.max(16, Math.round(w));
+        h = Math.max(16, Math.round(h));
+
+        // Ancre monde (coin opposé) reste fixe
+        const oldCx = drag.origX + drag.origW / 2;
+        const oldCy = drag.origY + drag.origH / 2;
+        const anchorWorld = rot2(anchorLocalX, anchorLocalY, rot);
+        anchorWorld.x += oldCx;
+        anchorWorld.y += oldCy;
+
+        let newAnchorLocalX = 0;
+        let newAnchorLocalY = 0;
+        if (corner === "br") {
+          newAnchorLocalX = -w / 2;
+          newAnchorLocalY = -h / 2;
+        } else if (corner === "bl") {
+          newAnchorLocalX = w / 2;
+          newAnchorLocalY = -h / 2;
+        } else if (corner === "tr") {
+          newAnchorLocalX = -w / 2;
+          newAnchorLocalY = h / 2;
+        } else {
+          newAnchorLocalX = w / 2;
+          newAnchorLocalY = h / 2;
+        }
+
+        const newCenterOff = rot2(newAnchorLocalX, newAnchorLocalY, rot);
+        const newCx = anchorWorld.x - newCenterOff.x;
+        const newCy = anchorWorld.y - newCenterOff.y;
+        item.w = w;
+        item.h = h;
+        item.x = Math.round(newCx - w / 2);
+        item.y = Math.round(newCy - h / 2);
+      }
+
+      keyEditor.addEventListener("pointerdown", (e) => {
+        if (!settings.keyCustom) return;
+        if (e.button !== 0) return;
+        const handle = e.target.closest(".fig-handle");
+        const mediaEl = e.target.closest(".emedia");
+        const el = e.target.closest(".ekey");
+        const pt = editorPoint(e);
+
+        if (mediaEl) {
+          e.preventDefault();
+          e.stopPropagation();
+          const mid = mediaEl.dataset.mediaId;
+          const item = mediaItems.find((m) => m.id === mid);
+          if (!item) return;
+
+          const resizing = !!(handle && handle.dataset.resize);
+          const rotating = !!(handle && handle.dataset.rotate === "1");
+          const corner = resizing ? handle.dataset.resize : null;
+
+          // Ne pas repaint si déjà sélectionné (garde le handle sous le curseur)
+          if (selectedMediaId !== mid) {
+            setMediaSelection(mid);
+            paintKeyEditor();
+          } else {
+            clearKeySelection();
+            selectedMediaId = mid;
+          }
+
+          const live = keyEditor.querySelector('.emedia[data-media-id="' + mid + '"]');
+          if (!live) return;
+
+          if (rotating) {
+            drag = {
+              mode: "media-rotate",
+              id: mid,
+              cx: item.x + item.w / 2,
+              cy: item.y + item.h / 2,
+              startAngle: Math.atan2(pt.y - (item.y + item.h / 2), pt.x - (item.x + item.w / 2)),
+              origRot: item.rot || 0,
+            };
+          } else if (resizing) {
+            drag = {
+              mode: "media-resize",
+              id: mid,
+              corner,
+              startX: pt.x,
+              startY: pt.y,
+              origX: item.x,
+              origY: item.y,
+              origW: item.w,
+              origH: item.h,
+              aspect: item.w / Math.max(1, item.h),
+              rot: item.rot || 0,
+            };
+          } else {
+            drag = {
+              mode: "media-move",
+              id: mid,
+              ox: pt.x - item.x,
+              oy: pt.y - item.y,
+            };
+          }
+          live.setPointerCapture(e.pointerId);
+          keyEditor.focus();
+          return;
+        }
+
+        if (!el) {
+          e.preventDefault();
+          drag = {
+            mode: "lasso",
+            x0: pt.x,
+            y0: pt.y,
+            additive: e.shiftKey,
+            moved: false,
+            pointerId: e.pointerId,
+          };
+          keyEditor.setPointerCapture(e.pointerId);
+          keyEditor.focus();
+          return;
+        }
+
+        e.preventDefault();
+        const id = el.dataset.id;
+        const item = editorItems.find((k) => k.id === id);
+        if (!item) return;
+        const resizing = !!(handle && handle.dataset.resize === "br");
+
+        if (e.shiftKey && !resizing) {
+          selectKey(id, true);
+          return;
+        }
+        if (!selectedIds.has(id)) {
+          setKeySelection([id], id);
+          paintKeyEditor();
+        } else {
+          selectedKeyId = id;
+          clearMediaSelection();
+          paintKeyEditor();
+        }
+
+        const live = keyEditor.querySelector('.ekey[data-id="' + id + '"]');
+        if (!live) return;
+
+        if (resizing && selectedIds.size === 1) {
+          drag = {
+            mode: "resize",
+            id,
+            startX: e.clientX,
+            startY: e.clientY,
+            origW: item.w,
+            origH: item.h,
+          };
+        } else {
+          const moveIds = [...selectedIds];
+          drag = {
+            mode: "move",
+            id,
+            ids: moveIds,
+            ox: e.clientX - pt.rect.left - item.x,
+            oy: e.clientY - pt.rect.top - item.y,
+            origins: Object.fromEntries(
+              moveIds.map((mid) => {
+                const it = editorItems.find((k) => k.id === mid);
+                return [mid, { x: it.x, y: it.y }];
+              })
+            ),
+          };
+        }
+        live.setPointerCapture(e.pointerId);
+        keyEditor.focus();
+      });
+
+      keyEditor.addEventListener("pointermove", (e) => {
+        if (!drag) return;
+        const pt = editorPoint(e);
+
+        if (drag.mode === "lasso") {
+          const x1 = Math.min(drag.x0, pt.x);
+          const y1 = Math.min(drag.y0, pt.y);
+          const x2 = Math.max(drag.x0, pt.x);
+          const y2 = Math.max(drag.y0, pt.y);
+          const box = { x: x1, y: y1, w: x2 - x1, h: y2 - y1 };
+          if (box.w > 2 || box.h > 2) drag.moved = true;
+          updateLassoEl(box);
+          applyLassoSelection(box, drag.additive);
+          for (const node of keyEditor.querySelectorAll(".ekey")) {
+            const on = selectedIds.has(node.dataset.id);
+            node.classList.toggle("selected", on);
+            node.classList.toggle("multi", on && selectedIds.size > 1);
+          }
+          syncEditorMeta();
+          return;
+        }
+
+        if (drag.mode === "media-move" || drag.mode === "media-resize" || drag.mode === "media-rotate") {
+          const item = mediaItems.find((m) => m.id === drag.id);
+          if (!item) return;
+          if (drag.mode === "media-move") {
+            item.x = Math.round(pt.x - drag.ox);
+            item.y = Math.round(pt.y - drag.oy);
+            if (e.shiftKey) {
+              item.x = snap(item.x, KEY_GRID);
+              item.y = snap(item.y, KEY_GRID);
+            }
+          } else if (drag.mode === "media-resize") {
+            const worldDx = pt.x - drag.startX;
+            const worldDy = pt.y - drag.startY;
+            const local = unrot2(worldDx, worldDy, drag.rot || 0);
+            // SHIFT = libre ; sinon ratio image (comme Figma)
+            applyMediaCornerResize(item, drag.corner, local.x, local.y, e.shiftKey);
+          } else {
+            const ang = Math.atan2(pt.y - drag.cy, pt.x - drag.cx);
+            let deg = (ang * 180) / Math.PI + 90;
+            if (e.shiftKey) deg = snap(deg, 15);
+            item.rot = ((Math.round(deg) % 360) + 360) % 360;
+          }
+          syncMediaLive(item);
+          const box = layoutBounds(editorItems, mediaItems);
+          keyEditor.style.width = box.w + "px";
+          keyEditor.style.height = box.h + "px";
+          syncEditorMeta();
+          return;
+        }
+
+        const item = editorItems.find((k) => k.id === drag.id);
+        if (!item) return;
+
+        if (drag.mode === "resize") {
+          let w = drag.origW + (e.clientX - drag.startX);
+          let h = drag.origH + (e.clientY - drag.startY);
+          if (e.shiftKey) {
+            w = snap(w, KEY_GRID);
+            h = snap(h, KEY_GRID);
+          }
+          item.w = Math.max(16, Math.round(w));
+          item.h = Math.max(16, Math.round(h));
+          clearFigGuides();
+          const live = keyEditor.querySelector('.ekey[data-id="' + drag.id + '"]');
+          if (live) {
+            live.style.width = item.w + "px";
+            live.style.height = item.h + "px";
+            live.title = item.label + " · " + item.x + "," + item.y + " · " + item.w + "×" + item.h;
+          }
+        } else {
+          let x = e.clientX - pt.rect.left - drag.ox;
+          let y = e.clientY - pt.rect.top - drag.oy;
+          const snapped = figSnapPosition(x, y, item.w, item.h, item.id, e.shiftKey, new Set(drag.ids));
+          const ox = drag.origins[drag.id];
+          const adx = snapped.x - ox.x;
+          const ady = snapped.y - ox.y;
+          for (const mid of drag.ids) {
+            const it = editorItems.find((k) => k.id === mid);
+            if (!it) continue;
+            it.x = drag.origins[mid].x + adx;
+            it.y = drag.origins[mid].y + ady;
+            const live = keyEditor.querySelector('.ekey[data-id="' + mid + '"]');
+            if (live) {
+              live.style.left = it.x + "px";
+              live.style.top = it.y + "px";
+              live.title = it.label + " · " + it.x + "," + it.y + " · " + it.w + "×" + it.h;
+            }
+          }
+          showFigGuides(snapped.guides);
+        }
+
+        const box = layoutBounds(editorItems, mediaItems);
+        keyEditor.style.width = box.w + "px";
+        keyEditor.style.height = box.h + "px";
+        syncEditorMeta();
+      });
+
+      function endDrag() {
+        if (!drag) return;
+        if (drag.mode === "lasso") {
+          removeLassoEl();
+          if (!drag.moved && !drag.additive) clearAllSelection();
+          paintKeyEditor();
+        } else if (drag.mode.indexOf("media-") === 0) {
+          commitMediaLayout(true);
+          paintKeyEditor();
+        } else {
+          clearFigGuides();
+          commitEditorLayout(true);
+          paintKeyEditor();
+        }
+        drag = null;
+      }
+
+      keyEditor.addEventListener("pointerup", endDrag);
+      keyEditor.addEventListener("pointercancel", () => {
+        if (drag && drag.mode === "lasso") removeLassoEl();
+        drag = null;
+        clearFigGuides();
+      });
+
+      keyEditor.addEventListener("keydown", (e) => {
+        if (!settings.keyCustom) return;
+        if ((e.key === "Delete" || e.key === "Backspace") && (selectedIds.size || selectedMediaId)) {
+          e.preventDefault();
+          deleteSelectedKey();
+          return;
+        }
+        if (!selectedIds.size && !selectedMediaId) return;
+        const step = e.shiftKey ? KEY_GRID : 1;
+        let handled = true;
+        if (e.key === "ArrowLeft") moveSelected(-step, 0, e.shiftKey);
+        else if (e.key === "ArrowRight") moveSelected(step, 0, e.shiftKey);
+        else if (e.key === "ArrowUp") moveSelected(0, -step, e.shiftKey);
+        else if (e.key === "ArrowDown") moveSelected(0, step, e.shiftKey);
+        else handled = false;
+        if (handled) e.preventDefault();
+      });
     }
 
     function normalize(raw) {
@@ -939,8 +3402,22 @@
       }
       if (!MOUSE_STYLES.some(([v]) => v === s.mouse)) s.mouse = DEFAULTS.mouse;
       if (!LAYOUTS.some(([v]) => v === s.layout)) s.layout = DEFAULTS.layout;
-      if (!SG_KEYS.some(([v]) => v === s.sgJump)) s.sgJump = DEFAULTS.sgJump;
-      if (!SG_KEYS.some(([v]) => v === s.sgCrouch)) s.sgCrouch = DEFAULTS.sgCrouch;
+      s.mouseSens = Math.max(0.05, Math.min(10, Number(s.mouseSens) || DEFAULTS.mouseSens));
+      s.keyCustom = !!s.keyCustom;
+      if (s.keyCustom) {
+        const rawLayout = Array.isArray(s.keyLayout) ? s.keyLayout : [];
+        s.keyLayout = normalizeKeyLayout(rawLayout, s.layout, { fillMissing: false })
+          .map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+        s.mediaLayers = normalizeMediaLayers(s.mediaLayers);
+      } else {
+        s.keyLayout = null;
+        s.mediaLayers = [];
+      }
+      s.sgEnabled = s.sgEnabled !== false;
+      s.sgJump = migrateSgKey(s.sgJump);
+      s.sgCrouch = migrateSgKey(s.sgCrouch);
+      if (!isValidSgKey(s.sgJump)) s.sgJump = DEFAULTS.sgJump;
+      if (!isValidSgKey(s.sgCrouch)) s.sgCrouch = DEFAULTS.sgCrouch;
       s.sgFps = Math.max(30, Math.min(360, Number(s.sgFps) || DEFAULTS.sgFps));
       return s;
     }
@@ -1001,6 +3478,89 @@
     fillSelect(sgJump, SG_KEYS);
     fillSelect(sgCrouch, SG_KEYS);
 
+    function isValidSgKey(v) {
+      return SG_KEYS.some(([id]) => id === v);
+    }
+
+    function migrateSgKey(v) {
+      const map = {
+        kC: "KeyC", kV: "KeyV", kX: "KeyX", kB: "KeyB", kN: "KeyN",
+        kS: "KeyS", kD: "KeyD", kE: "KeyE", kR: "KeyR",
+        kA: "KeyQ", kZ: "KeyW", kQ: "KeyA",
+        ctrl: "ControlLeft", alt: "AltLeft", shift: "ShiftLeft", tab: "Tab",
+      };
+      return map[v] || v;
+    }
+
+    function ensureSgOption(sel, value) {
+      if (!value) return;
+      const exists = Array.from(sel.options).some((o) => o.value === value);
+      if (!exists) {
+        const opt = document.createElement("option");
+        opt.value = value;
+        opt.textContent = value + " (capturée)";
+        sel.appendChild(opt);
+      }
+      sel.value = value;
+    }
+
+    let captureTarget = null;
+    const sgHint = document.getElementById("sgHint");
+    const capJump = document.getElementById("capJump");
+    const capCrouch = document.getElementById("capCrouch");
+
+    function stopCapture() {
+      captureTarget = null;
+      capJump.classList.remove("listening");
+      capCrouch.classList.remove("listening");
+      capJump.textContent = "Capturer";
+      capCrouch.textContent = "Capturer";
+      sgHint.textContent = "Combo = jump puis crouch ≈ 1 frame. Tu peux choisir n’importe quelle touche (même hors overlay) ou la capturer.";
+    }
+
+    function startCapture(which) {
+      captureTarget = which;
+      capJump.classList.toggle("listening", which === "jump");
+      capCrouch.classList.toggle("listening", which === "crouch");
+      capJump.textContent = which === "jump" ? "Appuie sur une touche…" : "Capturer";
+      capCrouch.textContent = which === "crouch" ? "Appuie sur une touche…" : "Capturer";
+      sgHint.textContent = "En écoute… appuie sur la touche jump/crouch voulue (Échap pour annuler).";
+    }
+
+    capJump.addEventListener("click", () => {
+      if (captureTarget === "jump") stopCapture();
+      else startCapture("jump");
+    });
+    capCrouch.addEventListener("click", () => {
+      if (captureTarget === "crouch") stopCapture();
+      else startCapture("crouch");
+    });
+
+    window.addEventListener("keydown", (e) => {
+      if (!captureTarget) return;
+      e.preventDefault();
+      e.stopPropagation();
+      if (e.code === "Escape") {
+        stopCapture();
+        return;
+      }
+      const id = CODE_TO_SG[e.code];
+      if (!id) {
+        sgHint.textContent = "Touche non supportée, réessaie (lettres, chiffres, mods…).";
+        return;
+      }
+      if (captureTarget === "jump") {
+        settings.sgJump = id;
+        ensureSgOption(sgJump, id);
+      } else {
+        settings.sgCrouch = id;
+        ensureSgOption(sgCrouch, id);
+      }
+      stopCapture();
+      queueSave();
+      render();
+    }, true);
+
     hRange.addEventListener("input", () => { hsv.h = Number(hRange.value); setAccentFromHsv(true); });
     sRange.addEventListener("input", () => { hsv.s = Number(sRange.value) / 100; setAccentFromHsv(true); });
     vRange.addEventListener("input", () => { hsv.v = Number(vRange.value) / 100; setAccentFromHsv(true); });
@@ -1023,10 +3583,141 @@
       settings.sgFps = Number(sgFps.value) || DEFAULTS.sgFps;
       queueSave();
     });
+    sgEnabled.addEventListener("change", () => {
+      settings.sgEnabled = sgEnabled.checked;
+      sgFields.classList.toggle("is-disabled", !sgEnabled.checked);
+      queueSave();
+    });
+
+    mouseSens.addEventListener("input", () => {
+      settings.mouseSens = Number(mouseSens.value) / 100;
+      mouseSensVal.textContent = Math.round(settings.mouseSens * 100) + "%";
+      queueSave();
+    });
+
+    keyCustom.addEventListener("change", () => {
+      settings.keyCustom = keyCustom.checked;
+      if (settings.keyCustom) {
+        if (savedKeyLayout && savedKeyLayout.length) {
+          settings.keyLayout = normalizeKeyLayout(savedKeyLayout, settings.layout, { fillMissing: false })
+            .map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+        } else {
+          settings.keyLayout = buildDefaultKeyLayout(settings.layout)
+            .map(({ id, x, y, w, h }) => ({ id, x, y, w, h }));
+        }
+        savedKeyLayout = settings.keyLayout;
+        settings.mediaLayers = normalizeMediaLayers(savedMediaLayers);
+        mediaItems = settings.mediaLayers.map((m) => ({ ...m }));
+        savedMediaLayers = settings.mediaLayers;
+      } else {
+        if (Array.isArray(settings.keyLayout) && settings.keyLayout.length) {
+          savedKeyLayout = settings.keyLayout;
+        }
+        if (Array.isArray(settings.mediaLayers) && settings.mediaLayers.length) {
+          savedMediaLayers = settings.mediaLayers.map(serializeMedia);
+        } else if (mediaItems.length) {
+          savedMediaLayers = mediaItems.map(serializeMedia);
+        }
+        settings.keyLayout = null;
+        settings.mediaLayers = [];
+        mediaItems = [];
+        clearAllSelection();
+      }
+      render();
+      queueSave();
+    });
+
+    btnKeyReset.addEventListener("click", () => {
+      settings.keyCustom = false;
+      settings.keyLayout = null;
+      settings.mediaLayers = [];
+      savedKeyLayout = null;
+      savedMediaLayers = null;
+      mediaItems = [];
+      clearAllSelection();
+      keyCustom.checked = false;
+      render();
+      queueSave();
+    });
+
+    btnSnapGrid.addEventListener("click", () => {
+      rebuildCustomFromDefault();
+    });
+
+    btnKeyDelete.addEventListener("click", () => deleteSelectedKey());
+    btnAddFullKb.addEventListener("click", () => addFullKeyboard());
+
+    function applyMetaField(field, value) {
+      if (!settings.keyCustom) return;
+      if (value === "" || value === "-") return;
+      const n = Math.round(Number(value));
+      if (!Number.isFinite(n)) return;
+      if (selectedMediaId) {
+        const item = mediaItems.find((k) => k.id === selectedMediaId);
+        if (!item) return;
+        if (field === "x" || field === "y") item[field] = Math.max(0, n);
+        else if (field === "w" || field === "h") item[field] = Math.max(16, n);
+        else if (field === "rot") item.rot = ((n % 360) + 360) % 360;
+        commitMediaLayout(true);
+        paintKeyEditor();
+        return;
+      }
+      const item = editorItems.find((k) => k.id === selectedKeyId);
+      if (!item) return;
+      if (field === "x" || field === "y") item[field] = Math.max(0, n);
+      else item[field] = Math.max(16, n);
+      commitEditorLayout(true);
+      paintKeyEditor();
+    }
+
+    keyX.addEventListener("change", () => applyMetaField("x", keyX.value));
+    keyY.addEventListener("change", () => applyMetaField("y", keyY.value));
+    keyW.addEventListener("change", () => applyMetaField("w", keyW.value));
+    keyH.addEventListener("change", () => applyMetaField("h", keyH.value));
+    keyX.addEventListener("input", () => applyMetaField("x", keyX.value));
+    keyY.addEventListener("input", () => applyMetaField("y", keyY.value));
+    keyW.addEventListener("input", () => applyMetaField("w", keyW.value));
+    keyH.addEventListener("input", () => applyMetaField("h", keyH.value));
+    mediaRot.addEventListener("change", () => applyMetaField("rot", mediaRot.value));
+    mediaRot.addEventListener("input", () => applyMetaField("rot", mediaRot.value));
+    mediaMask.addEventListener("change", () => {
+      const item = mediaItems.find((k) => k.id === selectedMediaId);
+      if (!item || !settings.keyCustom) return;
+      item.mask = mediaMask.checked;
+      commitMediaLayout(true);
+      paintKeyEditor();
+    });
+    mediaOverLetters.addEventListener("change", () => {
+      const item = mediaItems.find((k) => k.id === selectedMediaId);
+      if (!item || !settings.keyCustom) return;
+      item.overLetters = mediaOverLetters.checked;
+      commitMediaLayout(true);
+      paintKeyEditor();
+    });
+    function applyMediaOpacity() {
+      const item = mediaItems.find((k) => k.id === selectedMediaId);
+      if (!item || !settings.keyCustom) return;
+      item.opacity = Math.max(0, Math.min(1, Number(mediaOpacity.value) / 100));
+      mediaOpacityVal.textContent = Math.round(item.opacity * 100) + "%";
+      commitMediaLayout(true);
+      paintKeyEditor();
+    }
+    mediaOpacity.addEventListener("input", applyMediaOpacity);
+    mediaOpacity.addEventListener("change", applyMediaOpacity);
+
+    mediaFileInput.addEventListener("change", () => {
+      const file = mediaFileInput.files && mediaFileInput.files[0];
+      mediaFileInput.value = "";
+      if (file) addMediaFromFile(file);
+    });
+
+    bindKeyEditorDrag();
 
     document.getElementById("btnSave").addEventListener("click", () => saveSettings(true));
     document.getElementById("btnReset").addEventListener("click", () => {
       settings = normalize(DEFAULTS);
+      clearAllSelection();
+      mediaItems = [];
       render();
       saveSettings(true);
     });

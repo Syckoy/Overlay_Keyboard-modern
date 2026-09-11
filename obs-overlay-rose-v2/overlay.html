@@ -860,8 +860,64 @@
       gap: var(--kgap);
     }
 
+    .kb.custom {
+      display: block;
+      position: relative;
+    }
+
+    /* Force absolute même si un thème met position:relative sur .key (ex: cat/kawaii) */
+    body .kb.custom > .key {
+      position: absolute !important;
+      flex: none !important;
+      margin: 0 !important;
+      min-width: 0 !important;
+      min-height: 0 !important;
+    }
+
     .kb-box {
       position: relative;
+    }
+
+    .media-root {
+      position: absolute;
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .media-root-back { z-index: 1; }
+    .media-root-front { z-index: 5; }
+
+    .media-item {
+      position: absolute;
+      transform-origin: center center;
+      pointer-events: none;
+      object-fit: fill;
+      user-select: none;
+    }
+
+    .media-svg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      overflow: visible;
+      pointer-events: none;
+    }
+
+    .kb {
+      position: relative;
+      z-index: 2;
+    }
+
+    /* Image masquée sous les lettres : fond de touche semi-transparent */
+    body.media-under-letters .key {
+      background: color-mix(in srgb, var(--key) 22%, transparent) !important;
+    }
+    body.media-under-letters .key.on {
+      background: color-mix(in srgb, var(--accent) 55%, transparent) !important;
     }
 
     .row {
@@ -1122,7 +1178,9 @@
       <img class="kw-4" data-src="/assets/kawaii-4.gif" alt="" />
     </div>
     <div class="kb-box">
+      <div class="media-root media-root-back" id="mediaRootBack"></div>
       <div class="kb" id="kb"></div>
+      <div class="media-root media-root-front" id="mediaRootFront"></div>
       <div class="sg-banner" id="sgBanner">SUPERGLIDE</div>
     </div>
     <div class="mouse">
@@ -1153,8 +1211,13 @@
       design: "classic",
       mouse: "ribbon",
       layout: "azerty",
+      mouseSens: 1,
+      keyCustom: false,
+      keyLayout: null,
+      mediaLayers: [],
+      sgEnabled: true,
       sgJump: "space",
-      sgCrouch: "kC",
+      sgCrouch: "KeyC",
       sgFps: 138,
     };
 
@@ -1225,16 +1288,58 @@
     };
 
     const VC = {
+      esc: 0x0001,
       n1: 0x0002, n2: 0x0003, n3: 0x0004, n4: 0x0005, n5: 0x0006,
-      tab: 0x000f, caps: 0x003a,
+      n6: 0x0007, n7: 0x0008, n8: 0x0009, n9: 0x000a, n0: 0x000b,
+      backspace: 0x000e, tab: 0x000f, caps: 0x003a, enter: 0x001c,
       kA: 0x0010, kZ: 0x0011, kE: 0x0012, kR: 0x0013,
+      kT: 0x0014, kY: 0x0015, kU: 0x0016, kI: 0x0017, kO: 0x0018, kP: 0x0019,
       kQ: 0x001e, kS: 0x001f, kD: 0x0020, kF: 0x0021,
-      kW: 0x002c, kX: 0x002d, kC: 0x002e, kV: 0x002f, kB: 0x0030, kN: 0x0031,
+      kG: 0x0022, kH: 0x0023, kJ: 0x0024, kK: 0x0025, kL: 0x0026,
+      kW: 0x002c, kX: 0x002d, kC: 0x002e, kV: 0x002f, kB: 0x0030, kN: 0x0031, kM: 0x0032,
       shiftL: 0x002a, shiftR: 0x0036,
       ctrlL: 0x001d, ctrlR: 0x0e1d,
       altL: 0x0038, altR: 0x0e38,
       space: 0x0039,
     };
+
+    // KeyboardEvent.code / legacy overlay id → MakeCode(s) du bridge
+    const SG_ID_TO_CODES = {
+      space: [VC.space],
+      Escape: [VC.esc],
+      Backspace: [VC.backspace],
+      Tab: [VC.tab],
+      CapsLock: [VC.caps],
+      Enter: [VC.enter],
+      ShiftLeft: [VC.shiftL, VC.shiftR],
+      ControlLeft: [VC.ctrlL, VC.ctrlR],
+      AltLeft: [VC.altL, VC.altR],
+      Digit1: [VC.n1], Digit2: [VC.n2], Digit3: [VC.n3], Digit4: [VC.n4], Digit5: [VC.n5],
+      Digit6: [VC.n6], Digit7: [VC.n7], Digit8: [VC.n8], Digit9: [VC.n9], Digit0: [VC.n0],
+      KeyQ: [VC.kA], KeyW: [VC.kZ], KeyE: [VC.kE], KeyR: [VC.kR],
+      KeyT: [VC.kT], KeyY: [VC.kY], KeyU: [VC.kU], KeyI: [VC.kI], KeyO: [VC.kO], KeyP: [VC.kP],
+      KeyA: [VC.kQ], KeyS: [VC.kS], KeyD: [VC.kD], KeyF: [VC.kF],
+      KeyG: [VC.kG], KeyH: [VC.kH], KeyJ: [VC.kJ], KeyK: [VC.kK], KeyL: [VC.kL],
+      KeyZ: [VC.kW], KeyX: [VC.kX], KeyC: [VC.kC], KeyV: [VC.kV], KeyB: [VC.kB], KeyN: [VC.kN], KeyM: [VC.kM],
+      // legacy ids overlay
+      kA: [VC.kA], kZ: [VC.kZ], kE: [VC.kE], kR: [VC.kR],
+      kQ: [VC.kQ], kS: [VC.kS], kD: [VC.kD], kC: [VC.kC], kV: [VC.kV],
+      ctrl: [VC.ctrlL, VC.ctrlR], alt: [VC.altL, VC.altR], shift: [VC.shiftL, VC.shiftR], tab: [VC.tab],
+    };
+
+    function migrateSgKey(v) {
+      const map = {
+        kC: "KeyC", kV: "KeyV", kX: "KeyX", kB: "KeyB", kN: "KeyN",
+        kS: "KeyS", kD: "KeyD", kE: "KeyE", kR: "KeyR",
+        kA: "KeyQ", kZ: "KeyW", kQ: "KeyA",
+        ctrl: "ControlLeft", alt: "AltLeft", shift: "ShiftLeft", tab: "Tab",
+      };
+      return map[v] || v;
+    }
+
+    function sgCodesFor(id) {
+      return SG_ID_TO_CODES[id] || [];
+    }
 
     const TAB_ICON = `<svg viewBox="0 0 24 24"><path d="M5 12h12M13 6l6 6-6 6"/></svg>`;
 
@@ -1248,7 +1353,7 @@
           ]
         : [
             { id: "n1", label: "&", codes: [VC.n1], cls: "sym" },
-            { id: "n2", label: "Ã©", codes: [VC.n2], cls: "sym" },
+            { id: "n2", label: "é", codes: [VC.n2], cls: "sym" },
             { id: "n3", label: "\"", codes: [VC.n3], cls: "sym" },
             { id: "n4", label: "'", codes: [VC.n4], cls: "sym" },
           ];
@@ -1299,6 +1404,58 @@
       ];
     }
 
+    function allKeyDefs(layout) {
+      const q = layout === "qwerty";
+      const list = [
+        { id: "esc", label: "ESC", codes: [VC.esc], cls: "mod" },
+        { id: "n1", label: q ? "1" : "&", codes: [VC.n1], cls: "sym" },
+        { id: "n2", label: q ? "2" : "é", codes: [VC.n2], cls: "sym" },
+        { id: "n3", label: q ? "3" : '"', codes: [VC.n3], cls: "sym" },
+        { id: "n4", label: q ? "4" : "'", codes: [VC.n4], cls: "sym" },
+        { id: "n5", label: q ? "5" : "(", codes: [VC.n5], cls: "sym" },
+        { id: "n6", label: q ? "6" : "-", codes: [VC.n6], cls: "sym" },
+        { id: "n7", label: q ? "7" : "è", codes: [VC.n7], cls: "sym" },
+        { id: "n8", label: q ? "8" : "_", codes: [VC.n8], cls: "sym" },
+        { id: "n9", label: q ? "9" : "ç", codes: [VC.n9], cls: "sym" },
+        { id: "n0", label: q ? "0" : "à", codes: [VC.n0], cls: "sym" },
+        { id: "backspace", label: "BKSP", codes: [VC.backspace], cls: "shift" },
+        { id: "tab", label: TAB_ICON, codes: [VC.tab], cls: "tab" },
+        { id: "kA", label: q ? "Q" : "A", codes: [VC.kA] },
+        { id: "kZ", label: q ? "W" : "Z", codes: [VC.kZ] },
+        { id: "kE", label: "E", codes: [VC.kE] },
+        { id: "kR", label: "R", codes: [VC.kR] },
+        { id: "kT", label: "T", codes: [VC.kT] },
+        { id: "kY", label: "Y", codes: [VC.kY] },
+        { id: "kU", label: "U", codes: [VC.kU] },
+        { id: "kI", label: "I", codes: [VC.kI] },
+        { id: "kO", label: "O", codes: [VC.kO] },
+        { id: "kP", label: "P", codes: [VC.kP] },
+        { id: "caps", label: "CAPS", codes: [VC.caps], cls: "shift" },
+        { id: "kQ", label: q ? "A" : "Q", codes: [VC.kQ] },
+        { id: "kS", label: "S", codes: [VC.kS] },
+        { id: "kD", label: "D", codes: [VC.kD] },
+        { id: "kF", label: "F", codes: [VC.kF] },
+        { id: "kG", label: "G", codes: [VC.kG] },
+        { id: "kH", label: "H", codes: [VC.kH] },
+        { id: "kJ", label: "J", codes: [VC.kJ] },
+        { id: "kK", label: "K", codes: [VC.kK] },
+        { id: "kL", label: "L", codes: [VC.kL] },
+        { id: "enter", label: "ENTER", codes: [VC.enter], cls: "shift" },
+        { id: "shift", label: "SHIFT", codes: [VC.shiftL, VC.shiftR], cls: "shift" },
+        { id: "kW", label: q ? "Z" : "W", codes: [VC.kW] },
+        { id: "kX", label: "X", codes: [VC.kX] },
+        { id: "kC", label: "C", codes: [VC.kC] },
+        { id: "kV", label: "V", codes: [VC.kV] },
+        { id: "kB", label: "B", codes: [VC.kB] },
+        { id: "kN", label: "N", codes: [VC.kN] },
+        { id: "kM", label: "M", codes: [VC.kM] },
+        { id: "ctrl", label: "CTRL", codes: [VC.ctrlL, VC.ctrlR], cls: "mod" },
+        { id: "alt", label: "ALT", codes: [VC.altL, VC.altR], cls: "mod" },
+        { id: "space", label: "SPACE", codes: [VC.space], cls: "space" },
+      ];
+      return new Map(list.map((k) => [k.id, k]));
+    }
+
     const kb = document.getElementById("kb");
     let elById = {};
     let codeToIds = new Map();
@@ -1308,7 +1465,7 @@
     function rebuildKeyboard() {
       const wasOn = {};
       for (const id of Object.keys(elById)) {
-        if (elById[id].classList.contains("on")) wasOn[id] = true;
+        if (elById[id] && elById[id].classList.contains("on")) wasOn[id] = true;
       }
       kb.innerHTML = "";
       elById = {};
@@ -1316,6 +1473,50 @@
       codeToIds = new Map();
       keyList = [];
 
+      // Custom uniquement si explicitement activé (même layout vide)
+      const custom = !!SETTINGS.keyCustom;
+      kb.classList.toggle("custom", custom);
+      kb.style.width = "";
+      kb.style.height = "";
+
+      if (custom) {
+        const defsById = allKeyDefs(SETTINGS.layout);
+        let maxW = 40;
+        let maxH = 40;
+        const layout = Array.isArray(SETTINGS.keyLayout) ? SETTINGS.keyLayout : [];
+        for (const pos of layout) {
+          const k = defsById.get(pos.id);
+          if (!k) continue;
+          const el = document.createElement("div");
+          el.className = "key" + (k.cls ? " " + k.cls : "");
+          el.innerHTML = k.label;
+          el.style.left = Math.round(pos.x) + "px";
+          el.style.top = Math.round(pos.y) + "px";
+          el.style.setProperty("width", Math.max(16, Math.round(pos.w || 34)) + "px", "important");
+          el.style.setProperty("height", Math.max(16, Math.round(pos.h || 34)) + "px", "important");
+          if (wasOn[k.id]) el.classList.add("on");
+          kb.appendChild(el);
+          elById[k.id] = el;
+          defById[k.id] = k;
+          keyList.push(k);
+          for (const c of k.codes) {
+            if (!codeToIds.has(c)) codeToIds.set(c, []);
+            codeToIds.get(c).push(k.id);
+          }
+          maxW = Math.max(maxW, Math.round(pos.x) + Math.max(16, Math.round(pos.w || 34)));
+          maxH = Math.max(maxH, Math.round(pos.y) + Math.max(16, Math.round(pos.h || 34)));
+        }
+        for (const m of (SETTINGS.mediaLayers || [])) {
+          maxW = Math.max(maxW, Math.round(m.x) + Math.max(16, Math.round(m.w || 120)));
+          maxH = Math.max(maxH, Math.round(m.y) + Math.max(16, Math.round(m.h || 120)));
+        }
+        kb.style.width = maxW + "px";
+        kb.style.height = maxH + "px";
+        rebuildMediaLayers();
+        return;
+      }
+
+      // Disposition par défaut (flex rows AZERTY / QWERTY)
       for (const row of layoutRows(SETTINGS.layout)) {
         const rowEl = document.createElement("div");
         rowEl.className = "row";
@@ -1335,6 +1536,186 @@
         }
         kb.appendChild(rowEl);
       }
+      rebuildMediaLayers();
+    }
+
+    function normalizeOverlayMedia(raw) {
+      if (!Array.isArray(raw)) return [];
+      const out = [];
+      const seen = new Set();
+      for (const item of raw) {
+        if (!item || !item.id || !item.file) continue;
+        const id = String(item.id);
+        if (seen.has(id)) continue;
+        seen.add(id);
+        const file = String(item.file).replace(/^.*[\\/]/, "");
+        if (!file.startsWith("user-")) continue;
+        out.push({
+          id,
+          file,
+          name: String(item.name || file),
+          x: Math.round(Number(item.x) || 0),
+          y: Math.round(Number(item.y) || 0),
+          w: Math.max(16, Math.round(Number(item.w) || 120)),
+          h: Math.max(16, Math.round(Number(item.h) || 120)),
+          rot: Math.round(Number(item.rot) || 0) % 360,
+          z: Math.round(Number(item.z) || 0),
+          mask: !!item.mask,
+          opacity: Math.max(0, Math.min(1, Number(item.opacity) != null ? Number(item.opacity) : 1)),
+          overLetters: !!item.overLetters,
+        });
+      }
+      out.sort((a, b) => a.z - b.z || a.id.localeCompare(b.id));
+      return out;
+    }
+
+    function getKeyRectsInBox() {
+      const kbBox = document.querySelector(".kb-box");
+      if (!kbBox) return { w: 1, h: 1, rects: [] };
+      const origin = kbBox.getBoundingClientRect();
+      const w = Math.max(1, Math.round(kb.offsetWidth || origin.width));
+      const h = Math.max(1, Math.round(kb.offsetHeight || origin.height));
+      const rects = [];
+      kb.querySelectorAll(".key").forEach((el) => {
+        const r = el.getBoundingClientRect();
+        const rw = Math.max(1, Math.round(r.width));
+        const rh = Math.max(1, Math.round(r.height));
+        const cs = getComputedStyle(el);
+        const rad = Math.min(10, Math.round(parseFloat(cs.borderRadius) || Math.min(rw, rh) * 0.16));
+        rects.push({
+          x: Math.round(r.left - origin.left),
+          y: Math.round(r.top - origin.top),
+          w: rw,
+          h: rh,
+          rx: rad,
+        });
+      });
+      return { w, h, rects };
+    }
+
+    function rebuildMediaLayers() {
+      const rootBack = document.getElementById("mediaRootBack");
+      const rootFront = document.getElementById("mediaRootFront");
+      if (!rootBack || !rootFront) return;
+      rootBack.innerHTML = "";
+      rootFront.innerHTML = "";
+      document.body.classList.remove("media-under-letters");
+
+      // Images uniquement en mode custom
+      if (!SETTINGS.keyCustom) {
+        SETTINGS.mediaLayers = [];
+        return;
+      }
+
+      const layers = normalizeOverlayMedia(SETTINGS.mediaLayers);
+      SETTINGS.mediaLayers = layers;
+      const underLetters = layers.some((m) => m.mask && !m.overLetters);
+      document.body.classList.toggle("media-under-letters", underLetters);
+      if (!layers.length) return;
+
+      const paint = () => {
+        rootBack.innerHTML = "";
+        rootFront.innerHTML = "";
+        const geo = getKeyRectsInBox();
+        rootBack.style.width = geo.w + "px";
+        rootBack.style.height = geo.h + "px";
+        rootFront.style.width = geo.w + "px";
+        rootFront.style.height = geo.h + "px";
+
+        const plainBack = layers.filter((m) => !m.mask && !m.overLetters);
+        const plainFront = layers.filter((m) => !m.mask && m.overLetters);
+        const maskBack = layers.filter((m) => m.mask && !m.overLetters);
+        const maskFront = layers.filter((m) => m.mask && m.overLetters);
+
+        function appendPlain(root, list) {
+          for (const m of list) {
+            const img = document.createElement("img");
+            img.className = "media-item";
+            img.src = "/assets/" + encodeURIComponent(m.file);
+            img.alt = "";
+            img.style.left = m.x + "px";
+            img.style.top = m.y + "px";
+            img.style.width = m.w + "px";
+            img.style.height = m.h + "px";
+            img.style.transform = "rotate(" + m.rot + "deg)";
+            img.style.opacity = String(m.opacity);
+            img.style.zIndex = String(10 + m.z);
+            root.appendChild(img);
+          }
+        }
+
+        function appendMasked(root, list, maskId) {
+          if (!list.length || !geo.rects.length) return;
+          const NS = "http://www.w3.org/2000/svg";
+          const XLINK = "http://www.w3.org/1999/xlink";
+          const svg = document.createElementNS(NS, "svg");
+          svg.setAttribute("class", "media-svg");
+          svg.setAttribute("width", String(geo.w));
+          svg.setAttribute("height", String(geo.h));
+          svg.style.width = geo.w + "px";
+          svg.style.height = geo.h + "px";
+
+          const defs = document.createElementNS(NS, "defs");
+          const mask = document.createElementNS(NS, "mask");
+          mask.setAttribute("id", maskId);
+          mask.setAttribute("maskUnits", "userSpaceOnUse");
+          mask.setAttribute("x", "0");
+          mask.setAttribute("y", "0");
+          mask.setAttribute("width", String(geo.w));
+          mask.setAttribute("height", String(geo.h));
+
+          const black = document.createElementNS(NS, "rect");
+          black.setAttribute("x", "0");
+          black.setAttribute("y", "0");
+          black.setAttribute("width", String(geo.w));
+          black.setAttribute("height", String(geo.h));
+          black.setAttribute("fill", "#000");
+          mask.appendChild(black);
+
+          for (const r of geo.rects) {
+            const rect = document.createElementNS(NS, "rect");
+            rect.setAttribute("x", String(r.x));
+            rect.setAttribute("y", String(r.y));
+            rect.setAttribute("width", String(r.w));
+            rect.setAttribute("height", String(r.h));
+            rect.setAttribute("rx", String(r.rx));
+            rect.setAttribute("ry", String(r.rx));
+            rect.setAttribute("fill", "#fff");
+            mask.appendChild(rect);
+          }
+          defs.appendChild(mask);
+          svg.appendChild(defs);
+
+          const group = document.createElementNS(NS, "g");
+          group.setAttribute("mask", "url(#" + maskId + ")");
+
+          for (const m of list) {
+            const image = document.createElementNS(NS, "image");
+            const href = "/assets/" + encodeURIComponent(m.file);
+            image.setAttributeNS(XLINK, "href", href);
+            image.setAttribute("href", href);
+            image.setAttribute("x", String(m.x));
+            image.setAttribute("y", String(m.y));
+            image.setAttribute("width", String(m.w));
+            image.setAttribute("height", String(m.h));
+            image.setAttribute("preserveAspectRatio", "none");
+            image.setAttribute("opacity", String(m.opacity));
+            const cx = m.x + m.w / 2;
+            const cy = m.y + m.h / 2;
+            if (m.rot) image.setAttribute("transform", "rotate(" + m.rot + " " + cx + " " + cy + ")");
+            group.appendChild(image);
+          }
+          svg.appendChild(group);
+          root.appendChild(svg);
+        }
+
+        appendPlain(rootBack, plainBack);
+        appendMasked(rootBack, maskBack, "overlayKeyMaskBack");
+        appendPlain(rootFront, plainFront);
+        appendMasked(rootFront, maskFront, "overlayKeyMaskFront");
+      };
+
+      requestAnimationFrame(() => requestAnimationFrame(paint));
     }
 
     function hexToRgb(hex) {
@@ -1342,6 +1723,28 @@
       if (!m) return { r: 229, g: 107, b: 138 };
       const n = parseInt(m[1], 16);
       return { r: (n >> 16) & 255, g: (n >> 8) & 255, b: n & 255 };
+    }
+
+    const sgBanner = document.getElementById("sgBanner");
+    let sgJumpAt = 0;
+    let sgHideTimer = 0;
+    let sgFadeTimer = 0;
+    let sgCombo = 0;
+    let sgSide = 1;
+    let sgJumpCodes = [];
+    let sgCrouchCodes = [];
+
+    function refreshSgCodes() {
+      sgJumpCodes = sgCodesFor(SETTINGS.sgJump);
+      sgCrouchCodes = sgCodesFor(SETTINGS.sgCrouch);
+    }
+
+    function clearSgEffect() {
+      if (SETTINGS.sgEnabled !== false) return;
+      sgJumpAt = 0;
+      sgCombo = 0;
+      if (!sgBanner) return;
+      sgBanner.classList.remove("show", "pop");
     }
 
     function applySettings(raw) {
@@ -1353,9 +1756,38 @@
       }
       if (!["ribbon", "dots", "laser", "comet", "cross", "ring"].includes(next.mouse)) next.mouse = "ribbon";
       if (next.layout !== "qwerty") next.layout = "azerty";
+      next.mouseSens = Math.max(0.05, Math.min(10, Number(next.mouseSens) || 1));
+      next.keyCustom = !!next.keyCustom;
+      if (next.keyCustom) {
+        const known = allKeyDefs(next.layout);
+        const rawLayout = Array.isArray(next.keyLayout) ? next.keyLayout : [];
+        next.keyLayout = rawLayout
+          .filter((p) => p && p.id && known.has(String(p.id)))
+          .map((p) => ({
+            id: String(p.id),
+            x: Math.round(Number(p.x) || 0),
+            y: Math.round(Number(p.y) || 0),
+            w: Math.max(16, Math.round(Number(p.w) || 34)),
+            h: Math.max(16, Math.round(Number(p.h) || 34)),
+          }));
+      } else {
+        next.keyLayout = null;
+        next.mediaLayers = [];
+      }
+      if (next.keyCustom) {
+        next.mediaLayers = normalizeOverlayMedia(next.mediaLayers);
+      }
+      next.sgEnabled = next.sgEnabled !== false;
+      next.sgJump = migrateSgKey(next.sgJump);
+      next.sgCrouch = migrateSgKey(next.sgCrouch);
+      if (!sgCodesFor(next.sgJump).length) next.sgJump = DEFAULT_SETTINGS.sgJump;
+      if (!sgCodesFor(next.sgCrouch).length) next.sgCrouch = DEFAULT_SETTINGS.sgCrouch;
       next.sgFps = Math.max(30, Math.min(360, Number(next.sgFps) || 138));
-      const layoutChanged = next.layout !== SETTINGS.layout;
+      const kbSig = next.layout + "|" + next.keyCustom + "|" + JSON.stringify(next.keyLayout) + "|" + JSON.stringify(next.mediaLayers);
+      const layoutChanged = kbSig !== (SETTINGS._kbSig || "");
       SETTINGS = next;
+      SETTINGS._kbSig = kbSig;
+      refreshSgCodes();
 
       const rgb = hexToRgb(SETTINGS.accent);
       accentRgb = rgb.r + "," + rgb.g + "," + rgb.b;
@@ -1370,8 +1802,10 @@
       document.body.classList.remove("mouse-ribbon", "mouse-dots", "mouse-laser", "mouse-comet", "mouse-cross", "mouse-ring");
       document.body.classList.add("mouse-" + SETTINGS.mouse);
       if (layoutChanged || !keyList.length) rebuildKeyboard();
+      else rebuildMediaLayers();
       syncStickers(SETTINGS.design);
-      updatePadCache();
+      clearSgEffect();
+      if (typeof updatePadCache === "function") updatePadCache();
       bumpAnim();
     }
 
@@ -1385,38 +1819,51 @@
 
     function applyKeycode(code, down) {
       const ids = codeToIds.get(code);
-      if (!ids) return;
-      const key = "k:" + code;
-      if (down) pressed.add(key);
-      else pressed.delete(key);
-      for (const id of ids) {
-        const def = defById[id];
-        if (!def || !elById[id]) continue;
-        const wasOn = elById[id].classList.contains("on");
-        const any = def.codes.some((c) => pressed.has("k:" + c));
-        elById[id].classList.toggle("on", any);
-        if (down && !wasOn && any) onSgPress(id);
+      if (ids) {
+        const key = "k:" + code;
+        if (down) pressed.add(key);
+        else pressed.delete(key);
+        for (const id of ids) {
+          const def = defById[id];
+          if (!def || !elById[id]) continue;
+          const any = def.codes.some((c) => pressed.has("k:" + c));
+          elById[id].classList.toggle("on", any);
+        }
       }
+      if (down) noteSgCode(code);
     }
 
-    const sgBanner = document.getElementById("sgBanner");
-    let sgJumpAt = 0;
-    let sgHideTimer = 0;
-    let sgFadeTimer = 0;
-    let sgCombo = 0;
-    let sgSide = 1;
-
     function placeSgBanner() {
-      const jumpEl = elById[SETTINGS.sgJump] || elById.space;
-      const crouchEl = elById[SETTINGS.sgCrouch] || elById.kC;
-      if (!jumpEl || !crouchEl) return;
-      const c = crouchEl.getBoundingClientRect();
-      const s = jumpEl.getBoundingClientRect();
-      const box = document.querySelector(".kb-box").getBoundingClientRect();
-      const x = (c.left + c.width / 2 + s.left + s.width / 2) / 2 - box.left;
-      const y = (c.top + c.height / 2 + s.top + s.height / 2) / 2 - box.top;
-      sgBanner.style.left = x + "px";
-      sgBanner.style.top = y + "px";
+      const jumpEl = elById[SETTINGS.sgJump]
+        || (SETTINGS.sgJump === "KeyC" ? elById.kC : null)
+        || (SETTINGS.sgJump === "KeyV" ? elById.kV : null)
+        || elById.space;
+      const crouchEl = elById[SETTINGS.sgCrouch]
+        || (SETTINGS.sgCrouch === "KeyC" ? elById.kC : null)
+        || (SETTINGS.sgCrouch === "KeyV" ? elById.kV : null)
+        || elById.kC
+        || elById.space;
+      const box = document.querySelector(".kb-box");
+      if (!box) return;
+      const boxRect = box.getBoundingClientRect();
+      if (jumpEl && crouchEl) {
+        const c = crouchEl.getBoundingClientRect();
+        const s = jumpEl.getBoundingClientRect();
+        const x = (c.left + c.width / 2 + s.left + s.width / 2) / 2 - boxRect.left;
+        const y = (c.top + c.height / 2 + s.top + s.height / 2) / 2 - boxRect.top;
+        sgBanner.style.left = x + "px";
+        sgBanner.style.top = y + "px";
+        return;
+      }
+      const anchor = crouchEl || jumpEl || elById.space;
+      if (anchor) {
+        const r = anchor.getBoundingClientRect();
+        sgBanner.style.left = (r.left + r.width / 2 - boxRect.left) + "px";
+        sgBanner.style.top = (r.top + r.height / 2 - boxRect.top) + "px";
+      } else {
+        sgBanner.style.left = (boxRect.width * 0.55) + "px";
+        sgBanner.style.top = (boxRect.height * 0.72) + "px";
+      }
     }
 
     function flashSgBanner() {
@@ -1441,13 +1888,14 @@
       }, 280);
     }
 
-    function onSgPress(id) {
+    function noteSgCode(code) {
+      if (SETTINGS.sgEnabled === false) return;
       const now = performance.now();
-      if (id === SETTINGS.sgJump) {
+      if (sgJumpCodes.includes(code)) {
         sgJumpAt = now;
         return;
       }
-      if (id !== SETTINGS.sgCrouch || !sgJumpAt) return;
+      if (!sgCrouchCodes.includes(code) || !sgJumpAt) return;
       const dt = now - sgJumpAt;
       sgJumpAt = 0;
       const frame = 1000 / CONFIG.sgFps;
@@ -1536,8 +1984,9 @@
       padCache.maxY = Math.max(8, r.height / 2 - margin);
       const edgeX = (CONFIG.travelCm / 2.54) * CONFIG.mouseDpi;
       const edgeY = edgeX * (CONFIG.padHeightCm / CONFIG.padWidthCm);
-      mouseScaleX = padCache.maxX / Math.max(1, edgeX);
-      mouseScaleY = padCache.maxY / Math.max(1, edgeY);
+      const sens = Math.max(0.05, Math.min(10, Number(SETTINGS.mouseSens) || 1));
+      mouseScaleX = (padCache.maxX / Math.max(1, edgeX)) * sens;
+      mouseScaleY = (padCache.maxY / Math.max(1, edgeY)) * sens;
     }
 
     function padLimits() {
@@ -1896,11 +2345,15 @@
     startWs();
 
     const demoKey = {
-      Digit1: VC.n1, Digit2: VC.n2, Digit3: VC.n3, Digit4: VC.n4,
+      Escape: VC.esc, Backspace: VC.backspace, Enter: VC.enter, CapsLock: VC.caps,
+      Digit0: VC.n0, Digit1: VC.n1, Digit2: VC.n2, Digit3: VC.n3, Digit4: VC.n4,
+      Digit5: VC.n5, Digit6: VC.n6, Digit7: VC.n7, Digit8: VC.n8, Digit9: VC.n9,
       Tab: VC.tab,
       KeyQ: VC.kA, KeyW: VC.kZ, KeyE: VC.kE, KeyR: VC.kR,
-      KeyA: VC.kQ, KeyS: VC.kS, KeyD: VC.kD,
-      KeyC: VC.kC, KeyV: VC.kV,
+      KeyT: VC.kT, KeyY: VC.kY, KeyU: VC.kU, KeyI: VC.kI, KeyO: VC.kO, KeyP: VC.kP,
+      KeyA: VC.kQ, KeyS: VC.kS, KeyD: VC.kD, KeyF: VC.kF,
+      KeyG: VC.kG, KeyH: VC.kH, KeyJ: VC.kJ, KeyK: VC.kK, KeyL: VC.kL,
+      KeyZ: VC.kW, KeyX: VC.kX, KeyC: VC.kC, KeyV: VC.kV, KeyB: VC.kB, KeyN: VC.kN, KeyM: VC.kM,
       ShiftLeft: VC.shiftL, ShiftRight: VC.shiftR,
       ControlLeft: VC.ctrlL, ControlRight: VC.ctrlR,
       AltLeft: VC.altL, AltRight: VC.altR, Space: VC.space,

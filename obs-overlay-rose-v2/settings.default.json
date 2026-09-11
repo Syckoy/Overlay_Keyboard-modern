@@ -3,7 +3,12 @@
   "design": "classic",
   "mouse": "ribbon",
   "layout": "azerty",
+  "mouseSens": 1,
+  "keyCustom": false,
+  "keyLayout": null,
+  "mediaLayers": [],
+  "sgEnabled": true,
   "sgJump": "space",
-  "sgCrouch": "kC",
+  "sgCrouch": "KeyC",
   "sgFps": 138
 }

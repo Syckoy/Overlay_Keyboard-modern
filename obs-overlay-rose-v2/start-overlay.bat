@@ -6,6 +6,10 @@ mode con cols=78 lines=32
 color 0F
 powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0yeshua.ps1"
 
+echo.
+powershell -NoProfile -ExecutionPolicy Bypass -File "%~dp0check-update.ps1"
+echo.
+
 set CSC=%SystemRoot%\Microsoft.NET\Framework64\v4.0.30319\csc.exe
 if not exist "%CSC%" set CSC=%SystemRoot%\Microsoft.NET\Framework\v4.0.30319\csc.exe
 if not exist "%CSC%" (
@@ -13,13 +17,12 @@ if not exist "%CSC%" (
   pause
   exit /b 1
 )
-if not exist "bridge.exe" (
-  "%CSC%" /nologo /t:exe /out:bridge.exe /optimize+ bridge.cs
-  if errorlevel 1 (
-    echo Echec compilation.
-    pause
-    exit /b 1
-  )
+if exist "bridge.exe" del /f /q "bridge.exe" >nul 2>&1
+"%CSC%" /nologo /t:exe /out:bridge.exe /optimize+ bridge.cs
+if errorlevel 1 (
+  echo Echec compilation.
+  pause
+  exit /b 1
 )
 bridge.exe
 pause

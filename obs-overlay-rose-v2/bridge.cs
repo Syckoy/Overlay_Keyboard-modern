@@ -45,6 +45,7 @@ internal static class Program
         PanelPath = Path.Combine(BaseDir, "panel.html");
         SettingsPath = Path.Combine(BaseDir, "settings.json");
         DefaultSettingsPath = Path.Combine(BaseDir, "settings.default.json");
+        try { Directory.CreateDirectory(Path.Combine(BaseDir, "assets")); } catch { }
         if (!File.Exists(HtmlPath))
         {
             Console.WriteLine("overlay.html introuvable a cote de bridge.exe");
@@ -230,6 +231,40 @@ internal static class Program
                 return;
             }
 
+            if (path == "/media/upload" && isPost)
+            {
+                var body = RequestBody(req);
+                string savedName;
+                string err;
+                if (!TrySaveMediaUpload(body, out savedName, out err))
+                {
+                    WriteText(stream, "HTTP/1.1 400 Bad Request", "application/json; charset=utf-8",
+                        "{\"ok\":false,\"error\":\"" + JsonEscape(err) + "\"}");
+                    tcp.Close();
+                    return;
+                }
+                WriteText(stream, "HTTP/1.1 200 OK", "application/json; charset=utf-8",
+                    "{\"ok\":true,\"file\":\"" + JsonEscape(savedName) + "\",\"url\":\"/assets/" + JsonEscape(savedName) + "\"}");
+                tcp.Close();
+                return;
+            }
+
+            if (path == "/media/delete" && isPost)
+            {
+                var body = RequestBody(req);
+                var file = JsonGetString(body, "file");
+                if (!TryDeleteMedia(file))
+                {
+                    WriteText(stream, "HTTP/1.1 400 Bad Request", "application/json; charset=utf-8",
+                        "{\"ok\":false}");
+                    tcp.Close();
+                    return;
+                }
+                WriteText(stream, "HTTP/1.1 200 OK", "application/json; charset=utf-8", "{\"ok\":true}");
+                tcp.Close();
+                return;
+            }
+
             string filePath = null;
             string contentType = "text/html; charset=utf-8";
             if (path == "/" || path == "/overlay" || path == "/overlay.html")
@@ -239,7 +274,7 @@ internal static class Program
             else if (path.StartsWith("/assets/", StringComparison.OrdinalIgnoreCase))
             {
                 var name = Path.GetFileName(path);
-                if (string.IsNullOrEmpty(name) || name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0)
+                if (string.IsNullOrEmpty(name) || name.IndexOfAny(Path.GetInvalidFileNameChars()) >= 0 || name.StartsWith("."))
                 {
                     WriteText(stream, "HTTP/1.1 400 Bad Request", "text/plain; charset=utf-8", "Bad request");
                     tcp.Close();
@@ -291,7 +326,8 @@ internal static class Program
         var cl = Header(headers + "\r\n", "Content-Length");
         int need;
         if (!int.TryParse(cl, out need) || need <= 0) return req;
-        if (need > 200000) return null;
+        // Uploads médias base64 : jusqu'à ~8 Mo ; settings restent petits
+        if (need > 9000000) return null;
         var bodyBytes = Encoding.UTF8.GetBytes(body);
         while (bodyBytes.Length < need)
         {
@@ -309,6 +345,110 @@ internal static class Program
             bodyBytes = trimmed;
         }
         return headers + "\r\n\r\n" + Encoding.UTF8.GetString(bodyBytes);
+    }
+
+    static string JsonEscape(string s)
+    {
+        if (s == null) return "";
+        return s.Replace("\\", "\\\\").Replace("\"", "\\\"");
+    }
+
+    static string JsonGetString(string json, string key)
+    {
+        if (string.IsNullOrEmpty(json) || string.IsNullOrEmpty(key)) return null;
+        var needle = "\"" + key + "\"";
+        var i = json.IndexOf(needle, StringComparison.OrdinalIgnoreCase);
+        if (i < 0) return null;
+        i = json.IndexOf(':', i + needle.Length);
+        if (i < 0) return null;
+        i++;
+        while (i < json.Length && char.IsWhiteSpace(json[i])) i++;
+        if (i >= json.Length || json[i] != '"') return null;
+        i++;
+        var sb = new StringBuilder();
+        while (i < json.Length)
+        {
+            var c = json[i++];
+            if (c == '\\' && i < json.Length)
+            {
+                var n = json[i++];
+                if (n == 'n') sb.Append('\n');
+                else if (n == 'r') sb.Append('\r');
+                else if (n == 't') sb.Append('\t');
+                else sb.Append(n);
+                continue;
+            }
+            if (c == '"') break;
+            sb.Append(c);
+        }
+        return sb.ToString();
+    }
+
+    static bool TrySaveMediaUpload(string json, out string savedName, out string err)
+    {
+        savedName = null;
+        err = "invalid";
+        var name = JsonGetString(json, "name");
+        var data = JsonGetString(json, "data");
+        if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(data))
+        {
+            err = "name/data manquants";
+            return false;
+        }
+        name = Path.GetFileName(name);
+        var ext = Path.GetExtension(name).ToLowerInvariant();
+        if (ext != ".png" && ext != ".jpg" && ext != ".jpeg" && ext != ".gif" && ext != ".webp")
+        {
+            err = "format non supporté";
+            return false;
+        }
+        // data:image/...;base64,XXXX  ou base64 brut
+        var comma = data.IndexOf(',');
+        if (data.StartsWith("data:", StringComparison.OrdinalIgnoreCase) && comma > 0)
+            data = data.Substring(comma + 1);
+        byte[] bytes;
+        try { bytes = Convert.FromBase64String(data); }
+        catch
+        {
+            err = "base64 invalide";
+            return false;
+        }
+        if (bytes.Length < 8 || bytes.Length > 6500000)
+        {
+            err = "fichier trop petit/grand";
+            return false;
+        }
+        var safe = "user-" + DateTime.UtcNow.ToString("yyyyMMddHHmmssfff") + "-" +
+                   Guid.NewGuid().ToString("N").Substring(0, 8) + ext;
+        var dir = Path.Combine(BaseDir, "assets");
+        try { Directory.CreateDirectory(dir); } catch { }
+        var path = Path.Combine(dir, safe);
+        try
+        {
+            File.WriteAllBytes(path, bytes);
+        }
+        catch
+        {
+            err = "écriture impossible";
+            return false;
+        }
+        savedName = safe;
+        err = null;
+        return true;
+    }
+
+    static bool TryDeleteMedia(string file)
+    {
+        if (string.IsNullOrEmpty(file)) return false;
+        file = Path.GetFileName(file);
+        if (!file.StartsWith("user-", StringComparison.OrdinalIgnoreCase)) return false;
+        var path = Path.Combine(BaseDir, "assets", file);
+        try
+        {
+            if (File.Exists(path)) File.Delete(path);
+            return true;
+        }
+        catch { return false; }
     }
 
     static string Header(string req, string name)
