@@ -14,10 +14,10 @@
       --text: rgba(255, 255, 255, 0.94);
       --stroke: rgba(255, 255, 255, 0.28);
       --stroke-w: 1px;
-      --gap: 3px;
-      --u: 50px;
-      --ku: 34px;
-      --kgap: 2px;
+      --gap: 4px;
+      --u: 63px;
+      --ku: 43px;
+      --kgap: 3px;
       --mouse: calc(var(--u) * 4 + var(--gap) * 3);
       --radius: 10px;
       --key-radius: 7px;
@@ -676,7 +676,7 @@
     body.design-apex #m2 {
       clip-path: polygon(0 0, 100% 0, 100% 100%, 18% 100%, 0 70%);
     }
-    body.design-apex .wheel-wrap { flex: 0 0 34px; }
+    body.design-apex .wheel-wrap { flex: 0 0 43px; }
     body.design-apex .wheel {
       border-radius: 0;
       clip-path: polygon(20% 0, 80% 0, 100% 50%, 80% 100%, 20% 100%, 0 50%);
@@ -962,19 +962,19 @@
     .key {
       height: var(--ku);
       width: var(--ku);
-      font-size: 13px;
+      font-size: 15px;
       border-radius: var(--key-radius);
     }
 
     .key.tab { width: calc(var(--ku) * 1.18); }
-    .key.shift { width: calc(var(--ku) * 1.38); font-size: 9px; letter-spacing: 0.05em; }
-    .key.mod { width: calc(var(--ku) * 1.14); font-size: 9px; letter-spacing: 0.05em; }
-    .key.space { width: calc(var(--ku) * 3.1 + var(--kgap) * 2); font-size: 9px; letter-spacing: 0.08em; }
-    .key.sym { text-transform: none; font-size: 14px; }
+    .key.shift { width: calc(var(--ku) * 1.38); font-size: 11px; letter-spacing: 0.05em; }
+    .key.mod { width: calc(var(--ku) * 1.14); font-size: 11px; letter-spacing: 0.05em; }
+    .key.space { width: calc(var(--ku) * 3.1 + var(--kgap) * 2); font-size: 11px; letter-spacing: 0.08em; }
+    .key.sym { text-transform: none; font-size: 16px; }
 
     .key svg {
-      width: 15px;
-      height: 15px;
+      width: 18px;
+      height: 18px;
       fill: none;
       stroke: currentColor;
       stroke-width: 2.4;
@@ -1116,56 +1116,116 @@
       border: var(--stroke-w) solid var(--stroke);
     }
 
-    /* Placement libre souris */
+    /* Placement libre souris — formes dynamiques */
     .mouse.custom {
       position: relative;
       display: block;
       overflow: visible;
     }
 
-    .mouse.custom .clicks {
-      display: contents;
+    .mouse.custom .clicks,
+    .mouse.custom > .pad.default-pad {
+      display: none !important;
     }
 
-    .mouse.custom #m1,
-    .mouse.custom #m2,
-    .mouse.custom #wheelWrap,
-    .mouse.custom .pad {
+    .mouse.custom .mouse-part-custom {
       position: absolute !important;
       flex: none !important;
       margin: 0 !important;
       min-width: 0 !important;
       min-height: 0 !important;
-      width: auto;
-      height: auto;
       box-sizing: border-box;
-    }
-
-    .mouse.custom #m1,
-    .mouse.custom #m2 {
-      display: flex !important;
+      display: flex;
       align-items: center;
       justify-content: center;
+      overflow: hidden;
+      z-index: 2;
+      background: var(--key);
+      border: var(--stroke-w) solid var(--stroke);
+      box-shadow: var(--glow);
+      color: var(--text);
+      font-weight: 600;
+      font-size: 14px;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+      transition: background 60ms linear, color 60ms linear, box-shadow 60ms linear;
     }
 
-    .mouse.custom #wheelWrap {
-      display: block !important;
-      overflow: visible;
+    /* Même look au repos, quelle que soit la fonction (molette ≠ bloc ▲▼ des thèmes prêts) */
+    .mouse.custom .mouse-part-custom.on {
+      background: var(--accent);
+      color: #fff;
+      border-color: var(--stroke);
+      box-shadow: 0 0 12px rgba(var(--accent-rgb), 0.45);
     }
 
-    .mouse.custom #wheelWrap .wheel {
-      width: 100%;
-      height: 100%;
+    .mouse.custom.media-under-labels .mouse-part-custom {
+      background: rgba(24, 26, 32, 0.28);
     }
 
-    .mouse.custom .pad {
-      flex: none !important;
+    .mouse.custom.media-under-labels .mouse-part-custom.on {
+      background: color-mix(in srgb, var(--accent) 55%, transparent);
+      color: #fff;
+    }
+
+    .mouse.custom .mouse-part-custom.action-pad {
+      z-index: 1;
       overflow: hidden;
     }
 
-    .mouse.custom .pad #trail {
+    .mouse.custom .mouse-media-layer {
+      position: absolute;
+      pointer-events: none;
+      z-index: 0;
+      box-sizing: border-box;
+      overflow: hidden;
+      transform-origin: center center;
+    }
+
+    .mouse.custom .mouse-media-layer.front {
+      z-index: 4;
+    }
+
+    .mouse.custom .mouse-media-layer img {
       width: 100%;
       height: 100%;
+      object-fit: fill;
+      display: block;
+      pointer-events: none;
+    }
+
+    .mouse.custom .mouse-media-svg {
+      position: absolute;
+      left: 0;
+      top: 0;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .mouse.custom .mouse-media-svg.back { z-index: 0; }
+    .mouse.custom .mouse-media-svg.front { z-index: 4; }
+
+    .mouse.custom .mouse-part-custom.action-pad #trail {
+      width: 100%;
+      height: 100%;
+    }
+
+    .mouse.custom .mouse-part-custom.action-wheel,
+    .mouse.custom .mouse-part-custom.action-wheelUp,
+    .mouse.custom .mouse-part-custom.action-wheelDown {
+      padding: 0;
+    }
+
+    .mouse.custom .mouse-part-custom.shape-circle {
+      border-radius: 50% !important;
+    }
+
+    .mouse.custom .mouse-part-custom.shape-triangle {
+      clip-path: polygon(50% 0%, 0% 100%, 100% 100%);
+    }
+
+    .mouse.custom .mouse-part-custom.shape-star {
+      clip-path: polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
     }
 
     #trail { display: block; width: 100%; height: 100%; }
@@ -1265,7 +1325,7 @@
         </div>
         <div class="mbtn" id="m2">M2</div>
       </div>
-      <div class="pad">
+      <div class="pad default-pad">
         <canvas id="trail"></canvas>
       </div>
     </div>
@@ -1286,6 +1346,7 @@
       mediaLayers: [],
       mouseCustom: false,
       mouseLayout: null,
+      mouseMediaLayers: [],
       sgEnabled: true,
       sgJump: "space",
       sgCrouch: "KeyC",
@@ -1833,10 +1894,53 @@
       sgBanner.classList.remove("show", "pop");
     }
 
-    const MOUSE_PART_IDS = ["m1", "m2", "wheel", "pad"];
-    const MOUSE_U = 50;
-    const MOUSE_GAP = 3;
-    const MOUSE_BOX = MOUSE_U * 4 + MOUSE_GAP * 3; // 209 — = --mouse CSS
+    const MOUSE_ACTIONS = ["none", "m1", "m2", "wheel", "wheelUp", "wheelDown", "pad"];
+    const MOUSE_U = 63;
+    const MOUSE_GAP = 4;
+    const MOUSE_BOX = MOUSE_U * 4 + MOUSE_GAP * 3; // = --mouse CSS
+
+    function newMousePartId() {
+      return "mp_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 7);
+    }
+
+    function normalizeMouseAction(raw, fallbackId) {
+      const a = String(raw || "");
+      if (MOUSE_ACTIONS.includes(a)) return a;
+      const id = String(fallbackId || "");
+      if (MOUSE_ACTIONS.includes(id)) return id;
+      return "none";
+    }
+
+    function normalizeMouseShape(raw) {
+      const s = String(raw || "rect");
+      return ["rect", "square", "circle", "triangle", "star"].includes(s) ? s : "rect";
+    }
+
+    function defaultMouseRadius(action) {
+      return action === "pad" ? 18 : 13;
+    }
+
+    function minMouseSize(action) {
+      const a = normalizeMouseAction(action, action);
+      if (a === "pad") return { w: 100, h: 100 };
+      if (a === "wheel") return { w: 45, h: 45 };
+      if (a === "wheelUp" || a === "wheelDown") return { w: 45, h: 35 };
+      return { w: 50, h: 45 };
+    }
+
+    function shortMouseLabel(action) {
+      // Designs prêts uniquement (DOM #m1 / #m2 / ▲▼)
+      const a = normalizeMouseAction(action, action);
+      if (a === "m1") return "M1";
+      if (a === "m2") return "M2";
+      if (a === "wheelUp") return "▲";
+      if (a === "wheelDown") return "▼";
+      return "";
+    }
+
+    function customMouseLabel(part) {
+      return String(part && part.label != null ? part.label : "").trim().slice(0, 24);
+    }
 
     function buildDefaultMouseLayout() {
       const box = MOUSE_BOX;
@@ -1845,71 +1949,75 @@
       const btnW = Math.floor((box - gap * 2) / 3);
       const wheelW = box - gap * 2 - btnW * 2;
       return [
-        { id: "m1", x: 0, y: 0, w: btnW, h: u, r: 10 },
-        { id: "wheel", x: btnW + gap, y: 0, w: wheelW, h: u, r: 10 },
-        { id: "m2", x: btnW + gap + wheelW + gap, y: 0, w: btnW, h: u, r: 10 },
-        { id: "pad", x: 0, y: u + gap, w: box, h: box - u - gap, r: 14 },
+        { id: "mp_m1", action: "m1", shape: "rect", label: "", x: 0, y: 0, w: btnW, h: u, r: 13, rot: 0 },
+        { id: "mp_wheel", action: "wheel", shape: "rect", label: "", x: btnW + gap, y: 0, w: wheelW, h: u, r: 13, rot: 0 },
+        { id: "mp_m2", action: "m2", shape: "rect", label: "", x: btnW + gap + wheelW + gap, y: 0, w: btnW, h: u, r: 13, rot: 0 },
+        { id: "mp_pad", action: "pad", shape: "rect", label: "", x: 0, y: u + gap, w: box, h: box - u - gap, r: 18, rot: 0 },
       ];
     }
 
     function normalizeMouseLayout(raw) {
-      const byId = Object.create(null);
-      if (Array.isArray(raw)) {
-        for (const p of raw) {
-          if (!p || !MOUSE_PART_IDS.includes(String(p.id))) continue;
-          const id = String(p.id);
-          const minW = id === "pad" ? 80 : id === "wheel" ? 36 : 40;
-          const minH = id === "pad" ? 80 : 36;
-          const w = Math.max(minW, Math.round(Number(p.w) || 34));
-          const h = Math.max(minH, Math.round(Number(p.h) || 34));
-          const fallback = id === "pad" ? 14 : 10;
-          const r = Math.max(0, Math.min(Math.floor(Math.min(w, h) / 2), Math.round(Number(p.r) != null ? Number(p.r) : fallback)));
-          byId[id] = {
-            id,
-            x: Math.round(Number(p.x) || 0),
-            y: Math.round(Number(p.y) || 0),
-            w,
-            h,
-            r,
-          };
+      if (!Array.isArray(raw) || !raw.length) return buildDefaultMouseLayout();
+      const out = [];
+      for (const p of raw) {
+        if (!p) continue;
+        const action = normalizeMouseAction(p.action, p.id);
+        let id = String(p.id || "");
+        if (!id) id = newMousePartId();
+        const mins = minMouseSize(action);
+        let w = Math.max(mins.w, Math.round(Number(p.w) || 60));
+        let h = Math.max(mins.h, Math.round(Number(p.h) || 50));
+        let shape = normalizeMouseShape(p.shape);
+        if (shape === "circle") {
+          const side = Math.max(mins.w, Math.round((w + h) / 2));
+          w = side;
+          h = side;
+        } else if (shape === "square" && w !== h) {
+          shape = "rect";
         }
+        const rRaw = Number(p.r);
+        const rFallback = defaultMouseRadius(action);
+        const r = Math.max(0, Math.min(Math.floor(Math.min(w, h) / 2), Math.round(Number.isFinite(rRaw) ? rRaw : rFallback)));
+        out.push({
+          id,
+          action,
+          shape,
+          label: customMouseLabel(p),
+          x: Math.round(Number(p.x) || 0),
+          y: Math.round(Number(p.y) || 0),
+          w,
+          h,
+          r,
+          rot: Math.round(Number(p.rot) || 0),
+        });
       }
-      const base = buildDefaultMouseLayout();
-      return base.map((d) => byId[d.id] || d);
+      return out.length ? out : buildDefaultMouseLayout();
     }
 
-    function mousePartEl(id) {
-      if (id === "m1") return document.getElementById("m1");
-      if (id === "m2") return document.getElementById("m2");
-      if (id === "wheel") return document.getElementById("wheelWrap");
-      if (id === "pad") return document.querySelector(".mouse .pad");
-      return null;
-    }
-
-    function clearMousePartStyles(el) {
-      if (!el) return;
-      el.style.left = "";
-      el.style.top = "";
-      el.style.width = "";
-      el.style.height = "";
-      el.style.borderRadius = "";
-      const wheel = el.querySelector && el.querySelector(".wheel");
-      if (wheel) {
-        wheel.style.borderRadius = "";
-        el.querySelectorAll(".wheel-up, .wheel-down").forEach((n) => { n.style.borderRadius = ""; });
+    function restoreDefaultMouseDom() {
+      const root = document.querySelector(".mouse");
+      if (!root) return;
+      const defPad = root.querySelector(".pad.default-pad");
+      const canvas = document.getElementById("trail");
+      if (canvas && defPad && canvas.parentElement !== defPad) {
+        try { defPad.appendChild(canvas); } catch (_) {}
       }
-    }
-
-    function applyMousePartRadius(el, id, r) {
-      if (!el) return;
-      el.style.setProperty("border-radius", r + "px", "important");
-      if (id !== "wheel") return;
-      const wheel = el.querySelector(".wheel");
-      if (wheel) wheel.style.setProperty("border-radius", r + "px", "important");
-      const up = el.querySelector(".wheel-up");
-      const down = el.querySelector(".wheel-down");
-      if (up) up.style.setProperty("border-radius", r + "px " + r + "px 0 0", "important");
-      if (down) down.style.setProperty("border-radius", "0 0 " + r + "px " + r + "px", "important");
+      root.querySelectorAll(".mouse-part-custom").forEach((n) => n.remove());
+      root.querySelectorAll(".mouse-media-layer, .mouse-media-svg").forEach((n) => n.remove());
+      root.classList.remove("media-under-labels");
+      const clicks = root.querySelector(".clicks");
+      if (clicks) clicks.style.display = "";
+      if (defPad) {
+        defPad.style.display = "";
+        defPad.style.left = "";
+        defPad.style.top = "";
+        defPad.style.width = "";
+        defPad.style.height = "";
+        defPad.style.borderRadius = "";
+        defPad.style.transform = "";
+      }
+      root.style.width = "";
+      root.style.height = "";
     }
 
     function applyMouseLayout() {
@@ -1917,31 +2025,233 @@
       if (!root) return;
       const custom = !!SETTINGS.mouseCustom;
       root.classList.toggle("custom", custom);
+
+      const clicks = root.querySelector(".clicks");
+      const defPad = root.querySelector(".pad.default-pad");
+      const canvas = document.getElementById("trail");
+
+      // Sauve le canvas AVANT de supprimer les parts (sinon #trail disparaît du DOM)
+      if (canvas && defPad && canvas.parentElement !== defPad) {
+        try { defPad.appendChild(canvas); } catch (_) {}
+      }
+
+      root.querySelectorAll(".mouse-part-custom").forEach((n) => n.remove());
+      root.querySelectorAll(".mouse-media-layer, .mouse-media-svg").forEach((n) => n.remove());
+      root.classList.remove("media-under-labels");
+
       if (!custom) {
+        if (clicks) clicks.style.display = "";
+        if (defPad) {
+          defPad.style.display = "";
+          defPad.style.left = "";
+          defPad.style.top = "";
+          defPad.style.width = "";
+          defPad.style.height = "";
+          defPad.style.borderRadius = "";
+          defPad.style.transform = "";
+        }
         root.style.width = "";
         root.style.height = "";
-        for (const id of MOUSE_PART_IDS) clearMousePartStyles(mousePartEl(id));
         if (typeof resizeCanvas === "function") requestAnimationFrame(resizeCanvas);
+        if (typeof watchTrailHost === "function") watchTrailHost();
         return;
       }
+
       const layout = normalizeMouseLayout(SETTINGS.mouseLayout);
       SETTINGS.mouseLayout = layout;
-      let maxR = 0;
-      let maxB = 0;
+      const mediaLayers = normalizeOverlayMedia(SETTINGS.mouseMediaLayers);
+      SETTINGS.mouseMediaLayers = mediaLayers;
+
+      if (clicks) clicks.style.display = "none";
+      if (defPad) defPad.style.display = "none";
+
+      // Taille = formes seulement (les images ne font pas grossir le pad / ne poussent pas le clavier)
+      let maxR = 40;
+      let maxB = 40;
       for (const p of layout) {
-        const el = mousePartEl(p.id);
-        if (!el) continue;
+        maxR = Math.max(maxR, p.x + p.w);
+        maxB = Math.max(maxB, p.y + p.h);
+      }
+      const artW = Math.max(40, maxR);
+      const artH = Math.max(40, maxB);
+      const slack = 36;
+      for (const m of mediaLayers) {
+        m.x = Math.round(Math.min(Math.max(m.x, -slack), artW - m.w + slack));
+        m.y = Math.round(Math.min(Math.max(m.y, -slack), artH - m.h + slack));
+      }
+
+      const plainBack = mediaLayers.filter((m) => !m.mask && !m.overLetters);
+      const plainFront = mediaLayers.filter((m) => !m.mask && m.overLetters);
+      const maskBack = mediaLayers.filter((m) => m.mask && !m.overLetters);
+      const maskFront = mediaLayers.filter((m) => m.mask && m.overLetters);
+      root.classList.toggle("media-under-labels", maskBack.length > 0);
+
+      function appendPlainMouseMedia(list, front) {
+        for (const m of list) {
+          const el = document.createElement("div");
+          el.className = "mouse-media-layer" + (front ? " front" : "");
+          el.dataset.mediaId = m.id;
+          el.style.left = m.x + "px";
+          el.style.top = m.y + "px";
+          el.style.width = m.w + "px";
+          el.style.height = m.h + "px";
+          el.style.opacity = String(m.opacity != null ? m.opacity : 1);
+          if (m.rot) el.style.transform = "rotate(" + m.rot + "deg)";
+          const img = document.createElement("img");
+          img.src = "/assets/" + encodeURIComponent(m.file);
+          img.alt = "";
+          el.appendChild(img);
+          root.appendChild(el);
+        }
+      }
+
+      function appendMouseMaskHole(mask, p) {
+        const NS = "http://www.w3.org/2000/svg";
+        const shape = p.shape || "rect";
+        const cx = p.x + p.w / 2;
+        const cy = p.y + p.h / 2;
+        const rot = Math.round(Number(p.rot) || 0);
+        let node;
+        if (shape === "circle") {
+          node = document.createElementNS(NS, "ellipse");
+          node.setAttribute("cx", String(cx));
+          node.setAttribute("cy", String(cy));
+          node.setAttribute("rx", String(p.w / 2));
+          node.setAttribute("ry", String(p.h / 2));
+        } else if (shape === "triangle") {
+          node = document.createElementNS(NS, "polygon");
+          node.setAttribute(
+            "points",
+            (p.x + p.w * 0.5) + "," + (p.y + p.h * 0.04) + " "
+            + (p.x + p.w * 0.04) + "," + (p.y + p.h * 0.96) + " "
+            + (p.x + p.w * 0.96) + "," + (p.y + p.h * 0.96)
+          );
+        } else if (shape === "star") {
+          node = document.createElementNS(NS, "polygon");
+          const pts = [
+            [50, 2], [61, 35], [98, 35], [68, 57], [79, 91],
+            [50, 70], [21, 91], [32, 57], [2, 35], [39, 35],
+          ].map(([px, py]) => (p.x + p.w * px / 100) + "," + (p.y + p.h * py / 100));
+          node.setAttribute("points", pts.join(" "));
+        } else {
+          node = document.createElementNS(NS, "rect");
+          node.setAttribute("x", String(p.x));
+          node.setAttribute("y", String(p.y));
+          node.setAttribute("width", String(p.w));
+          node.setAttribute("height", String(p.h));
+          const rx = Math.max(0, Math.round(Number(p.r) || 0));
+          node.setAttribute("rx", String(rx));
+          node.setAttribute("ry", String(rx));
+        }
+        node.setAttribute("fill", "#fff");
+        if (rot) node.setAttribute("transform", "rotate(" + rot + " " + cx + " " + cy + ")");
+        mask.appendChild(node);
+      }
+
+      function appendMaskedMouseMedia(list, front, maskId) {
+        if (!list.length || !layout.length) return;
+        const NS = "http://www.w3.org/2000/svg";
+        const XLINK = "http://www.w3.org/1999/xlink";
+        const svg = document.createElementNS(NS, "svg");
+        svg.setAttribute("class", "mouse-media-svg " + (front ? "front" : "back"));
+        svg.setAttribute("width", String(artW));
+        svg.setAttribute("height", String(artH));
+        svg.style.width = artW + "px";
+        svg.style.height = artH + "px";
+        const defs = document.createElementNS(NS, "defs");
+        const mask = document.createElementNS(NS, "mask");
+        mask.setAttribute("id", maskId);
+        mask.setAttribute("maskUnits", "userSpaceOnUse");
+        mask.setAttribute("x", "0");
+        mask.setAttribute("y", "0");
+        mask.setAttribute("width", String(artW));
+        mask.setAttribute("height", String(artH));
+        const black = document.createElementNS(NS, "rect");
+        black.setAttribute("width", String(artW));
+        black.setAttribute("height", String(artH));
+        black.setAttribute("fill", "#000");
+        mask.appendChild(black);
+        for (const p of layout) appendMouseMaskHole(mask, p);
+        defs.appendChild(mask);
+        svg.appendChild(defs);
+        const group = document.createElementNS(NS, "g");
+        group.setAttribute("mask", "url(#" + maskId + ")");
+        for (const m of list) {
+          const image = document.createElementNS(NS, "image");
+          const href = "/assets/" + encodeURIComponent(m.file);
+          image.setAttributeNS(XLINK, "href", href);
+          image.setAttribute("href", href);
+          image.setAttribute("x", String(m.x));
+          image.setAttribute("y", String(m.y));
+          image.setAttribute("width", String(m.w));
+          image.setAttribute("height", String(m.h));
+          image.setAttribute("preserveAspectRatio", "none");
+          image.setAttribute("opacity", String(m.opacity != null ? m.opacity : 1));
+          const cx = m.x + m.w / 2;
+          const cy = m.y + m.h / 2;
+          if (m.rot) image.setAttribute("transform", "rotate(" + m.rot + " " + cx + " " + cy + ")");
+          group.appendChild(image);
+        }
+        svg.appendChild(group);
+        root.appendChild(svg);
+      }
+
+      appendPlainMouseMedia(plainBack, false);
+      appendMaskedMouseMedia(maskBack, false, "overlayMouseMaskBack");
+
+      let trailHost = null;
+      const sorted = layout.slice().sort((a, b) => (a.action === "pad" ? 0 : 1) - (b.action === "pad" ? 0 : 1));
+
+      for (const p of sorted) {
+        const el = document.createElement("div");
+        el.className = "mouse-part-custom action-" + p.action;
+        if (p.action === "m1" || p.action === "m2") el.classList.add("mbtn");
+        if (p.action === "pad") el.classList.add("pad");
+        if (p.shape && p.shape !== "rect") el.classList.add("shape-" + p.shape);
+        el.dataset.action = p.action;
+        el.dataset.partId = p.id;
         el.style.left = p.x + "px";
         el.style.top = p.y + "px";
         el.style.width = p.w + "px";
         el.style.height = p.h + "px";
-        applyMousePartRadius(el, p.id, p.r);
-        maxR = Math.max(maxR, p.x + p.w);
-        maxB = Math.max(maxB, p.y + p.h);
+        if (p.shape === "circle") el.style.borderRadius = "50%";
+        else el.style.borderRadius = p.r + "px";
+        if (p.rot) el.style.transform = "rotate(" + p.rot + "deg)";
+
+        const label = customMouseLabel(p);
+        if (label) el.textContent = label;
+
+        root.appendChild(el);
+        if (p.action === "pad" && !trailHost) trailHost = el;
       }
-      root.style.width = Math.max(MOUSE_BOX, maxR) + "px";
-      root.style.height = Math.max(MOUSE_BOX, maxB) + "px";
+
+      appendMaskedMouseMedia(maskFront, true, "overlayMouseMaskFront");
+      appendPlainMouseMedia(plainFront, true);
+
+      const trail = document.getElementById("trail");
+      if (trailHost && trail) {
+        trailHost.appendChild(trail);
+      } else if (defPad && trail) {
+        defPad.appendChild(trail);
+      }
+
+      root.style.width = artW + "px";
+      root.style.height = artH + "px";
       if (typeof resizeCanvas === "function") requestAnimationFrame(resizeCanvas);
+      if (typeof watchTrailHost === "function") watchTrailHost();
+    }
+
+    function mouseActionNodes(action) {
+      if (SETTINGS.mouseCustom) {
+        return Array.from(document.querySelectorAll('.mouse-part-custom[data-action="' + action + '"]'));
+      }
+      if (action === "m1") return [document.getElementById("m1")].filter(Boolean);
+      if (action === "m2") return [document.getElementById("m2")].filter(Boolean);
+      if (action === "wheelUp") return [document.getElementById("wup")].filter(Boolean);
+      if (action === "wheelDown") return [document.getElementById("wdn")].filter(Boolean);
+      if (action === "wheel") return [document.getElementById("wheelWrap")].filter(Boolean);
+      if (action === "pad") return Array.from(document.querySelectorAll(".mouse .pad.default-pad"));
+      return [];
     }
 
     function applySettings(raw) {
@@ -1954,37 +2264,47 @@
       if (!["ribbon", "dots", "laser", "comet", "cross", "ring"].includes(next.mouse)) next.mouse = "ribbon";
       if (next.layout !== "qwerty") next.layout = "azerty";
       next.mouseSens = Math.max(0.05, Math.min(10, Number(next.mouseSens) || 1));
-      next.keyCustom = !!next.keyCustom;
-      if (next.keyCustom) {
-        const known = allKeyDefs(next.layout);
-        const rawLayout = Array.isArray(next.keyLayout) ? next.keyLayout : [];
-        next.keyLayout = rawLayout
-          .filter((p) => p && p.id && known.has(String(p.id)))
-          .map((p) => {
-            const w = Math.max(16, Math.round(Number(p.w) || 34));
-            const h = Math.max(16, Math.round(Number(p.h) || 34));
-            const r = Math.max(0, Math.min(Math.floor(Math.min(w, h) / 2), Math.round(Number(p.r) != null ? Number(p.r) : 8)));
-            return {
-              id: String(p.id),
-              x: Math.round(Number(p.x) || 0),
-              y: Math.round(Number(p.y) || 0),
-              w,
-              h,
-              r,
-            };
-          });
-      } else {
+      // Overlays custom uniquement si design === custom
+      if (next.design !== "custom") {
+        next.keyCustom = false;
         next.keyLayout = null;
         next.mediaLayers = [];
-      }
-      if (next.keyCustom) {
-        next.mediaLayers = normalizeOverlayMedia(next.mediaLayers);
-      }
-      next.mouseCustom = !!next.mouseCustom;
-      if (next.mouseCustom) {
-        next.mouseLayout = normalizeMouseLayout(next.mouseLayout);
-      } else {
+        next.mouseCustom = false;
         next.mouseLayout = null;
+        next.mouseMediaLayers = [];
+      } else {
+        next.keyCustom = !!next.keyCustom;
+        if (next.keyCustom) {
+          const known = allKeyDefs(next.layout);
+          const rawLayout = Array.isArray(next.keyLayout) ? next.keyLayout : [];
+          next.keyLayout = rawLayout
+            .filter((p) => p && p.id && known.has(String(p.id)))
+            .map((p) => {
+              const w = Math.max(16, Math.round(Number(p.w) || 43));
+              const h = Math.max(16, Math.round(Number(p.h) || 43));
+              const r = Math.max(0, Math.min(Math.floor(Math.min(w, h) / 2), Math.round(Number(p.r) != null ? Number(p.r) : 10)));
+              return {
+                id: String(p.id),
+                x: Math.round(Number(p.x) || 0),
+                y: Math.round(Number(p.y) || 0),
+                w,
+                h,
+                r,
+              };
+            });
+          next.mediaLayers = normalizeOverlayMedia(next.mediaLayers);
+        } else {
+          next.keyLayout = null;
+          next.mediaLayers = [];
+        }
+        next.mouseCustom = !!next.mouseCustom;
+        if (next.mouseCustom) {
+          next.mouseLayout = normalizeMouseLayout(next.mouseLayout);
+          next.mouseMediaLayers = normalizeOverlayMedia(next.mouseMediaLayers);
+        } else {
+          next.mouseLayout = null;
+          next.mouseMediaLayers = [];
+        }
       }
       delete next.contour;
       delete next.contourWidth;
@@ -1996,7 +2316,7 @@
       if (!sgCodesFor(next.sgCrouch).length) next.sgCrouch = DEFAULT_SETTINGS.sgCrouch;
       next.sgFps = Math.max(30, Math.min(360, Number(next.sgFps) || 138));
       const kbSig = next.layout + "|" + next.keyCustom + "|" + JSON.stringify(next.keyLayout) + "|" + JSON.stringify(next.mediaLayers);
-      const mouseSig = String(next.mouseCustom) + "|" + JSON.stringify(next.mouseLayout);
+      const mouseSig = String(next.mouseCustom) + "|" + JSON.stringify(next.mouseLayout) + "|" + JSON.stringify(next.mouseMediaLayers);
       const layoutChanged = kbSig !== (SETTINGS._kbSig || "");
       SETTINGS = next;
       SETTINGS._kbSig = kbSig;
@@ -2137,8 +2457,13 @@
     function setMouseButtons(mask) {
       mouseMask = mask;
       lmbDown = !!(mask & (1 << 8));
-      m1.classList.toggle("on", lmbDown);
-      m2.classList.toggle("on", !!(mask & (1 << 9)));
+      const lmb = lmbDown;
+      const rmb = !!(mask & (1 << 9));
+      mouseActionNodes("m1").forEach((el) => el.classList.toggle("on", lmb));
+      mouseActionNodes("m2").forEach((el) => el.classList.toggle("on", rmb));
+      // fallback défaut si nodes vides (transition custom)
+      if (m1 && !SETTINGS.mouseCustom) m1.classList.toggle("on", lmb);
+      if (m2 && !SETTINGS.mouseCustom) m2.classList.toggle("on", rmb);
     }
 
     function noteWheel(up) {
@@ -2148,28 +2473,38 @@
       wheels.push(now);
       while (wheels.length && now - wheels[0] > CONFIG.cpsWindowMs) wheels.shift();
       const n = wheels.length;
-      const el = up ? cpsUp : cpsDown;
-      const other = up ? cpsDown : cpsUp;
-      other.classList.remove("show", "pop");
-      el.textContent = n + "x";
-      el.classList.add("show");
-      el.classList.remove("pop");
-      void el.offsetWidth;
-      el.classList.add("pop");
-      clearTimeout(wheelCountTimer);
-      wheelCountTimer = setTimeout(() => {
-        wheels.length = 0;
-        lastWheelUp = null;
-        cpsUp.classList.remove("show", "pop");
-        cpsDown.classList.remove("show", "pop");
-      }, CONFIG.cpsWindowMs);
+      if (cpsUp && cpsDown && !SETTINGS.mouseCustom) {
+        const el = up ? cpsUp : cpsDown;
+        const other = up ? cpsDown : cpsUp;
+        other.classList.remove("show", "pop");
+        el.textContent = n + "x";
+        el.classList.add("show");
+        el.classList.remove("pop");
+        void el.offsetWidth;
+        el.classList.add("pop");
+        clearTimeout(wheelCountTimer);
+        wheelCountTimer = setTimeout(() => {
+          wheels.length = 0;
+          lastWheelUp = null;
+          cpsUp.classList.remove("show", "pop");
+          cpsDown.classList.remove("show", "pop");
+        }, CONFIG.cpsWindowMs);
+      }
 
-      wup.classList.toggle("on", up);
-      wdn.classList.toggle("on", !up);
+      mouseActionNodes("wheelUp").forEach((el) => el.classList.toggle("on", up));
+      mouseActionNodes("wheelDown").forEach((el) => el.classList.toggle("on", !up));
+      mouseActionNodes("wheel").forEach((el) => el.classList.add("on"));
+      if (!SETTINGS.mouseCustom) {
+        if (wup) wup.classList.toggle("on", up);
+        if (wdn) wdn.classList.toggle("on", !up);
+      }
       clearTimeout(wheelTimer);
       wheelTimer = setTimeout(() => {
-        wup.classList.remove("on");
-        wdn.classList.remove("on");
+        mouseActionNodes("wheelUp").forEach((el) => el.classList.remove("on"));
+        mouseActionNodes("wheelDown").forEach((el) => el.classList.remove("on"));
+        mouseActionNodes("wheel").forEach((el) => el.classList.remove("on"));
+        if (wup) wup.classList.remove("on");
+        if (wdn) wdn.classList.remove("on");
       }, 140);
     }
 
@@ -2193,9 +2528,17 @@
     }
     resizeCanvas();
     window.addEventListener("resize", resizeCanvas);
-    if (window.ResizeObserver) {
-      new ResizeObserver(resizeCanvas).observe(canvas.parentElement);
+    let padResizeObs = null;
+    function watchTrailHost() {
+      if (!window.ResizeObserver || !canvas) return;
+      if (padResizeObs) {
+        try { padResizeObs.disconnect(); } catch (_) {}
+      }
+      padResizeObs = new ResizeObserver(() => resizeCanvas());
+      if (canvas.parentElement) padResizeObs.observe(canvas.parentElement);
+      padResizeObs.observe(canvas);
     }
+    watchTrailHost();
 
     function updatePadCache() {
       const r = canvas.getBoundingClientRect();
@@ -2232,8 +2575,6 @@
     }
 
     function onMouseMoveEvent(data) {
-      // Preview panel : pas de suivi souris (évite un 2e rendu trail pendant le jeu)
-      if (IS_PREVIEW) return;
       if (typeof data.delta_x === "number" || typeof data.dx === "number") {
         addMouseDelta(data.delta_x ?? data.dx ?? 0, data.delta_y ?? data.dy ?? 0);
         return;
@@ -2498,8 +2839,7 @@
         return;
       }
       if (t === "key_typed" || t === "hello") return;
-      // Preview : settings + touches/clics seulement (pas le flood souris)
-      if (IS_PREVIEW && (t === "mouse_moved" || t === "mouse_dragged")) return;
+      // Onglet caché : ignore le flood souris (le panel coupe déjà l'iframe)
       if (document.hidden && (t === "mouse_moved" || t === "mouse_dragged")) return;
       if (t === "key_pressed" || t === "key_released") {
         applyKeycode(data.keycode, t === "key_pressed");
@@ -2524,9 +2864,13 @@
           const down = t === "mouse_pressed";
           if (data.button === 1) {
             lmbDown = down;
-            m1.classList.toggle("on", down);
+            mouseActionNodes("m1").forEach((el) => el.classList.toggle("on", down));
+            if (m1 && !SETTINGS.mouseCustom) m1.classList.toggle("on", down);
           }
-          if (data.button === 2) m2.classList.toggle("on", down);
+          if (data.button === 2) {
+            mouseActionNodes("m2").forEach((el) => el.classList.toggle("on", down));
+            if (m2 && !SETTINGS.mouseCustom) m2.classList.toggle("on", down);
+          }
         }
       }
     }
@@ -2614,17 +2958,25 @@
       if (wsOk) return;
       if (e.button === 0) {
         lmbDown = true;
-        m1.classList.add("on");
+        mouseActionNodes("m1").forEach((el) => el.classList.add("on"));
+        if (m1 && !SETTINGS.mouseCustom) m1.classList.add("on");
       }
-      if (e.button === 2) m2.classList.add("on");
+      if (e.button === 2) {
+        mouseActionNodes("m2").forEach((el) => el.classList.add("on"));
+        if (m2 && !SETTINGS.mouseCustom) m2.classList.add("on");
+      }
     });
     window.addEventListener("mouseup", (e) => {
       if (wsOk) return;
       if (e.button === 0) {
         lmbDown = false;
-        m1.classList.remove("on");
+        mouseActionNodes("m1").forEach((el) => el.classList.remove("on"));
+        if (m1 && !SETTINGS.mouseCustom) m1.classList.remove("on");
       }
-      if (e.button === 2) m2.classList.remove("on");
+      if (e.button === 2) {
+        mouseActionNodes("m2").forEach((el) => el.classList.remove("on"));
+        if (m2 && !SETTINGS.mouseCustom) m2.classList.remove("on");
+      }
     });
     window.addEventListener("wheel", (e) => {
       if (wsOk) return;

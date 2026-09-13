@@ -44,6 +44,8 @@ internal static class Program
     static string DefaultSettingsPath;
     static string ThemePersoDir;
     static string UserAssetsDir;
+    static string DesignsDir;
+    static string ExportsDir;
     static string BuiltinAssetsDir;
     static WndProc KeepAlive;
 
@@ -59,6 +61,8 @@ internal static class Program
         BuiltinAssetsDir = Path.Combine(BaseDir, "assets");
         ThemePersoDir = Path.Combine(BaseDir, "themeperso");
         UserAssetsDir = Path.Combine(ThemePersoDir, "assets");
+        DesignsDir = Path.Combine(ThemePersoDir, "designs");
+        ExportsDir = Path.Combine(ThemePersoDir, "exports");
         SettingsPath = Path.Combine(ThemePersoDir, "settings.json");
         EnsureThemePerso();
         if (!File.Exists(HtmlPath))
@@ -90,6 +94,8 @@ internal static class Program
     {
         try { Directory.CreateDirectory(ThemePersoDir); } catch { }
         try { Directory.CreateDirectory(UserAssetsDir); } catch { }
+        try { Directory.CreateDirectory(DesignsDir); } catch { }
+        try { Directory.CreateDirectory(ExportsDir); } catch { }
         try { Directory.CreateDirectory(BuiltinAssetsDir); } catch { }
 
         // README local pour que l'utilisateur ne supprime pas le dossier
@@ -102,6 +108,9 @@ internal static class Program
                     "Dossier themeperso\r\n" +
                     "=================\r\n" +
                     "Tes themes / reglages / images perso sont ici.\r\n" +
+                    "- designs\\  = themes sauvegardes (plusieurs possibles)\r\n" +
+                    "- exports\\  = dossiers a partager\r\n" +
+                    "- assets\\   = images / GIF uploades\r\n" +
                     "Ce dossier n'est PAS ecrase lors des mises a jour GitHub.\r\n" +
                     "Ne le supprime pas si tu veux garder ton overlay.\r\n",
                     Encoding.UTF8);
@@ -190,6 +199,298 @@ internal static class Program
         }
     }
 
+    static string SanitizeDesignId(string id)
+    {
+        if (string.IsNullOrEmpty(id)) return null;
+        id = id.Trim();
+        if (id.Length > 64) id = id.Substring(0, 64);
+        var sb = new StringBuilder(id.Length);
+        foreach (var c in id)
+        {
+            if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || (c >= '0' && c <= '9') || c == '-' || c == '_')
+                sb.Append(c);
+        }
+        var s = sb.ToString();
+        return string.IsNullOrEmpty(s) ? null : s;
+    }
+
+    static string SanitizeFolderName(string name)
+    {
+        if (string.IsNullOrWhiteSpace(name)) name = "theme";
+        name = name.Trim();
+        var invalid = Path.GetInvalidFileNameChars();
+        var sb = new StringBuilder(name.Length);
+        foreach (var c in name)
+        {
+            if (c == ' ' || c == '\t') sb.Append('-');
+            else if (Array.IndexOf(invalid, c) >= 0 || c < 32) sb.Append('-');
+            else sb.Append(c);
+        }
+        var s = sb.ToString().Trim().Trim('.');
+        while (s.IndexOf("--", StringComparison.Ordinal) >= 0) s = s.Replace("--", "-");
+        if (string.IsNullOrEmpty(s)) s = "theme";
+        if (s.Length > 48) s = s.Substring(0, 48);
+        return s;
+    }
+
+    static string ListDesignsJson()
+    {
+        try { Directory.CreateDirectory(DesignsDir); } catch { }
+        var sb = new StringBuilder();
+        sb.Append('[');
+        var first = true;
+        try
+        {
+            foreach (var dir in Directory.GetDirectories(DesignsDir))
+            {
+                var id = Path.GetFileName(dir);
+                if (SanitizeDesignId(id) != id) continue;
+                var themePath = Path.Combine(dir, "theme.json");
+                if (!File.Exists(themePath)) continue;
+                string json;
+                try { json = File.ReadAllText(themePath, Encoding.UTF8); }
+                catch { continue; }
+                var name = JsonGetTopLevelString(json, "name") ?? id;
+                var accent = JsonGetTopLevelString(json, "accent") ?? "#e56b8a";
+                var updated = JsonGetTopLevelString(json, "updatedAt") ?? "";
+                var thumb = ExtractFirstUserAsset(json) ?? "";
+                if (!first) sb.Append(',');
+                first = false;
+                sb.Append("{\"id\":\"").Append(JsonEscape(id)).Append("\",");
+                sb.Append("\"name\":\"").Append(JsonEscape(name)).Append("\",");
+                sb.Append("\"accent\":\"").Append(JsonEscape(accent)).Append("\",");
+                sb.Append("\"updatedAt\":\"").Append(JsonEscape(updated)).Append("\",");
+                sb.Append("\"thumb\":\"").Append(JsonEscape(thumb)).Append("\"}");
+            }
+        }
+        catch { }
+        sb.Append(']');
+        return sb.ToString();
+    }
+
+    static string ExtractFirstUserAsset(string json)
+    {
+        if (string.IsNullOrEmpty(json)) return null;
+        var i = 0;
+        while (true)
+        {
+            var idx = json.IndexOf("\"file\"", i, StringComparison.OrdinalIgnoreCase);
+            if (idx < 0) return null;
+            var colon = json.IndexOf(':', idx);
+            if (colon < 0) return null;
+            var q1 = json.IndexOf('"', colon + 1);
+            if (q1 < 0) return null;
+            var q2 = json.IndexOf('"', q1 + 1);
+            if (q2 < 0) return null;
+            var file = json.Substring(q1 + 1, q2 - q1 - 1);
+            if (file.StartsWith("user-", StringComparison.OrdinalIgnoreCase)
+                && file.IndexOfAny(Path.GetInvalidFileNameChars()) < 0)
+                return file;
+            i = q2 + 1;
+        }
+    }
+
+    static void CollectUserAssets(string json, List<string> into)
+    {
+        if (string.IsNullOrEmpty(json) || into == null) return;
+        var i = 0;
+        while (true)
+        {
+            var idx = json.IndexOf("\"file\"", i, StringComparison.OrdinalIgnoreCase);
+            if (idx < 0) break;
+            var colon = json.IndexOf(':', idx);
+            if (colon < 0) break;
+            var q1 = json.IndexOf('"', colon + 1);
+            if (q1 < 0) break;
+            var q2 = json.IndexOf('"', q1 + 1);
+            if (q2 < 0) break;
+            var file = json.Substring(q1 + 1, q2 - q1 - 1);
+            if (file.StartsWith("user-", StringComparison.OrdinalIgnoreCase)
+                && file.IndexOfAny(Path.GetInvalidFileNameChars()) < 0
+                && !into.Contains(file))
+                into.Add(file);
+            i = q2 + 1;
+        }
+    }
+
+    static bool TrySaveDesign(string body, out string savedId, out string err)
+    {
+        savedId = null;
+        err = "json invalide";
+        if (string.IsNullOrWhiteSpace(body)) return false;
+        var json = body.Trim();
+        if (!json.StartsWith("{")) return false;
+        var id = SanitizeDesignId(JsonGetTopLevelString(json, "id"));
+        if (string.IsNullOrEmpty(id))
+        {
+            id = "d_" + DateTime.UtcNow.ToString("yyyyMMddHHmmss") + "_" + Guid.NewGuid().ToString("N").Substring(0, 6);
+            json = "{\n  \"id\":\"" + JsonEscape(id) + "\"," + json.Substring(1);
+        }
+        try
+        {
+            var dir = Path.Combine(DesignsDir, id);
+            Directory.CreateDirectory(dir);
+            File.WriteAllText(Path.Combine(dir, "theme.json"), json, Encoding.UTF8);
+            savedId = id;
+            return true;
+        }
+        catch
+        {
+            err = "ecriture impossible";
+            return false;
+        }
+    }
+
+    static bool TryDeleteDesign(string id)
+    {
+        id = SanitizeDesignId(id);
+        if (string.IsNullOrEmpty(id)) return false;
+        var dir = Path.Combine(DesignsDir, id);
+        if (!Directory.Exists(dir)) return false;
+        try
+        {
+            Directory.Delete(dir, true);
+            return true;
+        }
+        catch { return false; }
+    }
+
+    static bool TryExportDesign(string id, out string exportPath, out string err)
+    {
+        exportPath = null;
+        err = "introuvable";
+        id = SanitizeDesignId(id);
+        if (string.IsNullOrEmpty(id)) return false;
+        var themePath = Path.Combine(DesignsDir, id, "theme.json");
+        if (!File.Exists(themePath)) return false;
+        string json;
+        try { json = File.ReadAllText(themePath, Encoding.UTF8); }
+        catch { err = "lecture impossible"; return false; }
+
+        var name = SanitizeFolderName(JsonGetTopLevelString(json, "name") ?? id);
+        try { Directory.CreateDirectory(ExportsDir); } catch { }
+        var dest = Path.Combine(ExportsDir, name);
+        var n = 2;
+        while (Directory.Exists(dest))
+        {
+            dest = Path.Combine(ExportsDir, name + "-" + n);
+            n++;
+            if (n > 99) { err = "trop d'exports"; return false; }
+        }
+        try
+        {
+            Directory.CreateDirectory(dest);
+            var assetsDest = Path.Combine(dest, "assets");
+            Directory.CreateDirectory(assetsDest);
+            File.WriteAllText(Path.Combine(dest, "theme.json"), json, Encoding.UTF8);
+            var files = new List<string>();
+            CollectUserAssets(json, files);
+            foreach (var file in files)
+            {
+                var src = ResolveAssetPath(file);
+                if (File.Exists(src))
+                {
+                    try { File.Copy(src, Path.Combine(assetsDest, file), true); } catch { }
+                }
+            }
+            File.WriteAllText(Path.Combine(dest, "LISEZMOI.txt"),
+                "Theme overlay a partager\r\n" +
+                "========================\r\n" +
+                "1. Copie TOUT le contenu de assets\\ vers themeperso\\assets\\\r\n" +
+                "2. Copie ce dossier (ou son theme.json) dans themeperso\\designs\\\r\n" +
+                "   sous un nom SANS espaces (ex: mon-theme) :\r\n" +
+                "   themeperso\\designs\\mon-theme\\theme.json\r\n" +
+                "3. Relance start-overlay.bat / le panneau.\r\n",
+                Encoding.UTF8);
+            exportPath = dest;
+            return true;
+        }
+        catch
+        {
+            err = "export impossible";
+            return false;
+        }
+    }
+
+    static void WriteBytes(NetworkStream stream, string status, string contentType, byte[] body)
+    {
+        var head =
+            status + "\r\n" +
+            "Content-Type: " + contentType + "\r\n" +
+            "Cache-Control: no-store\r\n" +
+            "Access-Control-Allow-Origin: *\r\n" +
+            "Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n" +
+            "Access-Control-Allow-Headers: Content-Type, X-Filename\r\n" +
+            "Content-Length: " + body.Length + "\r\n" +
+            "Connection: close\r\n\r\n";
+        var hb = Encoding.ASCII.GetBytes(head);
+        stream.Write(hb, 0, hb.Length);
+        if (body.Length > 0) stream.Write(body, 0, body.Length);
+        stream.Flush();
+    }
+
+    static void WriteText(NetworkStream stream, string status, string contentType, string text)
+    {
+        WriteBytes(stream, status, contentType, Encoding.UTF8.GetBytes(text ?? ""));
+    }
+
+    // Lit headers (ASCII) + body brut (binaire-safe) — nécessaire pour upload GIF
+    static bool TryReadHttp(NetworkStream stream, out string headerText, out byte[] body)
+    {
+        headerText = null;
+        body = new byte[0];
+        var buf = new byte[8192];
+        var headerBuf = new List<byte>(4096);
+        while (true)
+        {
+            var n = stream.Read(buf, 0, buf.Length);
+            if (n <= 0) return false;
+            for (var i = 0; i < n; i++) headerBuf.Add(buf[i]);
+            // Cherche fin des headers
+            var arr = headerBuf.ToArray();
+            var end = IndexOfHeaderEnd(arr);
+            if (end >= 0)
+            {
+                headerText = Encoding.ASCII.GetString(arr, 0, end);
+                var already = arr.Length - (end + 4);
+                int need = 0;
+                var cl = Header(headerText + "\r\n", "Content-Length");
+                int.TryParse(cl, out need);
+                if (need < 0) need = 0;
+                // Uploads médias : jusqu'à ~14 Mo
+                if (need > 14000000) return false;
+                body = new byte[need];
+                var got = 0;
+                if (already > 0)
+                {
+                    var copy = Math.Min(already, need);
+                    Buffer.BlockCopy(arr, end + 4, body, 0, copy);
+                    got = copy;
+                }
+                while (got < need)
+                {
+                    var r = stream.Read(buf, 0, Math.Min(buf.Length, need - got));
+                    if (r <= 0) break;
+                    Buffer.BlockCopy(buf, 0, body, got, r);
+                    got += r;
+                }
+                if (got < need) return false;
+                return true;
+            }
+            if (headerBuf.Count > 32000) return false;
+        }
+    }
+
+    static int IndexOfHeaderEnd(byte[] data)
+    {
+        for (var i = 0; i + 3 < data.Length; i++)
+        {
+            if (data[i] == 13 && data[i + 1] == 10 && data[i + 2] == 13 && data[i + 3] == 10)
+                return i;
+        }
+        return -1;
+    }
+
     static string RequestPath(string req)
     {
         var first = req.Split(new[] { "\r\n" }, StringSplitOptions.None)[0];
@@ -206,28 +507,6 @@ internal static class Program
         var idx = req.IndexOf("\r\n\r\n", StringComparison.Ordinal);
         if (idx < 0) return "";
         return req.Substring(idx + 4);
-    }
-
-    static void WriteBytes(NetworkStream stream, string status, string contentType, byte[] body)
-    {
-        var head =
-            status + "\r\n" +
-            "Content-Type: " + contentType + "\r\n" +
-            "Cache-Control: no-store\r\n" +
-            "Access-Control-Allow-Origin: *\r\n" +
-            "Access-Control-Allow-Methods: GET, POST, OPTIONS\r\n" +
-            "Access-Control-Allow-Headers: Content-Type\r\n" +
-            "Content-Length: " + body.Length + "\r\n" +
-            "Connection: close\r\n\r\n";
-        var hb = Encoding.ASCII.GetBytes(head);
-        stream.Write(hb, 0, hb.Length);
-        if (body.Length > 0) stream.Write(body, 0, body.Length);
-        stream.Flush();
-    }
-
-    static void WriteText(NetworkStream stream, string status, string contentType, string text)
-    {
-        WriteBytes(stream, status, contentType, Encoding.UTF8.GetBytes(text ?? ""));
     }
 
     static void KeepWsAlive()
@@ -258,13 +537,15 @@ internal static class Program
         try
         {
             tcp.NoDelay = true;
-            tcp.ReceiveTimeout = 8000;
+            tcp.ReceiveTimeout = 120000;
             var stream = tcp.GetStream();
-            stream.ReadTimeout = 8000;
-            var req = ReadRequest(stream);
-            if (req == null) { tcp.Close(); return; }
+            stream.ReadTimeout = 120000;
+            string req;
+            byte[] bodyBytes;
+            if (!TryReadHttp(stream, out req, out bodyBytes)) { tcp.Close(); return; }
 
-            if (req.Contains("Upgrade: websocket") && req.Contains("GET /ws"))
+            if (req.IndexOf("Upgrade: websocket", StringComparison.OrdinalIgnoreCase) >= 0
+                && req.IndexOf("GET /ws", StringComparison.OrdinalIgnoreCase) >= 0)
             {
                 var key = Header(req, "Sec-WebSocket-Key");
                 if (string.IsNullOrEmpty(key)) { tcp.Close(); return; }
@@ -287,7 +568,7 @@ internal static class Program
             {
                 if (isPost)
                 {
-                    var body = RequestBody(req);
+                    var body = Encoding.UTF8.GetString(bodyBytes);
                     if (!SaveSettingsJson(body))
                     {
                         WriteText(stream, "HTTP/1.1 500 Internal Server Error", "application/json; charset=utf-8",
@@ -308,12 +589,133 @@ internal static class Program
                 return;
             }
 
+            if (path == "/designs")
+            {
+                if (isPost)
+                {
+                    string savedId;
+                    string err;
+                    if (!TrySaveDesign(Encoding.UTF8.GetString(bodyBytes), out savedId, out err))
+                    {
+                        WriteText(stream, "HTTP/1.1 400 Bad Request", "application/json; charset=utf-8",
+                            "{\"ok\":false,\"error\":\"" + JsonEscape(err) + "\"}");
+                        tcp.Close();
+                        return;
+                    }
+                    WriteText(stream, "HTTP/1.1 200 OK", "application/json; charset=utf-8",
+                        "{\"ok\":true,\"id\":\"" + JsonEscape(savedId) + "\"}");
+                    tcp.Close();
+                    return;
+                }
+
+                WriteText(stream, "HTTP/1.1 200 OK", "application/json; charset=utf-8", ListDesignsJson());
+                tcp.Close();
+                return;
+            }
+
+            if (path.StartsWith("/designs/", StringComparison.OrdinalIgnoreCase))
+            {
+                var rest = path.Substring("/designs/".Length);
+                var slash = rest.IndexOf('/');
+                var designId = slash >= 0 ? rest.Substring(0, slash) : rest;
+                var action = slash >= 0 ? rest.Substring(slash + 1) : "";
+                designId = SanitizeDesignId(designId);
+
+                if (string.IsNullOrEmpty(designId))
+                {
+                    WriteText(stream, "HTTP/1.1 400 Bad Request", "application/json; charset=utf-8",
+                        "{\"ok\":false,\"error\":\"id invalide\"}");
+                    tcp.Close();
+                    return;
+                }
+
+                if (action == "export" && isPost)
+                {
+                    string exportPath;
+                    string err;
+                    if (!TryExportDesign(designId, out exportPath, out err))
+                    {
+                        WriteText(stream, "HTTP/1.1 400 Bad Request", "application/json; charset=utf-8",
+                            "{\"ok\":false,\"error\":\"" + JsonEscape(err) + "\"}");
+                        tcp.Close();
+                        return;
+                    }
+                    WriteText(stream, "HTTP/1.1 200 OK", "application/json; charset=utf-8",
+                        "{\"ok\":true,\"path\":\"" + JsonEscape(exportPath) + "\"}");
+                    tcp.Close();
+                    return;
+                }
+
+                if (string.IsNullOrEmpty(action) && isPost)
+                {
+                    // DELETE via POST body {"delete":true} to avoid needing DELETE method
+                    var body = Encoding.UTF8.GetString(bodyBytes);
+                    if (body.IndexOf("\"delete\"", StringComparison.OrdinalIgnoreCase) >= 0
+                        && body.IndexOf("true", StringComparison.OrdinalIgnoreCase) >= 0)
+                    {
+                        if (!TryDeleteDesign(designId))
+                        {
+                            WriteText(stream, "HTTP/1.1 400 Bad Request", "application/json; charset=utf-8",
+                                "{\"ok\":false}");
+                            tcp.Close();
+                            return;
+                        }
+                        WriteText(stream, "HTTP/1.1 200 OK", "application/json; charset=utf-8", "{\"ok\":true}");
+                        tcp.Close();
+                        return;
+                    }
+                }
+
+                if (string.IsNullOrEmpty(action) && !isPost)
+                {
+                    var themePath = Path.Combine(DesignsDir, designId, "theme.json");
+                    if (!File.Exists(themePath))
+                    {
+                        WriteText(stream, "HTTP/1.1 404 Not Found", "application/json; charset=utf-8",
+                            "{\"ok\":false}");
+                        tcp.Close();
+                        return;
+                    }
+                    WriteText(stream, "HTTP/1.1 200 OK", "application/json; charset=utf-8",
+                        File.ReadAllText(themePath, Encoding.UTF8));
+                    tcp.Close();
+                    return;
+                }
+
+                WriteText(stream, "HTTP/1.1 404 Not Found", "application/json; charset=utf-8", "{\"ok\":false}");
+                tcp.Close();
+                return;
+            }
+
             if (path == "/media/upload" && isPost)
             {
-                var body = RequestBody(req);
                 string savedName;
                 string err;
-                if (!TrySaveMediaUpload(body, out savedName, out err))
+                var ct = Header(req, "Content-Type") ?? "";
+                var ok = false;
+                if (ct.IndexOf("application/json", StringComparison.OrdinalIgnoreCase) >= 0)
+                    ok = TrySaveMediaUpload(Encoding.UTF8.GetString(bodyBytes), out savedName, out err);
+                else
+                {
+                    var fname = Header(req, "X-Filename");
+                    if (string.IsNullOrEmpty(fname))
+                    {
+                        // fallback query ?name=
+                        var first = req.Split(new[] { "\r\n" }, StringSplitOptions.None)[0];
+                        var qi = first.IndexOf("name=", StringComparison.OrdinalIgnoreCase);
+                        if (qi >= 0)
+                        {
+                            var rest = first.Substring(qi + 5);
+                            var sp = rest.IndexOf(' ');
+                            if (sp >= 0) rest = rest.Substring(0, sp);
+                            var amp = rest.IndexOf('&');
+                            if (amp >= 0) rest = rest.Substring(0, amp);
+                            try { fname = Uri.UnescapeDataString(rest); } catch { fname = rest; }
+                        }
+                    }
+                    ok = TrySaveMediaBinary(bodyBytes, fname, out savedName, out err);
+                }
+                if (!ok)
                 {
                     WriteText(stream, "HTTP/1.1 400 Bad Request", "application/json; charset=utf-8",
                         "{\"ok\":false,\"error\":\"" + JsonEscape(err) + "\"}");
@@ -328,7 +730,7 @@ internal static class Program
 
             if (path == "/media/delete" && isPost)
             {
-                var body = RequestBody(req);
+                var body = Encoding.UTF8.GetString(bodyBytes);
                 var file = JsonGetString(body, "file");
                 if (!TryDeleteMedia(file))
                 {
@@ -382,48 +784,6 @@ internal static class Program
         }
     }
 
-    static string ReadRequest(NetworkStream stream)
-    {
-        var buf = new byte[4096];
-        var sb = new StringBuilder();
-        while (true)
-        {
-            var n = stream.Read(buf, 0, buf.Length);
-            if (n <= 0) return null;
-            sb.Append(Encoding.ASCII.GetString(buf, 0, n));
-            if (sb.ToString().Contains("\r\n\r\n")) break;
-            if (sb.Length > 16000) return null;
-        }
-
-        var req = sb.ToString();
-        var headerEnd = req.IndexOf("\r\n\r\n", StringComparison.Ordinal);
-        if (headerEnd < 0) return req;
-        var headers = req.Substring(0, headerEnd);
-        var body = req.Substring(headerEnd + 4);
-        var cl = Header(headers + "\r\n", "Content-Length");
-        int need;
-        if (!int.TryParse(cl, out need) || need <= 0) return req;
-        // Uploads médias base64 : jusqu'à ~8 Mo ; settings restent petits
-        if (need > 9000000) return null;
-        var bodyBytes = Encoding.UTF8.GetBytes(body);
-        while (bodyBytes.Length < need)
-        {
-            var n = stream.Read(buf, 0, Math.Min(buf.Length, need - bodyBytes.Length));
-            if (n <= 0) break;
-            var more = new byte[bodyBytes.Length + n];
-            Buffer.BlockCopy(bodyBytes, 0, more, 0, bodyBytes.Length);
-            Buffer.BlockCopy(buf, 0, more, bodyBytes.Length, n);
-            bodyBytes = more;
-        }
-        if (bodyBytes.Length > need)
-        {
-            var trimmed = new byte[need];
-            Buffer.BlockCopy(bodyBytes, 0, trimmed, 0, need);
-            bodyBytes = trimmed;
-        }
-        return headers + "\r\n\r\n" + Encoding.UTF8.GetString(bodyBytes);
-    }
-
     static string JsonEscape(string s)
     {
         if (s == null) return "";
@@ -461,6 +821,130 @@ internal static class Program
         return sb.ToString();
     }
 
+    // Lit une clé string au niveau racine uniquement (évite keyLayout[].id)
+    static string JsonGetTopLevelString(string json, string key)
+    {
+        if (string.IsNullOrEmpty(json) || string.IsNullOrEmpty(key)) return null;
+        var needle = "\"" + key + "\"";
+        var depth = 0;
+        var inStr = false;
+        var esc = false;
+        for (var i = 0; i < json.Length; i++)
+        {
+            var c = json[i];
+            if (inStr)
+            {
+                if (esc) { esc = false; continue; }
+                if (c == '\\') { esc = true; continue; }
+                if (c == '"') inStr = false;
+                continue;
+            }
+            if (c == '"')
+            {
+                if (depth == 1 && i + needle.Length <= json.Length
+                    && string.Compare(json, i, needle, 0, needle.Length, StringComparison.OrdinalIgnoreCase) == 0)
+                {
+                    var after = i + needle.Length;
+                    while (after < json.Length && char.IsWhiteSpace(json[after])) after++;
+                    if (after >= json.Length || json[after] != ':') { inStr = true; continue; }
+                    after++;
+                    while (after < json.Length && char.IsWhiteSpace(json[after])) after++;
+                    if (after >= json.Length || json[after] != '"') return null;
+                    after++;
+                    var sb = new StringBuilder();
+                    while (after < json.Length)
+                    {
+                        var ch = json[after++];
+                        if (ch == '\\' && after < json.Length)
+                        {
+                            var n = json[after++];
+                            if (n == 'n') sb.Append('\n');
+                            else if (n == 'r') sb.Append('\r');
+                            else if (n == 't') sb.Append('\t');
+                            else sb.Append(n);
+                            continue;
+                        }
+                        if (ch == '"') break;
+                        sb.Append(ch);
+                    }
+                    return sb.ToString();
+                }
+                inStr = true;
+                continue;
+            }
+            if (c == '{') depth++;
+            else if (c == '}') depth--;
+            else if (c == '[') depth++;
+            else if (c == ']') depth--;
+        }
+        return null;
+    }
+
+    static string DetectImageExt(byte[] bytes, string fallbackExt)
+    {
+        if (bytes != null && bytes.Length >= 12)
+        {
+            // GIF87a / GIF89a
+            if (bytes[0] == 0x47 && bytes[1] == 0x49 && bytes[2] == 0x46 && bytes[3] == 0x38)
+                return ".gif";
+            // PNG
+            if (bytes[0] == 0x89 && bytes[1] == 0x50 && bytes[2] == 0x4E && bytes[3] == 0x47)
+                return ".png";
+            // JPEG
+            if (bytes[0] == 0xFF && bytes[1] == 0xD8 && bytes[2] == 0xFF)
+                return ".jpg";
+            // WEBP (RIFF....WEBP)
+            if (bytes[0] == 0x52 && bytes[1] == 0x49 && bytes[2] == 0x46 && bytes[3] == 0x46
+                && bytes[8] == 0x57 && bytes[9] == 0x45 && bytes[10] == 0x42 && bytes[11] == 0x50)
+                return ".webp";
+        }
+        var ext = (fallbackExt ?? "").ToLowerInvariant();
+        if (ext == ".jpeg") ext = ".jpg";
+        if (ext == ".png" || ext == ".jpg" || ext == ".gif" || ext == ".webp") return ext;
+        return null;
+    }
+
+    static bool WriteUserMedia(byte[] bytes, string preferredName, out string savedName, out string err)
+    {
+        savedName = null;
+        err = "invalid";
+        if (bytes == null || bytes.Length < 8)
+        {
+            err = "fichier trop petit";
+            return false;
+        }
+        if (bytes.Length > 12000000)
+        {
+            err = "fichier trop grand (max 12 Mo)";
+            return false;
+        }
+        var name = Path.GetFileName(string.IsNullOrEmpty(preferredName) ? "image.gif" : preferredName);
+        var ext = DetectImageExt(bytes, Path.GetExtension(name));
+        if (ext == null)
+        {
+            err = "format non supporté (PNG, JPG, GIF, WEBP)";
+            return false;
+        }
+        var safe = "user-" + DateTime.UtcNow.ToString("yyyyMMddHHmmssfff") + "-" +
+                   Guid.NewGuid().ToString("N").Substring(0, 8) + ext;
+        try { Directory.CreateDirectory(UserAssetsDir); } catch { }
+        var path = Path.Combine(UserAssetsDir, safe);
+        try { File.WriteAllBytes(path, bytes); }
+        catch
+        {
+            err = "écriture impossible";
+            return false;
+        }
+        savedName = safe;
+        err = null;
+        return true;
+    }
+
+    static bool TrySaveMediaBinary(byte[] bytes, string filename, out string savedName, out string err)
+    {
+        return WriteUserMedia(bytes, filename, out savedName, out err);
+    }
+
     static bool TrySaveMediaUpload(string json, out string savedName, out string err)
     {
         savedName = null;
@@ -470,13 +954,6 @@ internal static class Program
         if (string.IsNullOrEmpty(name) || string.IsNullOrEmpty(data))
         {
             err = "name/data manquants";
-            return false;
-        }
-        name = Path.GetFileName(name);
-        var ext = Path.GetExtension(name).ToLowerInvariant();
-        if (ext != ".png" && ext != ".jpg" && ext != ".jpeg" && ext != ".gif" && ext != ".webp")
-        {
-            err = "format non supporté";
             return false;
         }
         // data:image/...;base64,XXXX  ou base64 brut
@@ -490,27 +967,7 @@ internal static class Program
             err = "base64 invalide";
             return false;
         }
-        if (bytes.Length < 8 || bytes.Length > 6500000)
-        {
-            err = "fichier trop petit/grand";
-            return false;
-        }
-        var safe = "user-" + DateTime.UtcNow.ToString("yyyyMMddHHmmssfff") + "-" +
-                   Guid.NewGuid().ToString("N").Substring(0, 8) + ext;
-        try { Directory.CreateDirectory(UserAssetsDir); } catch { }
-        var path = Path.Combine(UserAssetsDir, safe);
-        try
-        {
-            File.WriteAllBytes(path, bytes);
-        }
-        catch
-        {
-            err = "écriture impossible";
-            return false;
-        }
-        savedName = safe;
-        err = null;
-        return true;
+        return WriteUserMedia(bytes, name, out savedName, out err);
     }
 
     static bool TryDeleteMedia(string file)

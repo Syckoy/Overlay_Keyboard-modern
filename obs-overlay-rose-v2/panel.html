@@ -471,6 +471,101 @@
       border-style: solid;
     }
 
+    .theme.theme-saved {
+      position: relative;
+      padding-top: 10px;
+    }
+
+    .theme-saved .theme-preview.kb-preview {
+      height: 72px;
+      background:
+        radial-gradient(ellipse at 30% 20%, color-mix(in srgb, var(--card-accent, var(--accent)) 18%, transparent), transparent 60%),
+        #10141a;
+      display: block;
+      overflow: hidden;
+    }
+
+    .theme-saved .kb-preview-stage {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+    }
+
+    .theme-saved .kb-mini-media {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      opacity: 0.7;
+      z-index: 0;
+      pointer-events: none;
+    }
+
+    .theme-saved .kb-mini-keys {
+      position: absolute;
+      left: 10px;
+      right: 10px;
+      bottom: 9px;
+      z-index: 1;
+      display: flex;
+      gap: 5px;
+      justify-content: center;
+      align-items: flex-end;
+      pointer-events: none;
+    }
+
+    .theme-saved .kb-mini-key {
+      box-sizing: border-box;
+      width: 22px;
+      height: 22px;
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: color-mix(in srgb, var(--card-accent, var(--accent)) 55%, #1a1216);
+      border: 1px solid color-mix(in srgb, var(--card-accent, var(--accent)) 65%, rgba(255,255,255,0.4));
+      border-radius: 5px;
+      color: #fff;
+      font-size: 9px;
+      font-weight: 800;
+      letter-spacing: -0.02em;
+      line-height: 1;
+      text-transform: uppercase;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.35);
+    }
+
+    .theme-saved .kb-mini-key.wide {
+      width: 34px;
+      font-size: 7px;
+    }
+
+    .theme-edit-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      z-index: 2;
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(18, 12, 16, 0.75);
+      color: #fff;
+      cursor: pointer;
+      display: grid;
+      place-items: center;
+      padding: 0;
+      font-size: 0.85rem;
+      line-height: 1;
+      transition: background 160ms ease, border-color 160ms ease, transform 160ms ease;
+    }
+
+    .theme-edit-btn:hover {
+      background: color-mix(in srgb, var(--accent) 35%, rgba(18,12,16,0.9));
+      border-color: color-mix(in srgb, var(--accent) 50%, #fff);
+      transform: scale(1.06);
+    }
+
     .create-back {
       margin-bottom: 12px;
       border-radius: 16px 20px 14px 18px;
@@ -479,8 +574,98 @@
     .home-create[hidden] { display: none !important; }
     .home-themes[hidden] { display: none !important; }
 
+    .mouse-workspace {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      margin-top: 14px;
+    }
+
+    .mouse-tools-bar {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 12px;
+    }
+
+    @media (min-width: 820px) {
+      .mouse-tools-bar {
+        grid-template-columns: 1fr 1fr;
+        gap: 14px;
+      }
+    }
+
+    .mouse-tool-block {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--bg2);
+      padding: 14px 16px;
+      min-width: 0;
+    }
+
+    .mouse-tool-block h3 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: var(--muted);
+      margin: 0 0 10px;
+      letter-spacing: 0.02em;
+    }
+
+    .mouse-tool-block .hint-inline {
+      margin: -4px 0 10px;
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.4;
+    }
+
+    .mouse-shape-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .mouse-shape-grid .btn {
+      padding: 10px 14px;
+      font-size: 0.9rem;
+      font-weight: 650;
+    }
+
+    .mouse-fn-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .mouse-fn-chip {
+      appearance: none;
+      border: 1px dashed color-mix(in srgb, var(--accent) 45%, var(--line));
+      background: color-mix(in srgb, var(--accent) 12%, var(--bg1));
+      color: var(--text);
+      border-radius: 12px;
+      padding: 10px 14px;
+      font: inherit;
+      font-size: 0.88rem;
+      font-weight: 650;
+      cursor: grab;
+      text-align: left;
+    }
+
+    .mouse-fn-chip:active { cursor: grabbing; }
+
+    .mouse-stage {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 14px;
+      align-items: stretch;
+    }
+
+    @media (min-width: 900px) {
+      .mouse-stage {
+        grid-template-columns: minmax(0, 1fr) 260px;
+      }
+    }
+
     .mouse-editor-wrap {
-      margin-top: 12px;
+      margin-top: 0;
       overflow: auto;
       border: 1px solid var(--line);
       border-radius: var(--radius);
@@ -488,21 +673,16 @@
         radial-gradient(circle at 1px 1px, rgba(255,255,255,0.08) 1px, transparent 0);
       background-size: 16px 16px;
       background-color: #101318;
-      max-height: 420px;
+      max-height: 520px;
+      min-height: 320px;
       position: relative;
-    }
-
-    .mouse-workspace {
-      display: grid;
-      grid-template-columns: minmax(0, 1fr) 168px;
-      gap: 12px;
-      align-items: start;
+      min-width: 0;
     }
 
     .mouse-editor {
       position: relative;
-      min-width: 280px;
-      min-height: 280px;
+      min-width: 240px;
+      min-height: 240px;
       outline: none;
       margin: 28px 22px 22px;
       background: rgba(8, 10, 14, 0.55);
@@ -511,19 +691,276 @@
       touch-action: none;
       user-select: none;
       cursor: default;
+      overflow: visible;
     }
 
     .mouse-editor::before {
       content: "Artboard souris · 1:1 px · SHIFT = grille 8";
       position: absolute;
       left: 0;
-      top: -20px;
-      font-size: 0.78rem;
+      top: -22px;
+      font-size: 0.8rem;
       font-weight: 700;
+      color: rgba(255,255,255,0.45);
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      pointer-events: none;
+    }
+
+    .mouse-layers-card {
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      background: var(--bg2);
+      padding: 14px 16px;
+      margin-top: 0;
+      max-height: 520px;
+      min-height: 320px;
+      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    .mouse-panel-section + .mouse-panel-section {
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid var(--line);
+    }
+
+    .mouse-layers-card > h3,
+    .mouse-panel-section > h3 {
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--muted);
+      margin: 0 0 10px;
+      text-transform: none;
+    }
+
+    .mouse-side-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      color: var(--muted);
+      margin: 0 0 10px;
+      text-transform: none;
+    }
+
+    .mouse-side-hint {
+      font-size: 0.82rem;
+      color: var(--muted);
+      margin: -2px 0 10px;
+      line-height: 1.4;
+    }
+
+    .mouse-media-tools {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    .mouse-media-tools .btn,
+    .mouse-media-tools .file-btn {
+      padding: 10px 14px;
+      font-size: 0.88rem;
+    }
+
+    .mouse-asset-reuse {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+
+    .mouse-asset-reuse[hidden] { display: none !important; }
+
+    .mouse-asset-chip {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: var(--bg1);
+      border-radius: 12px;
+      padding: 5px;
+      cursor: pointer;
+      width: 56px;
+      height: 56px;
+      overflow: hidden;
+    }
+
+    .mouse-asset-chip:hover,
+    .mouse-asset-chip:focus-visible {
+      border-color: var(--accent);
+      outline: none;
+    }
+
+    .mouse-asset-chip img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+      border-radius: 8px;
+      pointer-events: none;
+    }
+
+    .mouse-media-layers {
+      margin-bottom: 0;
+      max-height: none;
+      overflow: visible;
+    }
+
+    .mouse-layers {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .mouse-layer {
+      appearance: none;
+      width: 100%;
+      text-align: left;
+      border: 1px solid var(--line);
+      background: var(--bg1);
+      color: var(--text);
+      border-radius: var(--radius);
+      padding: 11px 12px;
+      font: inherit;
+      font-size: 0.92rem;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    .mouse-layer:hover {
+      border-color: color-mix(in srgb, var(--accent) 40%, var(--line));
+    }
+
+    .mouse-layer.active {
+      border-color: #4da3ff;
+      background: color-mix(in srgb, #4da3ff 16%, var(--bg1));
+    }
+
+    .mouse-layer small {
+      display: block;
+      margin-top: 3px;
+      color: var(--muted);
+      font-size: 0.78rem;
+      font-weight: 600;
+    }
+
+    .emouse.drop-target {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .emouse-media {
+      position: absolute;
+      display: block;
+      border: 1px solid rgba(255,255,255,0.28);
+      background: rgba(0,0,0,0.12);
+      cursor: grab;
+      touch-action: none;
+      user-select: none;
+      z-index: 4;
+      box-sizing: border-box;
+      transform-origin: center center;
+      overflow: visible;
+    }
+
+    .emouse-media img {
+      width: 100%;
+      height: 100%;
+      object-fit: fill;
+      pointer-events: none;
+      display: block;
+    }
+
+    .emouse-media.selected {
+      border-color: #4da3ff;
+      outline: 1px solid #4da3ff;
+      outline-offset: 0;
+      z-index: 50 !important;
+      background: rgba(77,163,255,0.06);
+    }
+
+    .emouse-media.mask-on {
+      background: rgba(77,163,255,0.08);
+      border-style: dashed;
+    }
+
+    .emouse-media.mask-on.selected {
+      background: rgba(77,163,255,0.12);
+    }
+
+    .emouse-media.mask-on::after {
+      content: "masque";
+      position: absolute;
+      left: 6px;
+      top: 4px;
+      font-size: 10px;
+      font-weight: 800;
       letter-spacing: 0.04em;
       text-transform: uppercase;
-      color: var(--muted);
-      white-space: nowrap;
+      color: rgba(126, 200, 255, 0.9);
+      pointer-events: none;
+    }
+
+    .emouse-mask-vis {
+      position: absolute;
+      left: 0;
+      top: 0;
+      pointer-events: none;
+      overflow: visible;
+    }
+
+    .mouse-editor.has-under-labels .emouse {
+      background: rgba(24, 26, 32, 0.28);
+    }
+
+    .mouse-editor.has-under-labels .emouse.pad {
+      background: rgba(16, 18, 22, 0.35);
+    }
+
+    .mouse-meta-row .media-mask-check {
+      grid-column: 1 / -1;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.9rem;
+      font-weight: 650;
+    }
+
+    .emouse-media .fig-handle {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      border-radius: 2px;
+      background: #4da3ff;
+      border: 1px solid #fff;
+      z-index: 2;
+      box-sizing: border-box;
+    }
+
+    .emouse-media .fig-handle.br { right: -5px; bottom: -5px; cursor: nwse-resize; }
+    .emouse-media .fig-handle.bl { left: -5px; bottom: -5px; cursor: nesw-resize; }
+    .emouse-media .fig-handle.tr { right: -5px; top: -5px; cursor: nesw-resize; }
+    .emouse-media .fig-handle.tl { left: -5px; top: -5px; cursor: nwse-resize; }
+
+    .emouse-media .fig-handle.rot {
+      left: 50%;
+      top: -22px;
+      width: 12px;
+      height: 12px;
+      margin-left: -6px;
+      border-radius: 50%;
+      cursor: grab;
+      background: #7ec8ff;
+    }
+
+    @media (max-width: 899px) {
+      .mouse-editor-wrap,
+      .mouse-layers-card {
+        min-height: 260px;
+        max-height: 420px;
+      }
     }
 
     .mouse-editor.disabled {
@@ -549,7 +986,7 @@
       border-radius: 8px;
       background: rgba(24, 26, 32, 0.94);
       color: #e9ecef;
-      font-size: 13px;
+      font-size: 15px;
       font-weight: 700;
       letter-spacing: 0.05em;
       cursor: grab;
@@ -608,6 +1045,10 @@
       z-index: 6;
     }
 
+    .emouse.selected.multi {
+      outline-color: #6bb6ff;
+    }
+
     .emouse .fig-handle {
       position: absolute;
       width: 8px;
@@ -625,15 +1066,93 @@
     .emouse .fig-handle.tr { right: -4px; top: -4px; cursor: nesw-resize; }
     .emouse .fig-handle.tl { left: -4px; top: -4px; cursor: nwse-resize; }
 
-    .mouse-layers-card {
-      border: 1px solid var(--line);
-      border-radius: var(--radius);
-      background: var(--bg2);
-      padding: 12px;
-      margin-top: 12px;
+    .mouse-add-palette {
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--line);
     }
 
-    .mouse-layers-card h3 {
+    .emouse.shape-circle {
+      border-radius: 50% !important;
+    }
+
+    .emouse.shape-triangle {
+      border-radius: 0 !important;
+      clip-path: polygon(50% 4%, 4% 96%, 96% 96%);
+    }
+
+    .emouse.shape-star {
+      border-radius: 0 !important;
+      clip-path: polygon(50% 2%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%);
+    }
+
+    .emouse .emouse-label {
+      pointer-events: none;
+      z-index: 1;
+      text-align: center;
+      line-height: 1.15;
+      padding: 2px 4px;
+      max-width: 100%;
+      overflow: hidden;
+      word-break: break-word;
+    }
+
+    .mouse-ctx {
+      position: fixed;
+      z-index: 1000;
+      min-width: 180px;
+      padding: 6px;
+      border-radius: 12px;
+      border: 1px solid var(--line);
+      background: rgba(28, 20, 24, 0.96);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 12px 28px rgba(0,0,0,0.35);
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .mouse-ctx[hidden] { display: none !important; }
+
+    .mouse-ctx button {
+      appearance: none;
+      border: 0;
+      background: transparent;
+      color: var(--text);
+      text-align: left;
+      padding: 9px 10px;
+      border-radius: 8px;
+      font: inherit;
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+    }
+
+    .mouse-ctx button:hover {
+      background: color-mix(in srgb, var(--accent) 18%, transparent);
+    }
+
+    .mouse-ctx button.danger { color: #ffb4b4; }
+
+    .editor-meta .field.full {
+      grid-column: 1 / -1;
+    }
+
+    .editor-meta input[type="text"] {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: var(--bg2);
+      color: var(--text);
+      border-radius: var(--radius-sm, 8px);
+      padding: 10px 12px;
+      font: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .mouse-add-palette h3 {
       font-size: 0.85rem;
       font-weight: 700;
       letter-spacing: 0.04em;
@@ -642,44 +1161,54 @@
       margin-bottom: 10px;
     }
 
-    .mouse-layers {
+    .mouse-add-palette .palette-grid {
       display: flex;
       flex-direction: column;
       gap: 6px;
     }
 
-    .mouse-layer {
-      appearance: none;
+    .mouse-add-palette .btn {
       width: 100%;
       text-align: left;
-      border: 1px solid var(--line);
-      background: var(--bg1);
-      color: var(--text);
-      border-radius: var(--radius);
       padding: 9px 10px;
-      font: inherit;
-      font-size: 0.92rem;
-      font-weight: 650;
-      cursor: pointer;
+      font-size: 0.88rem;
     }
 
-    .mouse-layer.active {
-      border-color: #4da3ff;
-      background: color-mix(in srgb, #4da3ff 16%, var(--bg1));
+    .emouse .fig-handle.rot {
+      left: 50%;
+      top: -22px;
+      transform: translateX(-50%);
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #ffb347;
+      border-color: #c77d1a;
+      cursor: grab;
     }
 
-    .mouse-layer small {
-      display: block;
-      margin-top: 2px;
-      color: var(--muted);
-      font-size: 0.78rem;
-      font-weight: 600;
+    .emouse .fig-handle.rot::before {
+      content: "";
+      position: absolute;
+      left: 50%;
+      top: 10px;
+      width: 1px;
+      height: 12px;
+      background: #4da3ff;
+      transform: translateX(-50%);
+      pointer-events: none;
     }
 
-    @media (max-width: 720px) {
-      .mouse-workspace {
-        grid-template-columns: 1fr;
-      }
+    .mouse-meta-row {
+      margin-top: 10px;
+    }
+
+    .mouse-meta-row[hidden] {
+      display: none !important;
+    }
+
+    .emouse.action-wheelUp,
+    .emouse.action-wheelDown {
+      font-size: 16px;
     }
 
     .create-shell,
@@ -949,10 +1478,19 @@
       margin-top: 4px;
     }
 
+    .footer-left {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
     .saved {
       min-height: 1.2em;
       font-size: 0.95rem;
       color: var(--ok);
+      flex: 1;
+      text-align: center;
     }
 
     .actions {
@@ -981,9 +1519,10 @@
     }
 
     .btn.primary {
-      background: linear-gradient(135deg, color-mix(in srgb, var(--accent) 92%, #fff), var(--accent));
-      border-color: transparent;
-      color: #fff;
+      background: color-mix(in srgb, var(--accent) 72%, #1a1014);
+      border-color: color-mix(in srgb, var(--accent) 40%, transparent);
+      color: var(--btn-primary-fg, #fff);
+      font-weight: 800;
     }
 
     .btn.capture {
@@ -1169,7 +1708,7 @@
       border: 1px solid rgba(255,255,255,0.16);
       border-radius: 6px;
       color: #e9ecef;
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 650;
       text-transform: uppercase;
       cursor: grab;
@@ -1182,7 +1721,7 @@
     .ekey.space,
     .ekey.shift,
     .ekey.mod,
-    .ekey.tab { font-size: 9px; letter-spacing: 0.05em; }
+    .ekey.tab { font-size: 11px; letter-spacing: 0.05em; }
 
     .ekey:active { cursor: grabbing; }
     .ekey.selected {
@@ -1262,7 +1801,17 @@
       max-width: 100%;
     }
 
-    .editor-meta input[type="number"] {
+    .editor-meta input[type="number"],
+    .editor-meta select {
+      appearance: none;
+      border: 1px solid var(--line);
+      background: var(--bg2);
+      color: var(--text);
+      border-radius: var(--radius-sm, 8px);
+      padding: 10px 12px;
+      font: inherit;
+      font-size: 0.95rem;
+      font-weight: 600;
       width: 100%;
       min-width: 0;
       max-width: 100%;
@@ -1297,6 +1846,7 @@
     .btn:disabled {
       opacity: 0.4;
       cursor: not-allowed;
+      transform: none;
     }
 
     .key-palette {
@@ -1736,6 +2286,7 @@
             </div>
             <aside class="media-layers-card" id="mediaLayersCard" hidden>
               <h3>Calques images</h3>
+              <div class="mouse-asset-reuse" id="keyAssetReuse" hidden></div>
               <div class="media-layers" id="mediaLayersList"></div>
               <p class="hint"><strong>Masque</strong> = pochoir. Décoche <strong>Couvrir les lettres</strong> pour lire les touches. Opacité + coins/rotation. ▲▼ = ordre.</p>
             </aside>
@@ -1753,27 +2304,81 @@
             <div class="editor-toolbar-actions">
               <button class="btn" type="button" id="btnMouseSnap">Recaler défaut</button>
               <button class="btn" type="button" id="btnMouseReset">Disposition défaut</button>
+              <button class="btn danger" type="button" id="btnMouseDelete">Supprimer</button>
             </div>
           </div>
           <div class="mouse-workspace">
-            <div class="mouse-editor-wrap" id="mouseEditorWrap">
-              <div class="mouse-editor" id="mouseEditor" tabindex="0">
-                <div class="fig-guides" id="mouseFigGuides"></div>
+            <div class="mouse-tools-bar">
+              <div class="mouse-tool-block">
+                <h3>Formes</h3>
+                <div class="mouse-shape-grid" id="mouseShapeButtons"></div>
+              </div>
+              <div class="mouse-tool-block">
+                <h3>Fonctions</h3>
+                <p class="hint-inline">Glisse une fonction sur une forme</p>
+                <div class="mouse-fn-chips" id="mouseFnChips"></div>
               </div>
             </div>
-            <aside class="mouse-layers-card" id="mouseLayersCard">
-              <h3>Éléments</h3>
-              <div class="mouse-layers" id="mouseLayersList"></div>
-            </aside>
+            <div class="mouse-stage">
+              <div class="mouse-editor-wrap" id="mouseEditorWrap">
+                <div class="mouse-editor" id="mouseEditor" tabindex="0">
+                  <div class="fig-guides" id="mouseFigGuides"></div>
+                </div>
+              </div>
+              <aside class="mouse-layers-card" id="mouseLayersCard">
+                <div class="mouse-panel-section">
+                  <h3>Éléments</h3>
+                  <div class="mouse-layers" id="mouseLayersList"></div>
+                </div>
+                <div class="mouse-panel-section">
+                  <h3>Images / GIF</h3>
+                  <p class="mouse-side-hint">Masque = pochoir sur les formes · texte lisible si décoché « Couvrir »</p>
+                  <div class="mouse-media-tools">
+                    <label class="btn file-btn" for="mouseMediaFileInput">Ajouter image / GIF</label>
+                    <input type="file" id="mouseMediaFileInput" accept="image/png,image/jpeg,image/gif,image/webp,.png,.jpg,.jpeg,.gif,.webp" hidden />
+                  </div>
+                  <div class="mouse-asset-reuse" id="mouseAssetReuse" hidden></div>
+                  <div class="media-layers mouse-media-layers" id="mouseMediaLayersList"></div>
+                </div>
+              </aside>
+            </div>
           </div>
-          <div class="editor-meta" id="mouseEditorMeta" hidden>
+          <div class="editor-meta mouse-meta-row" id="mouseEditorMeta" hidden>
+            <label class="field" id="mouseShapeField">Forme
+              <select id="mouseShape"></select>
+            </label>
+            <label class="field" id="mouseActionField">Fonction
+              <select id="mouseAction"></select>
+            </label>
+            <label class="field full" id="mouseLabelField">Texte<input type="text" id="mouseLabel" maxlength="24" placeholder="Vide = aucun" /></label>
             <label class="field">X (px)<input type="number" id="mouseX" step="1" /></label>
             <label class="field">Y (px)<input type="number" id="mouseY" step="1" /></label>
-            <label class="field">Largeur<input type="number" id="mouseW" min="24" step="1" /></label>
-            <label class="field">Hauteur<input type="number" id="mouseH" min="24" step="1" /></label>
-            <label class="field">Arrondi<input type="number" id="mouseR" min="0" step="1" /></label>
+            <label class="field">Largeur<input type="number" id="mouseW" min="16" step="1" /></label>
+            <label class="field">Hauteur<input type="number" id="mouseH" min="16" step="1" /></label>
+            <label class="field" id="mouseRField">Arrondi<input type="number" id="mouseR" min="0" step="1" /></label>
+            <label class="field">Rotation°<input type="number" id="mouseRot" step="1" /></label>
+            <label class="field" id="mouseMediaOpacityField" hidden>Opacité
+              <input type="range" id="mouseMediaOpacity" min="5" max="100" step="1" />
+              <span id="mouseMediaOpacityVal">100%</span>
+            </label>
+            <label class="check media-mask-check" id="mouseMediaMaskField" hidden>
+              <input type="checkbox" id="mouseMediaMask" />
+              Masque formes (visible seulement sur les formes)
+            </label>
+            <label class="check media-mask-check" id="mouseMediaOverLabelsField" hidden>
+              <input type="checkbox" id="mouseMediaOverLabels" />
+              Couvrir le texte des formes
+            </label>
           </div>
-          <p class="hint">Glisser · 4 coins = resize · <strong>point rose = arrondi</strong> (Figma) · SHIFT = grille 8 px.</p>
+          <p class="hint">Lasso / SHIFT+clic · images (masque / texte) · glisse une <strong>fonction</strong> · <strong>clic droit</strong> · drag · resize.</p>
+        </div>
+
+        <div id="mouseCtxMenu" class="mouse-ctx" hidden>
+          <button type="button" data-cmd="label">Écrire un texte…</button>
+          <button type="button" data-cmd="shape">Changer la forme…</button>
+          <button type="button" data-cmd="action">Assigner une fonction…</button>
+          <button type="button" data-cmd="duplicate">Dupliquer</button>
+          <button type="button" data-cmd="delete" class="danger">Supprimer</button>
         </div>
         </div>
       </div>
@@ -1827,6 +2432,11 @@
     </section>
 
     <div class="footer">
+      <div class="footer-left" id="footerDesignIO">
+        <button class="btn" type="button" id="btnImportDesign" hidden>Importer</button>
+        <button class="btn" type="button" id="btnExportDesign" hidden>Exporter</button>
+        <input type="file" id="importDesignInput" accept=".json,application/json" hidden />
+      </div>
       <div class="saved" id="savedLabel"></div>
       <div class="actions">
         <button class="btn" type="button" id="btnReset">Reset</button>
@@ -1865,6 +2475,8 @@
       mediaLayers: [],
       mouseCustom: false,
       mouseLayout: null,
+      mouseMediaLayers: [],
+      activeCustomId: null,
       sgEnabled: true,
       sgJump: "space",
       sgCrouch: "KeyC",
@@ -1872,14 +2484,34 @@
     };
 
     const KEY_GRID = 8;
-    const KEY_UNIT = 34; // = --ku overlay
-    const KEY_GAP = 2;   // = --kgap classic overlay
+    const KEY_UNIT = 43; // = --ku overlay
+    const KEY_GAP = 3;   // = --kgap classic overlay
     const FIG_SNAP = 6;  // seuil guides type Figma (px)
-    const MOUSE_PART_IDS = ["m1", "m2", "wheel", "pad"];
-    const MOUSE_PART_LABELS = { m1: "M1", m2: "M2", wheel: "Molette", pad: "Pad" };
-    const MOUSE_U = 50;
-    const MOUSE_GAP = 3;
+    const MOUSE_ACTIONS = ["none", "m1", "m2", "wheel", "wheelUp", "wheelDown", "pad"];
+    const MOUSE_ACTION_LABELS = {
+      none: "Aucune",
+      m1: "Clic gauche",
+      m2: "Clic droit",
+      wheel: "Molette",
+      wheelUp: "Molette ▲",
+      wheelDown: "Molette ▼",
+      pad: "Pad (traînée)",
+    };
+    const MOUSE_SHAPES = ["rect", "square", "circle", "triangle", "star"];
+    const MOUSE_SHAPE_LABELS = {
+      rect: "Rectangle",
+      square: "Carré",
+      circle: "Rond",
+      triangle: "Triangle",
+      star: "Étoile",
+    };
+    const MOUSE_U = 63;
+    const MOUSE_GAP = 4;
     const MOUSE_BOX = MOUSE_U * 4 + MOUSE_GAP * 3;
+
+    function newMousePartId() {
+      return "mp_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 7);
+    }
 
     function buildDefaultMouseLayout() {
       const box = MOUSE_BOX;
@@ -1888,34 +2520,71 @@
       const btnW = Math.floor((box - gap * 2) / 3);
       const wheelW = box - gap * 2 - btnW * 2;
       return [
-        { id: "m1", x: 0, y: 0, w: btnW, h: u, r: 10 },
-        { id: "wheel", x: btnW + gap, y: 0, w: wheelW, h: u, r: 10 },
-        { id: "m2", x: btnW + gap + wheelW + gap, y: 0, w: btnW, h: u, r: 10 },
-        { id: "pad", x: 0, y: u + gap, w: box, h: box - u - gap, r: 14 },
+        { id: "mp_m1", action: "m1", shape: "rect", label: "", x: 0, y: 0, w: btnW, h: u, r: 13, rot: 0 },
+        { id: "mp_wheel", action: "wheel", shape: "rect", label: "", x: btnW + gap, y: 0, w: wheelW, h: u, r: 13, rot: 0 },
+        { id: "mp_m2", action: "m2", shape: "rect", label: "", x: btnW + gap + wheelW + gap, y: 0, w: btnW, h: u, r: 13, rot: 0 },
+        { id: "mp_pad", action: "pad", shape: "rect", label: "", x: 0, y: u + gap, w: box, h: box - u - gap, r: 18, rot: 0 },
       ];
     }
 
-    function normalizeMouseLayout(raw) {
-      const byId = Object.create(null);
-      if (Array.isArray(raw)) {
-        for (const p of raw) {
-          if (!p || !MOUSE_PART_IDS.includes(String(p.id))) continue;
-          const id = String(p.id);
-          const minW = id === "pad" ? 80 : id === "wheel" ? 36 : 40;
-          const minH = id === "pad" ? 80 : 36;
-          const w = Math.max(minW, Math.round(Number(p.w) || 34));
-          const h = Math.max(minH, Math.round(Number(p.h) || 34));
-          byId[id] = {
-            id,
-            x: Math.round(Number(p.x) || 0),
-            y: Math.round(Number(p.y) || 0),
-            w,
-            h,
-            r: clampCornerRadius(w, h, p.r, defaultMouseRadius(id)),
-          };
-        }
+    function normalizeMouseAction(raw, fallbackId) {
+      const a = String(raw || "");
+      if (MOUSE_ACTIONS.includes(a)) return a;
+      const id = String(fallbackId || "");
+      if (MOUSE_ACTIONS.includes(id)) return id;
+      return "none";
+    }
+
+    function normalizeMouseShape(raw) {
+      const s = String(raw || "rect");
+      return MOUSE_SHAPES.includes(s) ? s : "rect";
+    }
+
+    /** Carré = preset de départ ; dès qu'on déforme → rectangle. Cercle reste verrouillé. */
+    function coerceMouseShapeSize(shape, w, h, mins) {
+      let s = normalizeMouseShape(shape);
+      let nw = Math.max(mins.w, Math.round(Number(w) || mins.w));
+      let nh = Math.max(mins.h, Math.round(Number(h) || mins.h));
+      if (s === "circle") {
+        const side = Math.max(mins.w, Math.round((nw + nh) / 2));
+        return { shape: s, w: side, h: side };
       }
-      return buildDefaultMouseLayout().map((d) => byId[d.id] || { ...d });
+      if (s === "square" && nw !== nh) s = "rect";
+      return { shape: s, w: nw, h: nh };
+    }
+
+    function normalizeMouseLayout(raw) {
+      if (!Array.isArray(raw) || !raw.length) return buildDefaultMouseLayout();
+      const out = [];
+      for (const p of raw) {
+        if (!p) continue;
+        const action = normalizeMouseAction(p.action, p.id);
+        const shape = normalizeMouseShape(p.shape);
+        let id = String(p.id || "");
+        if (!id) id = newMousePartId();
+        const mins = minMouseSize(action, shape);
+        let w = Math.max(mins.w, Math.round(Number(p.w) || 60));
+        let h = Math.max(mins.h, Math.round(Number(p.h) || 50));
+        const sized = coerceMouseShapeSize(shape, w, h, mins);
+        w = sized.w;
+        h = sized.h;
+        const finalShape = sized.shape;
+        const rot = Math.round(Number(p.rot) || 0);
+        const label = String(p.label != null ? p.label : "").slice(0, 24);
+        out.push({
+          id,
+          action,
+          shape: finalShape,
+          label,
+          x: Math.round(Number(p.x) || 0),
+          y: Math.round(Number(p.y) || 0),
+          w,
+          h,
+          r: clampCornerRadius(w, h, p.r, defaultMouseRadius(action, finalShape)),
+          rot,
+        });
+      }
+      return out.length ? out : buildDefaultMouseLayout();
     }
 
     function snap(v, grid) {
@@ -2042,8 +2711,10 @@
       return Math.max(0, Math.min(maxCornerRadius(w, h), Math.round(base)));
     }
 
-    function defaultMouseRadius(id) {
-      return id === "pad" ? 14 : 10;
+    function defaultMouseRadius(action, shape) {
+      if (shape === "circle") return 999;
+      if (shape === "triangle" || shape === "star") return 0;
+      return action === "pad" ? 18 : 13;
     }
 
     function serializeKeyItem(k) {
@@ -2053,18 +2724,25 @@
         y: k.y,
         w: k.w,
         h: k.h,
-        r: clampCornerRadius(k.w, k.h, k.r, 8),
+        r: clampCornerRadius(k.w, k.h, k.r, 10),
       };
     }
 
     function serializeMouseItem(m) {
+      const action = normalizeMouseAction(m.action, m.id);
+      const mins = minMouseSize(action, m.shape);
+      const sized = coerceMouseShapeSize(m.shape, m.w, m.h, mins);
       return {
         id: m.id,
+        action,
+        shape: sized.shape,
+        label: String(m.label || "").slice(0, 24),
         x: m.x,
         y: m.y,
-        w: m.w,
-        h: m.h,
-        r: clampCornerRadius(m.w, m.h, m.r, defaultMouseRadius(m.id)),
+        w: sized.w,
+        h: sized.h,
+        r: clampCornerRadius(sized.w, sized.h, m.r, defaultMouseRadius(action, sized.shape)),
+        rot: Math.round(Number(m.rot) || 0),
       };
     }
 
@@ -2073,7 +2751,7 @@
       handle.className = "fig-handle radius";
       handle.dataset.radius = "1";
       handle.title = "Arrondi " + r + " px";
-      const x = Math.max(0, Math.min((parseFloat(el.style.width) || 34) / 2, r));
+      const x = Math.max(0, Math.min((parseFloat(el.style.width) || KEY_UNIT) / 2, r));
       handle.style.left = x + "px";
       el.appendChild(handle);
       return handle;
@@ -2303,9 +2981,14 @@
     const settingsUrl = (location.protocol === "http:" || location.protocol === "https:")
       ? (location.origin + "/settings")
       : "http://127.0.0.1:7689/settings";
+    const designsApiBase = settingsUrl.replace(/\/settings$/, "") + "/designs";
 
     let settings = { ...DEFAULTS };
     let saveTimer = 0;
+    let customDesigns = [];
+    let editingDesignId = null;
+    let createSnapshot = null;
+    let createCommitted = false;
     let hsv = { h: 340, s: 0.53, v: 0.9 };
     let syncingPicker = false;
 
@@ -2330,6 +3013,12 @@
     const mouseW = document.getElementById("mouseW");
     const mouseH = document.getElementById("mouseH");
     const mouseR = document.getElementById("mouseR");
+    const mouseRot = document.getElementById("mouseRot");
+    const mouseAction = document.getElementById("mouseAction");
+    const mouseShape = document.getElementById("mouseShape");
+    const mouseLabel = document.getElementById("mouseLabel");
+    const mouseCtxMenu = document.getElementById("mouseCtxMenu");
+    const btnMouseDelete = document.getElementById("btnMouseDelete");
     const btnMouseReset = document.getElementById("btnMouseReset");
     const btnMouseSnap = document.getElementById("btnMouseSnap");
     const keyEditor = document.getElementById("keyEditor");
@@ -2350,6 +3039,21 @@
     const mediaFileInput = document.getElementById("mediaFileInput");
     const mediaLayersCard = document.getElementById("mediaLayersCard");
     const mediaLayersList = document.getElementById("mediaLayersList");
+    const keyAssetReuse = document.getElementById("keyAssetReuse");
+    const mouseMediaFileInput = document.getElementById("mouseMediaFileInput");
+    const mouseMediaLayersList = document.getElementById("mouseMediaLayersList");
+    const mouseAssetReuse = document.getElementById("mouseAssetReuse");
+    const mouseShapeField = document.getElementById("mouseShapeField");
+    const mouseActionField = document.getElementById("mouseActionField");
+    const mouseLabelField = document.getElementById("mouseLabelField");
+    const mouseRField = document.getElementById("mouseRField");
+    const mouseMediaOpacityField = document.getElementById("mouseMediaOpacityField");
+    const mouseMediaOpacity = document.getElementById("mouseMediaOpacity");
+    const mouseMediaOpacityVal = document.getElementById("mouseMediaOpacityVal");
+    const mouseMediaMaskField = document.getElementById("mouseMediaMaskField");
+    const mouseMediaMask = document.getElementById("mouseMediaMask");
+    const mouseMediaOverLabelsField = document.getElementById("mouseMediaOverLabelsField");
+    const mouseMediaOverLabels = document.getElementById("mouseMediaOverLabels");
     const mediaRot = document.getElementById("mediaRot");
     const mediaMask = document.getElementById("mediaMask");
     const mediaRotField = document.getElementById("mediaRotField");
@@ -2432,6 +3136,11 @@
     function setAccentFromHsv(save) {
       settings.accent = hsvToHex(hsv.h, hsv.s, hsv.v);
       document.documentElement.style.setProperty("--accent", settings.accent);
+      const rgb = hexToRgb(settings.accent);
+      if (rgb) {
+        const lum = (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255;
+        document.documentElement.style.setProperty("--btn-primary-fg", lum > 0.62 ? "#1a1216" : "#ffffff");
+      }
       if (!syncingPicker) {
         syncingPicker = true;
         updatePickerUi();
@@ -2656,11 +3365,135 @@
 
     let homeView = "themes"; // "themes" | "create"
 
+    function snapshotSettings() {
+      return JSON.parse(JSON.stringify(settings));
+    }
+
+    function applyFreshCustomDefaults() {
+      const layout = settings.layout || DEFAULTS.layout;
+      settings.accent = DEFAULTS.accent;
+      settings.design = DESIGN_CUSTOM;
+      settings.activeCustomId = null;
+      settings.mouse = DEFAULTS.mouse;
+      settings.mouseSens = DEFAULTS.mouseSens;
+      settings.layout = layout;
+      settings.keyCustom = true;
+      settings.keyLayout = buildDefaultKeyLayout(layout).map(serializeKeyItem);
+      settings.mediaLayers = [];
+      settings.mouseCustom = false;
+      settings.mouseLayout = null;
+      settings.mouseMediaLayers = [];
+      clearAllSelection();
+      mediaItems = [];
+      mouseMediaItems = [];
+      mouseEditorItems = [];
+      clearMouseSelection();
+      clearMouseMediaSelection();
+      savedKeyLayout = settings.keyLayout.map((k) => ({ ...k }));
+      savedMediaLayers = [];
+      savedMouseLayout = null;
+      savedMouseMediaLayers = [];
+    }
+
+    function themePayloadFromSettings(name, id) {
+      return {
+        id: id || undefined,
+        name: name || "Mon thème",
+        updatedAt: new Date().toISOString(),
+        accent: settings.accent,
+        mouse: settings.mouse,
+        layout: settings.layout,
+        mouseSens: settings.mouseSens,
+        keyCustom: !!settings.keyCustom,
+        keyLayout: settings.keyCustom ? (settings.keyLayout || []).map(serializeKeyItem) : null,
+        mediaLayers: settings.keyCustom ? normalizeMediaLayers(settings.mediaLayers) : [],
+        mouseCustom: !!settings.mouseCustom,
+        mouseLayout: settings.mouseCustom ? normalizeMouseLayout(settings.mouseLayout) : null,
+        mouseMediaLayers: settings.mouseCustom ? normalizeMediaLayers(settings.mouseMediaLayers) : [],
+      };
+    }
+
+    function applyDesignTheme(theme, designId) {
+      if (!theme) return;
+      settings.design = DESIGN_CUSTOM;
+      settings.activeCustomId = designId || theme.id || null;
+      if (theme.accent) settings.accent = theme.accent;
+      if (theme.mouse) settings.mouse = theme.mouse;
+      if (theme.layout) settings.layout = theme.layout;
+      if (theme.mouseSens != null) settings.mouseSens = theme.mouseSens;
+      settings.keyCustom = !!theme.keyCustom;
+      settings.keyLayout = theme.keyCustom
+        ? normalizeKeyLayout(theme.keyLayout, settings.layout, { fillMissing: false }).map(serializeKeyItem)
+        : null;
+      settings.mediaLayers = theme.keyCustom ? normalizeMediaLayers(theme.mediaLayers) : [];
+      settings.mouseCustom = !!theme.mouseCustom;
+      settings.mouseLayout = theme.mouseCustom ? normalizeMouseLayout(theme.mouseLayout) : null;
+      settings.mouseMediaLayers = theme.mouseCustom ? normalizeMediaLayers(theme.mouseMediaLayers) : [];
+      clearAllSelection();
+      mediaItems = settings.mediaLayers.map((m) => ({ ...m }));
+      mouseMediaItems = settings.mouseMediaLayers.map((m) => ({ ...m }));
+      savedKeyLayout = settings.keyLayout ? settings.keyLayout.map((k) => ({ ...k })) : null;
+      savedMediaLayers = settings.mediaLayers.map(serializeMedia);
+      savedMouseLayout = settings.mouseLayout ? settings.mouseLayout.map((m) => ({ ...m })) : null;
+      savedMouseMediaLayers = settings.mouseMediaLayers.map(serializeMedia);
+      mouseEditorItems = [];
+      clearMouseSelection();
+      clearMouseMediaSelection();
+    }
+
+    async function loadCustomDesigns() {
+      try {
+        const res = await fetch(designsApiBase, { cache: "no-store" });
+        if (!res.ok) throw new Error("bad");
+        const list = await res.json();
+        const base = Array.isArray(list) ? list : [];
+        customDesigns = await Promise.all(base.map(async (meta) => {
+          try {
+            const theme = await fetchDesignTheme(meta.id);
+            return { ...meta, _theme: theme };
+          } catch (e) {
+            return meta;
+          }
+        }));
+      } catch (e) {
+        customDesigns = [];
+      }
+    }
+
+    async function fetchDesignTheme(id) {
+      const res = await fetch(designsApiBase + "/" + encodeURIComponent(id), { cache: "no-store" });
+      if (!res.ok) throw new Error("not found");
+      return res.json();
+    }
+
+    async function saveCustomDesignRecord(name, id) {
+      const payload = themePayloadFromSettings(name, id);
+      const res = await fetch(designsApiBase, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(payload),
+      });
+      if (!res.ok) throw new Error("save design failed");
+      const data = await res.json();
+      return data && data.id ? data.id : id;
+    }
+
+    async function exportCustomDesign(id) {
+      const res = await fetch(designsApiBase + "/" + encodeURIComponent(id) + "/export", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: "{}",
+      });
+      if (!res.ok) throw new Error("export failed");
+      return res.json();
+    }
+
     function showHomeThemes() {
       homeView = "themes";
       document.getElementById("homeThemes").hidden = false;
       document.getElementById("homeCreate").hidden = true;
       if (appEl) appEl.classList.remove("create-mode");
+      syncExportButton();
       ensureOverlayPreview();
     }
 
@@ -2669,6 +3502,7 @@
       document.getElementById("homeThemes").hidden = true;
       document.getElementById("homeCreate").hidden = false;
       if (appEl) appEl.classList.add("create-mode");
+      syncExportButton();
       ensureOverlayPreview();
       syncingPicker = true;
       updatePickerUi();
@@ -2676,9 +3510,162 @@
       renderKeyEditor();
     }
 
+    function syncExportButton() {
+      const show = settings.design === DESIGN_CUSTOM && !!settings.activeCustomId;
+      const btnExport = document.getElementById("btnExportDesign");
+      const btnImport = document.getElementById("btnImportDesign");
+      if (btnExport) btnExport.hidden = !show;
+      if (btnImport) btnImport.hidden = !show;
+    }
+
+    function applyBuiltinDesign(value) {
+      // Les thèmes prêts restent intacts : pas d'images / clavier / souris custom par-dessus
+      if (settings.keyCustom) {
+        if (Array.isArray(settings.keyLayout) && settings.keyLayout.length) {
+          savedKeyLayout = settings.keyLayout.map(serializeKeyItem);
+        }
+        if (Array.isArray(settings.mediaLayers) && settings.mediaLayers.length) {
+          savedMediaLayers = settings.mediaLayers.map(serializeMedia);
+        }
+      }
+      if (settings.mouseCustom && Array.isArray(settings.mouseLayout) && settings.mouseLayout.length) {
+        savedMouseLayout = settings.mouseLayout.map(serializeMouseItem);
+      }
+      if (settings.mouseCustom && Array.isArray(settings.mouseMediaLayers) && settings.mouseMediaLayers.length) {
+        savedMouseMediaLayers = settings.mouseMediaLayers.map(serializeMedia);
+      }
+      settings.design = value;
+      settings.activeCustomId = null;
+      settings.keyCustom = false;
+      settings.keyLayout = null;
+      settings.mediaLayers = [];
+      settings.mouseCustom = false;
+      settings.mouseLayout = null;
+      settings.mouseMediaLayers = [];
+      mediaItems = [];
+      mouseMediaItems = [];
+      mouseEditorItems = [];
+      clearAllSelection();
+      clearMouseSelection();
+      clearMouseMediaSelection();
+      clearMouseFigGuides();
+    }
+
     function syncHomeView() {
       if (homeView === "create") showHomeCreate();
       else showHomeThemes();
+    }
+
+    function buildThemeCardPreview(previewEl, meta) {
+      previewEl.innerHTML = "";
+      const theme = meta._theme || null;
+      const layoutName = (theme && theme.layout) || settings.layout || "azerty";
+      const accent = (theme && theme.accent) || meta.accent || DEFAULTS.accent;
+      const q = layoutName === "qwerty";
+
+      const stage = document.createElement("div");
+      stage.className = "kb-preview-stage";
+
+      // GIF / image en fond (premier calque ou thumb)
+      const medias = theme && theme.keyCustom ? normalizeMediaLayers(theme.mediaLayers) : [];
+      const thumbFile = (medias[0] && medias[0].file) || meta.thumb || "";
+      if (thumbFile) {
+        const img = document.createElement("img");
+        img.className = "kb-mini-media";
+        img.src = mediaUrl(thumbFile);
+        img.alt = "";
+        stage.appendChild(img);
+      }
+
+      // Juste 3 touches pour l’aperçu (pas tout le clavier)
+      const keysRow = document.createElement("div");
+      keysRow.className = "kb-mini-keys";
+      const samples = q
+        ? [{ t: "A" }, { t: "W" }, { t: "D" }]
+        : [{ t: "Q" }, { t: "Z" }, { t: "D" }];
+      for (const s of samples) {
+        const el = document.createElement("span");
+        el.className = "kb-mini-key";
+        el.style.background = "color-mix(in srgb, " + accent + " 55%, #1a1216)";
+        el.style.borderColor = "color-mix(in srgb, " + accent + " 65%, rgba(255,255,255,0.4))";
+        el.textContent = s.t;
+        keysRow.appendChild(el);
+      }
+      stage.appendChild(keysRow);
+      previewEl.appendChild(stage);
+    }
+
+    function buildSavedThemeCard(meta) {
+      const wrap = document.createElement("div");
+      wrap.className = "theme theme-saved" + (settings.design === DESIGN_CUSTOM && settings.activeCustomId === meta.id ? " active" : "");
+      wrap.style.setProperty("--card-accent", meta.accent || settings.accent || DEFAULTS.accent);
+
+      const preview = document.createElement("div");
+      preview.className = "theme-preview kb-preview";
+      buildThemeCardPreview(preview, meta);
+
+      const title = document.createElement("strong");
+      title.textContent = meta.name || "Mon thème";
+      const desc = document.createElement("small");
+      desc.textContent = "Thème sauvegardé";
+
+      const editBtn = document.createElement("button");
+      editBtn.type = "button";
+      editBtn.className = "theme-edit-btn";
+      editBtn.title = "Éditer";
+      editBtn.setAttribute("aria-label", "Éditer " + (meta.name || "thème"));
+      editBtn.innerHTML = "✎";
+      editBtn.addEventListener("click", (e) => {
+        e.stopPropagation();
+        openEditCustomDesign(meta.id);
+      });
+
+      wrap.appendChild(editBtn);
+      wrap.appendChild(preview);
+      wrap.appendChild(title);
+      wrap.appendChild(desc);
+      wrap.addEventListener("click", () => selectCustomDesign(meta.id));
+      return wrap;
+    }
+
+    async function selectCustomDesign(id) {
+      try {
+        const theme = await fetchDesignTheme(id);
+        applyDesignTheme(theme, id);
+        showHomeThemes();
+        render();
+        queueSave();
+      } catch (e) {
+        savedLabel.textContent = "Impossible de charger le thème";
+        setTimeout(() => { savedLabel.textContent = ""; }, 1800);
+      }
+    }
+
+    async function openEditCustomDesign(id) {
+      try {
+        createSnapshot = snapshotSettings();
+        createCommitted = false;
+        const theme = await fetchDesignTheme(id);
+        applyDesignTheme(theme, id);
+        editingDesignId = id;
+        showHomeCreate();
+        render();
+        // Ne pas écraser le live tant qu'on n'enregistre pas : on applique quand même pour l'aperçu
+        queueSave();
+      } catch (e) {
+        savedLabel.textContent = "Impossible d’éditer";
+        setTimeout(() => { savedLabel.textContent = ""; }, 1800);
+      }
+    }
+
+    function startNewCustomDesign() {
+      createSnapshot = snapshotSettings();
+      createCommitted = false;
+      editingDesignId = null;
+      applyFreshCustomDefaults();
+      showHomeCreate();
+      render();
+      queueSave();
     }
 
     function renderDesigns() {
@@ -2686,16 +3673,15 @@
 
       const createBtn = document.createElement("button");
       createBtn.type = "button";
-      createBtn.className = "theme theme-create-card" + (settings.design === DESIGN_CUSTOM ? " active" : "");
+      createBtn.className = "theme theme-create-card" + (homeView === "create" && !editingDesignId ? " active" : "");
       createBtn.innerHTML =
         '<div class="plus">+</div><strong>Créer mon thème</strong><small>Couleur, touches, souris, images</small>';
-      createBtn.addEventListener("click", () => {
-        settings.design = DESIGN_CUSTOM;
-        showHomeCreate();
-        render();
-        queueSave();
-      });
+      createBtn.addEventListener("click", () => startNewCustomDesign());
       designGrid.appendChild(createBtn);
+
+      for (const meta of customDesigns) {
+        designGrid.appendChild(buildSavedThemeCard(meta));
+      }
 
       for (const [value, label, desc, preview] of DESIGNS) {
         const btn = document.createElement("button");
@@ -2706,7 +3692,7 @@
           '<span class="chip"></span><span class="chip b"></span><span class="chip c"></span>' +
           "</div><strong>" + label + "</strong><small>" + desc + "</small>";
         btn.addEventListener("click", () => {
-          settings.design = value;
+          applyBuiltinDesign(value);
           showHomeThemes();
           render();
           queueSave();
@@ -2770,7 +3756,12 @@
     function render() {
       document.documentElement.style.setProperty("--accent", settings.accent);
       const rgb = hexToRgb(settings.accent);
-      if (rgb) hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+      if (rgb) {
+        hsv = rgbToHsv(rgb.r, rgb.g, rgb.b);
+        // Contraste bouton Enregistrer (évite blanc sur accent clair)
+        const lum = (0.2126 * rgb.r + 0.7152 * rgb.g + 0.0722 * rgb.b) / 255;
+        document.documentElement.style.setProperty("--btn-primary-fg", lum > 0.62 ? "#1a1216" : "#ffffff");
+      }
       syncingPicker = true;
       updatePickerUi();
       syncingPicker = false;
@@ -2788,6 +3779,8 @@
       sgFps.value = String(settings.sgFps);
       sgEnabled.checked = settings.sgEnabled !== false;
       sgFields.classList.toggle("is-disabled", !sgEnabled.checked);
+      syncMouseDeleteButton();
+      syncExportButton();
       syncHomeView();
     }
 
@@ -2799,8 +3792,74 @@
     let savedKeyLayout = null;
     let savedMediaLayers = null;
     let mouseEditorItems = [];
+    let mouseMediaItems = [];
     let selectedMouseId = null;
+    let selectedMouseIds = new Set();
+    let selectedMouseMediaId = null;
     let savedMouseLayout = null;
+    let savedMouseMediaLayers = null;
+
+    function clearMouseMediaSelection() {
+      selectedMouseMediaId = null;
+    }
+
+    function clearMouseSelection() {
+      selectedMouseIds.clear();
+      selectedMouseId = null;
+    }
+
+    function setMouseMediaSelection(id) {
+      clearMouseSelection();
+      selectedMouseMediaId = id || null;
+    }
+
+    function setMouseSelection(ids, primary) {
+      clearMouseMediaSelection();
+      const list = (ids || []).filter((id) => mouseEditorItems.some((k) => k.id === id));
+      selectedMouseIds = new Set(list);
+      if (primary && selectedMouseIds.has(primary)) selectedMouseId = primary;
+      else selectedMouseId = list.length ? list[list.length - 1] : null;
+      if (selectedMouseId) selectedMouseIds.add(selectedMouseId);
+    }
+
+    function selectMousePart(id, additive) {
+      clearMouseMediaSelection();
+      if (!mouseEditorItems.some((k) => k.id === id)) return;
+      if (additive) {
+        if (selectedMouseIds.has(id)) {
+          selectedMouseIds.delete(id);
+          if (selectedMouseId === id) {
+            selectedMouseId = selectedMouseIds.size ? [...selectedMouseIds].at(-1) : null;
+          }
+        } else {
+          selectedMouseIds.add(id);
+          selectedMouseId = id;
+        }
+      } else {
+        setMouseSelection([id], id);
+      }
+    }
+
+    function pruneMouseSelection() {
+      const keep = [...selectedMouseIds].filter((id) => mouseEditorItems.some((k) => k.id === id));
+      selectedMouseIds = new Set(keep);
+      if (selectedMouseId && !selectedMouseIds.has(selectedMouseId)) {
+        selectedMouseId = keep.length ? keep[keep.length - 1] : null;
+      }
+      if (selectedMouseId) selectedMouseIds.add(selectedMouseId);
+    }
+
+    function syncMouseDeleteButton() {
+      if (!btnMouseDelete) return;
+      if (selectedMouseMediaId) {
+        btnMouseDelete.disabled = !settings.mouseCustom;
+        btnMouseDelete.textContent = "Supprimer l'image";
+        return;
+      }
+      const n = selectedMouseIds.size;
+      btnMouseDelete.disabled = !settings.mouseCustom || n === 0;
+      btnMouseDelete.textContent = n > 1 ? ("Supprimer (" + n + ")") : "Supprimer";
+    }
 
     const mediaApiBase = settingsUrl.replace(/\/settings$/, "");
 
@@ -3312,12 +4371,17 @@
       nx = Math.max(0, Math.round(nx));
       ny = Math.max(0, Math.round(ny));
 
-      // 3) Labels de distance live vers les voisins proches (même sans snap)
+      figAppendNeighborMeasures(guides, nx, ny, w, h, others);
+
+      return { x: nx, y: ny, guides };
+    }
+
+    function figAppendNeighborMeasures(guides, x, y, w, h, others) {
       for (const o of others) {
-        if (rangesOverlap(ny, ny + h, o.y, o.y + o.h)) {
-          const gapRight = Math.round(nx - (o.x + o.w));
-          const gapLeft = Math.round(o.x - (nx + w));
-          const midY = Math.round((Math.max(ny, o.y) + Math.min(ny + h, o.y + o.h)) / 2);
+        if (rangesOverlap(y, y + h, o.y, o.y + o.h)) {
+          const gapRight = Math.round(x - (o.x + o.w));
+          const gapLeft = Math.round(o.x - (x + w));
+          const midY = Math.round((Math.max(y, o.y) + Math.min(y + h, o.y + o.h)) / 2);
           if (gapRight >= 0 && gapRight <= 120) {
             const exists = guides.measures.some((m) => m.axis === "h" && m.value === gapRight
               && Math.min(m.a, m.b) === o.x + o.w);
@@ -3325,7 +4389,7 @@
               guides.measures.push({
                 axis: "h",
                 a: o.x + o.w,
-                b: nx,
+                b: x,
                 pos: midY,
                 value: gapRight,
               });
@@ -3337,7 +4401,7 @@
             if (!exists) {
               guides.measures.push({
                 axis: "h",
-                a: nx + w,
+                a: x + w,
                 b: o.x,
                 pos: midY,
                 value: gapLeft,
@@ -3345,10 +4409,10 @@
             }
           }
         }
-        if (rangesOverlap(nx, nx + w, o.x, o.x + o.w)) {
-          const gapBelow = Math.round(ny - (o.y + o.h));
-          const gapAbove = Math.round(o.y - (ny + h));
-          const midX = Math.round((Math.max(nx, o.x) + Math.min(nx + w, o.x + o.w)) / 2);
+        if (rangesOverlap(x, x + w, o.x, o.x + o.w)) {
+          const gapBelow = Math.round(y - (o.y + o.h));
+          const gapAbove = Math.round(o.y - (y + h));
+          const midX = Math.round((Math.max(x, o.x) + Math.min(x + w, o.x + o.w)) / 2);
           if (gapBelow >= 0 && gapBelow <= 120) {
             const exists = guides.measures.some((m) => m.axis === "v" && m.value === gapBelow
               && Math.min(m.a, m.b) === o.y + o.h);
@@ -3356,7 +4420,7 @@
               guides.measures.push({
                 axis: "v",
                 a: o.y + o.h,
-                b: ny,
+                b: y,
                 pos: midX,
                 value: gapBelow,
               });
@@ -3368,7 +4432,7 @@
             if (!exists) {
               guides.measures.push({
                 axis: "v",
-                a: ny + h,
+                a: y + h,
                 b: o.y,
                 pos: midX,
                 value: gapAbove,
@@ -3377,8 +4441,179 @@
           }
         }
       }
+    }
 
-      return { x: nx, y: ny, guides };
+    /** Snap resize type Figma : bords / centres alignés + distances. */
+    function figSnapResize(x, y, w, h, corner, opts) {
+      const o = opts || {};
+      const hardGrid = !!o.hardGrid;
+      const minW = Math.max(1, Number(o.minW) || 16);
+      const minH = Math.max(1, Number(o.minH) || 16);
+      const pool = o.itemsPool || editorItems;
+      const exclude = o.excludeIds instanceof Set ? new Set(o.excludeIds) : new Set();
+      if (o.selfId) exclude.add(o.selfId);
+      const others = pool.filter((it) => !exclude.has(it.id));
+      const c = corner || "br";
+
+      let nx = Math.round(x);
+      let ny = Math.round(y);
+      let nw = Math.round(w);
+      let nh = Math.round(h);
+
+      if (hardGrid) {
+        if (c.indexOf("l") >= 0) {
+          const right = nx + nw;
+          nx = snap(nx, KEY_GRID);
+          nw = Math.max(minW, right - nx);
+        } else {
+          nw = Math.max(minW, snap(nw, KEY_GRID));
+        }
+        if (c.indexOf("t") >= 0) {
+          const bottom = ny + nh;
+          ny = snap(ny, KEY_GRID);
+          nh = Math.max(minH, bottom - ny);
+        } else {
+          nh = Math.max(minH, snap(nh, KEY_GRID));
+        }
+        return {
+          x: Math.max(0, nx),
+          y: Math.max(0, ny),
+          w: nw,
+          h: nh,
+          guides: { v: [], h: [], measures: [] },
+        };
+      }
+
+      const guides = { v: [], h: [], measures: [] };
+      const moveRight = c === "br" || c === "tr";
+      const moveLeft = c === "bl" || c === "tl";
+      const moveBottom = c === "br" || c === "bl";
+      const moveTop = c === "tr" || c === "tl";
+
+      const fixedLeft = moveLeft ? null : nx;
+      const fixedRight = moveRight ? null : nx + nw;
+      const fixedTop = moveTop ? null : ny;
+      const fixedBottom = moveBottom ? null : ny + nh;
+
+      let left = nx;
+      let right = nx + nw;
+      let top = ny;
+      let bottom = ny + nh;
+
+      const candidatesX = [0];
+      const candidatesY = [0];
+      for (const it of others) {
+        candidatesX.push(it.x, it.x + it.w / 2, it.x + it.w);
+        candidatesY.push(it.y, it.y + it.h / 2, it.y + it.h);
+      }
+
+      function snapEdge(value, candidates, axis) {
+        let best = FIG_SNAP + 1;
+        let snapped = value;
+        let guide = null;
+        for (const cnd of candidates) {
+          const d = cnd - value;
+          if (Math.abs(d) < Math.abs(best)) {
+            best = d;
+            snapped = cnd;
+            guide = cnd;
+          }
+        }
+        if (Math.abs(best) <= FIG_SNAP) {
+          if (axis === "x") guides.v.push(guide);
+          else guides.h.push(guide);
+          return snapped;
+        }
+        return value;
+      }
+
+      if (moveRight) right = snapEdge(right, candidatesX, "x");
+      if (moveLeft) left = snapEdge(left, candidatesX, "x");
+      if (moveBottom) bottom = snapEdge(bottom, candidatesY, "y");
+      if (moveTop) top = snapEdge(top, candidatesY, "y");
+
+      // Snap taille égale (même largeur / hauteur qu’un voisin)
+      if (moveRight || moveLeft) {
+        let best = FIG_SNAP + 1;
+        let targetW = null;
+        for (const it of others) {
+          const d = it.w - (right - left);
+          if (Math.abs(d) < Math.abs(best)) {
+            best = d;
+            targetW = it.w;
+          }
+        }
+        if (targetW != null && Math.abs(best) <= FIG_SNAP) {
+          if (moveRight && fixedLeft != null) right = fixedLeft + targetW;
+          else if (moveLeft && fixedRight != null) left = fixedRight - targetW;
+          guides.measures.push({
+            axis: "h",
+            a: Math.min(left, left + targetW),
+            b: Math.max(left, left + targetW),
+            pos: Math.round(top - 12),
+            value: targetW,
+          });
+        }
+      }
+      if (moveBottom || moveTop) {
+        let best = FIG_SNAP + 1;
+        let targetH = null;
+        for (const it of others) {
+          const d = it.h - (bottom - top);
+          if (Math.abs(d) < Math.abs(best)) {
+            best = d;
+            targetH = it.h;
+          }
+        }
+        if (targetH != null && Math.abs(best) <= FIG_SNAP) {
+          if (moveBottom && fixedTop != null) bottom = fixedTop + targetH;
+          else if (moveTop && fixedBottom != null) top = fixedBottom - targetH;
+          guides.measures.push({
+            axis: "v",
+            a: Math.min(top, top + targetH),
+            b: Math.max(top, top + targetH),
+            pos: Math.round(left - 14),
+            value: targetH,
+          });
+        }
+      }
+
+      // Recompose avec bords fixes
+      if (fixedLeft != null) left = fixedLeft;
+      if (fixedRight != null) right = fixedRight;
+      if (fixedTop != null) top = fixedTop;
+      if (fixedBottom != null) bottom = fixedBottom;
+
+      nw = Math.max(minW, Math.round(right - left));
+      nh = Math.max(minH, Math.round(bottom - top));
+      if (moveLeft) left = (fixedRight != null ? fixedRight : right) - nw;
+      if (moveTop) top = (fixedBottom != null ? fixedBottom : bottom) - nh;
+      if (!moveLeft) left = fixedLeft != null ? fixedLeft : left;
+      if (!moveTop) top = fixedTop != null ? fixedTop : top;
+
+      nx = Math.max(0, Math.round(left));
+      ny = Math.max(0, Math.round(top));
+      nw = Math.max(minW, Math.round(nw));
+      nh = Math.max(minH, Math.round(nh));
+
+      // Guides d’alignement restants (bords déjà calés)
+      const myX = [nx, nx + nw / 2, nx + nw];
+      const myY = [ny, ny + nh / 2, ny + nh];
+      for (const cx of candidatesX) {
+        for (const mx of myX) {
+          if (Math.abs(cx - mx) <= 0.51) guides.v.push(cx);
+        }
+      }
+      for (const cy of candidatesY) {
+        for (const my of myY) {
+          if (Math.abs(cy - my) <= 0.51) guides.h.push(cy);
+        }
+      }
+      guides.v = Array.from(new Set(guides.v.map((v) => Math.round(v))));
+      guides.h = Array.from(new Set(guides.h.map((v) => Math.round(v))));
+
+      figAppendNeighborMeasures(guides, nx, ny, nw, nh, others);
+      return { x: nx, y: ny, w: nw, h: nh, guides };
     }
 
     function catalogCls(id) {
@@ -3562,6 +4797,7 @@
     function renderMediaLayersList() {
       if (!mediaLayersList) return;
       mediaLayersList.innerHTML = "";
+      paintKeyAssetReuse();
       if (!settings.keyCustom) return;
       const sorted = mediaItems.slice().sort((a, b) => b.z - a.z);
       if (!sorted.length) {
@@ -3658,13 +4894,7 @@
         mediaItems = mediaItems.filter((x) => x.id !== selectedMediaId);
         clearMediaSelection();
         commitMediaLayout(true);
-        if (m && m.file) {
-          fetch(mediaApiBase + "/media/delete", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ file: m.file }),
-          }).catch(() => {});
-        }
+        if (m && m.file) maybeDeleteAssetFile(m.file, { side: "key", id: m.id });
         paintKeyEditor();
         return;
       }
@@ -3721,13 +4951,24 @@
 
     async function addMediaFromFile(file) {
       if (!settings.keyCustom || !file) return;
-      const reader = new FileReader();
-      const dataUrl = await new Promise((resolve, reject) => {
-        reader.onload = () => resolve(reader.result);
-        reader.onerror = reject;
-        reader.readAsDataURL(file);
-      });
+      const maxBytes = 12 * 1024 * 1024;
+      if (file.size > maxBytes) {
+        savedLabel.textContent = "Fichier trop gros (max 12 Mo)";
+        setTimeout(() => { if (savedLabel.textContent.indexOf("trop gros") >= 0) savedLabel.textContent = ""; }, 2800);
+        return;
+      }
+      const type = (file.type || "").toLowerCase();
+      const nameLower = (file.name || "").toLowerCase();
+      const okType = type.indexOf("image/") === 0
+        || /\.(gif|png|jpe?g|webp)$/i.test(nameLower);
+      if (!okType) {
+        savedLabel.textContent = "Format non supporté (PNG, JPG, GIF, WEBP)";
+        return;
+      }
+
+      savedLabel.textContent = "Upload en cours…";
       let natural = { w: 220, h: 220 };
+      const objectUrl = URL.createObjectURL(file);
       try {
         natural = await new Promise((resolve) => {
           const probe = new Image();
@@ -3736,9 +4977,12 @@
             h: Math.max(32, probe.naturalHeight || 220),
           });
           probe.onerror = () => resolve({ w: 220, h: 220 });
-          probe.src = dataUrl;
+          probe.src = objectUrl;
         });
       } catch (_) {}
+      finally {
+        try { URL.revokeObjectURL(objectUrl); } catch (_) {}
+      }
       const maxSide = 360;
       let w = natural.w;
       let h = natural.h;
@@ -3752,8 +4996,11 @@
       try {
         res = await fetch(mediaApiBase + "/media/upload", {
           method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ name: file.name || "image.png", data: dataUrl }),
+          headers: {
+            "Content-Type": "application/octet-stream",
+            "X-Filename": file.name || "image.gif",
+          },
+          body: file,
         });
       } catch (e) {
         savedLabel.textContent = "Upload impossible — relance start-overlay.bat";
@@ -3762,6 +5009,7 @@
       const json = await res.json().catch(() => null);
       if (!res.ok || !json || !json.ok || !json.file) {
         savedLabel.textContent = (json && json.error) ? json.error : "Upload échoué";
+        setTimeout(() => { if (savedLabel.textContent === (json && json.error)) savedLabel.textContent = ""; }, 3200);
         return;
       }
       const id = "media_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 7);
@@ -3785,6 +5033,76 @@
       paintKeyEditor();
       savedLabel.textContent = "Image ajoutée ✓";
       setTimeout(() => { if (savedLabel.textContent === "Image ajoutée ✓") savedLabel.textContent = ""; }, 1400);
+    }
+
+    function paintKeyAssetReuse() {
+      if (!keyAssetReuse) return;
+      keyAssetReuse.innerHTML = "";
+      if (!settings.keyCustom) {
+        keyAssetReuse.hidden = true;
+        return;
+      }
+      const all = collectReusableAssets();
+      if (!all.length) {
+        keyAssetReuse.hidden = true;
+        return;
+      }
+      keyAssetReuse.hidden = false;
+      const label = document.createElement("div");
+      label.className = "mouse-side-hint";
+      label.style.width = "100%";
+      label.textContent = "Réutiliser (déjà uploadé) :";
+      keyAssetReuse.appendChild(label);
+      for (const a of all) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "mouse-asset-chip";
+        btn.title = "Réutiliser « " + a.name + " » sans re-upload";
+        btn.innerHTML = "<img alt=\"\" />";
+        btn.querySelector("img").src = mediaUrl(a.file);
+        btn.addEventListener("click", () => addKeyMediaFromAsset(a.file, a.name));
+        keyAssetReuse.appendChild(btn);
+      }
+    }
+
+    async function addKeyMediaFromAsset(file, name) {
+      if (!settings.keyCustom || !file) return;
+      const sized = await new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => {
+          const maxSide = 360;
+          let w = Math.max(32, img.naturalWidth || 220);
+          let h = Math.max(32, img.naturalHeight || 220);
+          if (w > maxSide || h > maxSide) {
+            const s = maxSide / Math.max(w, h);
+            w = Math.round(w * s);
+            h = Math.round(h * s);
+          }
+          resolve({ w, h });
+        };
+        img.onerror = () => resolve({ w: 220, h: 220 });
+        img.src = mediaUrl(file);
+      });
+      const id = "media_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 7);
+      mediaItems.push({
+        id,
+        file,
+        name: String(name || "image").slice(0, 40),
+        x: 12,
+        y: 12,
+        w: sized.w,
+        h: sized.h,
+        rot: 0,
+        z: mediaItems.length,
+        mask: false,
+        opacity: 1,
+        overLetters: false,
+      });
+      setMediaSelection(id);
+      commitMediaLayout(true);
+      paintKeyEditor();
+      savedLabel.textContent = "Image réutilisée ✓";
+      setTimeout(() => { if (savedLabel.textContent === "Image réutilisée ✓") savedLabel.textContent = ""; }, 1400);
     }
 
     function clearMouseFigGuides() {
@@ -3843,10 +5161,54 @@
       }
     }
 
-    function minMouseSize(id) {
-      if (id === "pad") return { w: 80, h: 80 };
-      if (id === "wheel") return { w: 36, h: 36 };
-      return { w: 40, h: 36 };
+    function minMouseSize(action, shape) {
+      const s = normalizeMouseShape(shape);
+      if (s === "circle" || s === "square" || s === "star") return { w: 45, h: 45 };
+      const a = normalizeMouseAction(action, action);
+      if (a === "pad") return { w: 100, h: 100 };
+      if (a === "wheel") return { w: 45, h: 45 };
+      if (a === "wheelUp" || a === "wheelDown") return { w: 45, h: 35 };
+      return { w: 50, h: 45 };
+    }
+
+    function mouseActionLabel(action) {
+      return MOUSE_ACTION_LABELS[normalizeMouseAction(action, action)] || action;
+    }
+
+    function mouseShapeLabel(shape) {
+      return MOUSE_SHAPE_LABELS[normalizeMouseShape(shape)] || shape;
+    }
+
+    function shortMouseLabel(action) {
+      const a = normalizeMouseAction(action, action);
+      if (a === "none") return "";
+      if (a === "m1") return "M1";
+      if (a === "m2") return "M2";
+      if (a === "wheel") return "";
+      if (a === "wheelUp") return "▲";
+      if (a === "wheelDown") return "▼";
+      if (a === "pad") return "";
+      return a;
+    }
+
+    function mouseDisplayText(item) {
+      // En orga custom : pas de M1/M2 auto — seulement le texte saisi
+      return String(item.label || "").trim();
+    }
+
+    function applyMouseShapeStyle(el, item) {
+      const shape = normalizeMouseShape(item.shape);
+      el.classList.remove("shape-rect", "shape-square", "shape-circle", "shape-triangle", "shape-star");
+      el.classList.add("shape-" + shape);
+      if (shape === "circle") {
+        el.style.borderRadius = "50%";
+      } else if (shape === "triangle" || shape === "star") {
+        el.style.borderRadius = "0";
+      } else {
+        const pr = clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.action, shape));
+        item.r = pr;
+        el.style.borderRadius = pr + "px";
+      }
     }
 
     function ensureMouseEditorLayout() {
@@ -3860,54 +5222,694 @@
         }
         settings.mouseLayout = mouseEditorItems.map(serializeMouseItem);
         savedMouseLayout = settings.mouseLayout;
+        mouseMediaItems = normalizeMediaLayers(settings.mouseMediaLayers);
+        settings.mouseMediaLayers = mouseMediaItems.map(serializeMedia);
       } else {
         mouseEditorItems = buildDefaultMouseLayout();
+        mouseMediaItems = [];
+      }
+      pruneMouseSelection();
+      if (selectedMouseMediaId && !mouseMediaItems.some((m) => m.id === selectedMouseMediaId)) {
+        clearMouseMediaSelection();
       }
     }
 
     function commitMouseLayout(save) {
       settings.mouseLayout = mouseEditorItems.map(serializeMouseItem);
       savedMouseLayout = settings.mouseLayout;
+      mouseMediaItems.forEach((m, i) => { m.z = i; });
+      settings.mouseMediaLayers = mouseMediaItems.map(serializeMedia);
       if (save !== false) queueSave();
     }
 
+    function commitMouseMediaLayout(save) {
+      const art = mouseArtboardSize(mouseEditorItems);
+      mouseMediaItems.forEach((m, i) => {
+        clampMouseMediaToArt(m, art);
+        m.z = i;
+      });
+      settings.mouseMediaLayers = mouseMediaItems.map(serializeMedia);
+      if (save !== false) queueSave();
+    }
+
+    function assetFileStillUsed(file, except) {
+      if (!file) return false;
+      const pools = [mediaItems, mouseMediaItems];
+      for (const pool of pools) {
+        for (const m of pool || []) {
+          if (!m || m.file !== file) continue;
+          if (except && except.side === "key" && except.id === m.id && pool === mediaItems) continue;
+          if (except && except.side === "mouse" && except.id === m.id && pool === mouseMediaItems) continue;
+          return true;
+        }
+      }
+      return false;
+    }
+
+    function maybeDeleteAssetFile(file, except) {
+      if (!file || assetFileStillUsed(file, except)) return;
+      fetch(mediaApiBase + "/media/delete", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ file }),
+      }).catch(() => {});
+    }
+
+    function collectReusableAssets() {
+      const map = new Map();
+      const push = (m) => {
+        if (!m || !m.file || !String(m.file).startsWith("user-")) return;
+        if (!map.has(m.file)) map.set(m.file, { file: m.file, name: m.name || m.file });
+      };
+      for (const m of mediaItems) push(m);
+      for (const m of mouseMediaItems) push(m);
+      for (const m of normalizeMediaLayers(settings.mediaLayers)) push(m);
+      for (const m of normalizeMediaLayers(settings.mouseMediaLayers)) push(m);
+      for (const m of normalizeMediaLayers(savedMediaLayers)) push(m);
+      for (const m of normalizeMediaLayers(savedMouseMediaLayers)) push(m);
+      return [...map.values()].sort((a, b) => a.name.localeCompare(b.name));
+    }
+
+    function paintMouseAssetReuse() {
+      if (!mouseAssetReuse) return;
+      mouseAssetReuse.innerHTML = "";
+      if (!settings.mouseCustom) {
+        mouseAssetReuse.hidden = true;
+        return;
+      }
+      const assets = collectReusableAssets();
+      if (!assets.length) {
+        mouseAssetReuse.hidden = true;
+        return;
+      }
+      mouseAssetReuse.hidden = false;
+      const label = document.createElement("div");
+      label.className = "mouse-side-hint";
+      label.style.width = "100%";
+      label.textContent = "Réutiliser (déjà sur le PC) :";
+      mouseAssetReuse.appendChild(label);
+      for (const a of assets) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "mouse-asset-chip";
+        btn.title = "Réutiliser « " + a.name + " » sans re-upload";
+        btn.innerHTML = "<img alt=\"\" />";
+        btn.querySelector("img").src = mediaUrl(a.file);
+        btn.addEventListener("click", () => addMouseMediaFromAsset(a.file, a.name));
+        mouseAssetReuse.appendChild(btn);
+      }
+    }
+
+    function paintMouseMediaLayersList() {
+      if (!mouseMediaLayersList) return;
+      mouseMediaLayersList.innerHTML = "";
+      if (!settings.mouseCustom) return;
+      const sorted = mouseMediaItems.slice().sort((a, b) => b.z - a.z);
+      if (!sorted.length) {
+        const empty = document.createElement("div");
+        empty.className = "palette-empty";
+        empty.textContent = "Aucune image souris.";
+        mouseMediaLayersList.appendChild(empty);
+        return;
+      }
+      for (const m of sorted) {
+        const row = document.createElement("div");
+        row.className = "media-layer-row" + (m.id === selectedMouseMediaId ? " active" : "");
+        row.innerHTML =
+          "<img src=\"" + mediaUrl(m.file) + "\" alt=\"\" />" +
+          "<div class=\"meta\"><strong></strong><span></span></div>" +
+          "<div class=\"media-layer-actions\"></div>";
+        row.querySelector("strong").textContent = m.name;
+        row.querySelector("span").textContent =
+          Math.round((m.opacity != null ? m.opacity : 1) * 100) + "%"
+          + (m.mask ? " · masque" : "")
+          + (m.overLetters ? " · texte" : "")
+          + " · " + m.w + "×" + m.h;
+        const actions = row.querySelector(".media-layer-actions");
+        const up = document.createElement("button");
+        up.type = "button";
+        up.className = "btn";
+        up.textContent = "▲";
+        up.title = "Monter le calque";
+        up.addEventListener("click", (e) => {
+          e.stopPropagation();
+          moveMouseMediaLayer(m.id, 1);
+        });
+        const down = document.createElement("button");
+        down.type = "button";
+        down.className = "btn";
+        down.textContent = "▼";
+        down.title = "Descendre le calque";
+        down.addEventListener("click", (e) => {
+          e.stopPropagation();
+          moveMouseMediaLayer(m.id, -1);
+        });
+        actions.appendChild(up);
+        actions.appendChild(down);
+        row.addEventListener("click", () => {
+          setMouseMediaSelection(m.id);
+          paintMouseEditor();
+          mouseEditor.focus();
+        });
+        mouseMediaLayersList.appendChild(row);
+      }
+    }
+
+    function moveMouseMediaLayer(id, dir) {
+      const idx = mouseMediaItems.findIndex((m) => m.id === id);
+      if (idx < 0) return;
+      const next = idx + dir;
+      if (next < 0 || next >= mouseMediaItems.length) return;
+      const tmp = mouseMediaItems[idx];
+      mouseMediaItems[idx] = mouseMediaItems[next];
+      mouseMediaItems[next] = tmp;
+      mouseMediaItems.forEach((m, i) => { m.z = i; });
+      commitMouseMediaLayout(true);
+      paintMouseEditor();
+    }
+
+    function scaleMediaNaturalSize(nw, nh) {
+      const maxSide = 280;
+      let w = Math.max(32, nw || 180);
+      let h = Math.max(32, nh || 180);
+      if (w > maxSide || h > maxSide) {
+        const s = maxSide / Math.max(w, h);
+        w = Math.round(w * s);
+        h = Math.round(h * s);
+      }
+      return { w, h };
+    }
+
+    function pushMouseMediaItem(file, name, w, h) {
+      if (!settings.mouseCustom) {
+        settings.mouseCustom = true;
+        mouseCustom.checked = true;
+        ensureMouseEditorLayout();
+      }
+      const id = "mm_" + Date.now().toString(36) + "_" + Math.random().toString(36).slice(2, 7);
+      const item = {
+        id,
+        file,
+        name: String(name || "image").slice(0, 40),
+        x: 12,
+        y: 12,
+        w,
+        h,
+        rot: 0,
+        z: mouseMediaItems.length,
+        mask: false,
+        opacity: 1,
+        overLetters: false,
+      };
+      mouseMediaItems.push(item);
+      setMouseMediaSelection(id);
+      commitMouseMediaLayout(true);
+      paintMouseEditor();
+      savedLabel.textContent = "Image ajoutée (souris)";
+      setTimeout(() => {
+        if (savedLabel.textContent === "Image ajoutée (souris)") savedLabel.textContent = "";
+      }, 1600);
+    }
+
+    async function addMouseMediaFromAsset(file, name) {
+      if (!file) return;
+      const sized = await new Promise((resolve) => {
+        const img = new Image();
+        img.onload = () => resolve(scaleMediaNaturalSize(img.naturalWidth, img.naturalHeight));
+        img.onerror = () => resolve(scaleMediaNaturalSize(180, 180));
+        img.src = mediaUrl(file);
+      });
+      pushMouseMediaItem(file, name || file, sized.w, sized.h);
+    }
+
+    async function addMouseMediaFromFile(file) {
+      if (!file) return;
+      const maxBytes = 12 * 1024 * 1024;
+      if (file.size > maxBytes) {
+        savedLabel.textContent = "Fichier trop gros (max 12 Mo)";
+        setTimeout(() => { if (savedLabel.textContent.indexOf("trop gros") >= 0) savedLabel.textContent = ""; }, 2800);
+        return;
+      }
+      const type = (file.type || "").toLowerCase();
+      const nameLower = (file.name || "").toLowerCase();
+      const okType = type.indexOf("image/") === 0
+        || /\.(gif|png|jpe?g|webp)$/i.test(nameLower);
+      if (!okType) {
+        savedLabel.textContent = "Format non supporté (PNG, JPG, GIF, WEBP)";
+        return;
+      }
+
+      savedLabel.textContent = "Upload en cours…";
+      let natural = { w: 180, h: 180 };
+      const objectUrl = URL.createObjectURL(file);
+      try {
+        natural = await new Promise((resolve) => {
+          const probe = new Image();
+          probe.onload = () => resolve({
+            w: Math.max(32, probe.naturalWidth || 180),
+            h: Math.max(32, probe.naturalHeight || 180),
+          });
+          probe.onerror = () => resolve({ w: 180, h: 180 });
+          probe.src = objectUrl;
+        });
+      } catch (_) {}
+      finally {
+        try { URL.revokeObjectURL(objectUrl); } catch (_) {}
+      }
+      const sized = scaleMediaNaturalSize(natural.w, natural.h);
+
+      let res;
+      try {
+        res = await fetch(mediaApiBase + "/media/upload", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/octet-stream",
+            "X-Filename": file.name || "image.gif",
+          },
+          body: file,
+        });
+      } catch (e) {
+        savedLabel.textContent = "Upload impossible — relance start-overlay.bat";
+        return;
+      }
+      const json = await res.json().catch(() => null);
+      if (!res.ok || !json || !json.ok || !json.file) {
+        savedLabel.textContent = (json && json.error) ? json.error : "Upload échoué";
+        setTimeout(() => { if (savedLabel.textContent === (json && json.error)) savedLabel.textContent = ""; }, 3200);
+        return;
+      }
+      const displayName = (file.name || "image").replace(/\.[^.]+$/, "").slice(0, 40);
+      pushMouseMediaItem(json.file, displayName, sized.w, sized.h);
+    }
+
+    function deleteSelectedMouseMedia() {
+      if (!settings.mouseCustom || !selectedMouseMediaId) return;
+      const m = mouseMediaItems.find((x) => x.id === selectedMouseMediaId);
+      mouseMediaItems = mouseMediaItems.filter((x) => x.id !== selectedMouseMediaId);
+      clearMouseMediaSelection();
+      commitMouseMediaLayout(true);
+      if (m && m.file) maybeDeleteAssetFile(m.file, { side: "mouse", id: m.id });
+      paintMouseEditor();
+    }
+
+    const MEDIA_EDGE_SLACK = 36;
+
+    function mouseArtboardSize(parts) {
+      let maxR = 250;
+      let maxB = 225;
+      for (const p of parts || []) {
+        maxR = Math.max(maxR, p.x + p.w + 28);
+        maxB = Math.max(maxB, p.y + p.h + 28);
+      }
+      return { w: maxR, h: maxB };
+    }
+
+    function clampMouseMediaToArt(m, art, slack) {
+      if (!m || !art) return;
+      const s = slack != null ? slack : MEDIA_EDGE_SLACK;
+      m.x = Math.round(Math.min(Math.max(Number(m.x) || 0, -s), art.w - m.w + s));
+      m.y = Math.round(Math.min(Math.max(Number(m.y) || 0, -s), art.h - m.h + s));
+    }
+
+    function appendMouseShapeMaskHole(mask, p) {
+      const NS = "http://www.w3.org/2000/svg";
+      const shape = normalizeMouseShape(p.shape);
+      const cx = p.x + p.w / 2;
+      const cy = p.y + p.h / 2;
+      const rot = Math.round(Number(p.rot) || 0);
+      let node;
+      if (shape === "circle") {
+        node = document.createElementNS(NS, "ellipse");
+        node.setAttribute("cx", String(cx));
+        node.setAttribute("cy", String(cy));
+        node.setAttribute("rx", String(p.w / 2));
+        node.setAttribute("ry", String(p.h / 2));
+      } else if (shape === "triangle") {
+        node = document.createElementNS(NS, "polygon");
+        node.setAttribute(
+          "points",
+          (p.x + p.w * 0.5) + "," + (p.y + p.h * 0.04) + " "
+          + (p.x + p.w * 0.04) + "," + (p.y + p.h * 0.96) + " "
+          + (p.x + p.w * 0.96) + "," + (p.y + p.h * 0.96)
+        );
+      } else if (shape === "star") {
+        node = document.createElementNS(NS, "polygon");
+        const pts = [
+          [50, 2], [61, 35], [98, 35], [68, 57], [79, 91],
+          [50, 70], [21, 91], [32, 57], [2, 35], [39, 35],
+        ].map(([px, py]) => (p.x + p.w * px / 100) + "," + (p.y + p.h * py / 100));
+        node.setAttribute("points", pts.join(" "));
+      } else {
+        node = document.createElementNS(NS, "rect");
+        node.setAttribute("x", String(p.x));
+        node.setAttribute("y", String(p.y));
+        node.setAttribute("width", String(p.w));
+        node.setAttribute("height", String(p.h));
+        const rx = shape === "circle"
+          ? Math.min(p.w, p.h) / 2
+          : clampCornerRadius(p.w, p.h, p.r, defaultMouseRadius(p.action, shape));
+        node.setAttribute("rx", String(rx));
+        node.setAttribute("ry", String(rx));
+      }
+      node.setAttribute("fill", "#fff");
+      if (rot) node.setAttribute("transform", "rotate(" + rot + " " + cx + " " + cy + ")");
+      mask.appendChild(node);
+    }
+
+    function fillMouseActionSelect() {
+      if (!mouseAction) return;
+      mouseAction.innerHTML = "";
+      for (const a of MOUSE_ACTIONS) {
+        const opt = document.createElement("option");
+        opt.value = a;
+        opt.textContent = MOUSE_ACTION_LABELS[a];
+        mouseAction.appendChild(opt);
+      }
+    }
+
+    function fillMouseShapeSelect() {
+      if (!mouseShape) return;
+      mouseShape.innerHTML = "";
+      for (const s of MOUSE_SHAPES) {
+        const opt = document.createElement("option");
+        opt.value = s;
+        opt.textContent = MOUSE_SHAPE_LABELS[s];
+        mouseShape.appendChild(opt);
+      }
+    }
+
     function updateMouseMetaFields() {
+      const mediaItem = mouseMediaItems.find((m) => m.id === selectedMouseMediaId);
+      if (mediaItem && settings.mouseCustom) {
+        mouseEditorMeta.hidden = false;
+        if (mouseShapeField) mouseShapeField.hidden = true;
+        if (mouseActionField) mouseActionField.hidden = true;
+        if (mouseLabelField) mouseLabelField.hidden = true;
+        if (mouseRField) mouseRField.hidden = true;
+        if (mouseMediaOpacityField) mouseMediaOpacityField.hidden = false;
+        if (mouseMediaMaskField) mouseMediaMaskField.hidden = false;
+        if (mouseMediaOverLabelsField) mouseMediaOverLabelsField.hidden = false;
+        if (document.activeElement !== mouseX) mouseX.value = String(mediaItem.x);
+        if (document.activeElement !== mouseY) mouseY.value = String(mediaItem.y);
+        if (document.activeElement !== mouseW) mouseW.value = String(mediaItem.w);
+        if (document.activeElement !== mouseH) mouseH.value = String(mediaItem.h);
+        if (mouseRot && document.activeElement !== mouseRot) mouseRot.value = String(Math.round(Number(mediaItem.rot) || 0));
+        const opPct = Math.round((mediaItem.opacity != null ? mediaItem.opacity : 1) * 100);
+        if (mouseMediaOpacity && document.activeElement !== mouseMediaOpacity) mouseMediaOpacity.value = String(opPct);
+        if (mouseMediaOpacityVal) mouseMediaOpacityVal.textContent = opPct + "%";
+        if (mouseMediaMask) mouseMediaMask.checked = !!mediaItem.mask;
+        if (mouseMediaOverLabels) mouseMediaOverLabels.checked = !!mediaItem.overLetters;
+        return;
+      }
+
+      if (mouseShapeField) mouseShapeField.hidden = false;
+      if (mouseActionField) mouseActionField.hidden = false;
+      if (mouseLabelField) mouseLabelField.hidden = false;
+      if (mouseRField) mouseRField.hidden = false;
+      if (mouseMediaOpacityField) mouseMediaOpacityField.hidden = true;
+      if (mouseMediaMaskField) mouseMediaMaskField.hidden = true;
+      if (mouseMediaOverLabelsField) mouseMediaOverLabelsField.hidden = true;
+
+      const multi = selectedMouseIds.size > 1;
       const item = mouseEditorItems.find((k) => k.id === selectedMouseId);
-      if (!item || !settings.mouseCustom) {
+      if (!item || !settings.mouseCustom || multi) {
         mouseEditorMeta.hidden = true;
         return;
       }
       mouseEditorMeta.hidden = false;
+      if (mouseAction) mouseAction.value = normalizeMouseAction(item.action, item.id);
+      if (mouseShape) mouseShape.value = normalizeMouseShape(item.shape);
+      if (mouseLabel && document.activeElement !== mouseLabel) {
+        mouseLabel.value = String(item.label || "");
+      }
       mouseX.value = String(item.x);
       mouseY.value = String(item.y);
       mouseW.value = String(item.w);
       mouseH.value = String(item.h);
       if (mouseR) {
-        const mr = clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.id));
+        const mr = clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.action, item.shape));
         item.r = mr;
         mouseR.value = String(mr);
         mouseR.max = String(maxCornerRadius(item.w, item.h));
+        mouseR.disabled = item.shape === "circle" || item.shape === "triangle" || item.shape === "star";
       }
+      if (mouseRot) mouseRot.value = String(Math.round(Number(item.rot) || 0));
     }
 
     function paintMouseLayers() {
       if (!mouseLayersList) return;
       mouseLayersList.innerHTML = "";
-      const order = ["pad", "m1", "wheel", "m2"];
-      for (const id of order) {
-        const p = mouseEditorItems.find((k) => k.id === id);
-        if (!p) continue;
+      if (!mouseEditorItems.length) {
+        const empty = document.createElement("p");
+        empty.className = "hint";
+        empty.textContent = "Aucune forme.";
+        mouseLayersList.appendChild(empty);
+        return;
+      }
+      for (const p of mouseEditorItems) {
         const btn = document.createElement("button");
         btn.type = "button";
-        btn.className = "mouse-layer" + (selectedMouseId === id ? " active" : "");
-        btn.innerHTML = "<strong>" + (MOUSE_PART_LABELS[id] || id) + "</strong>"
-          + "<small>" + p.w + "×" + p.h + " · " + p.x + "," + p.y + "</small>";
-        btn.addEventListener("click", () => {
+        btn.className = "mouse-layer" + (selectedMouseIds.has(p.id) ? " active" : "");
+        const title = (p.label && p.label.trim()) || mouseShapeLabel(p.shape);
+        btn.innerHTML = "<strong>" + title + "</strong>"
+          + "<small>" + mouseActionLabel(p.action)
+          + " · " + p.w + "×" + p.h
+          + (p.rot ? " · " + p.rot + "°" : "") + "</small>";
+        btn.addEventListener("click", (e) => {
           if (!settings.mouseCustom) return;
-          selectedMouseId = id;
+          selectMousePart(p.id, e.shiftKey);
           paintMouseEditor();
         });
         mouseLayersList.appendChild(btn);
+      }
+    }
+
+    function paintMouseShapeButtons() {
+      const host = document.getElementById("mouseShapeButtons");
+      if (!host) return;
+      host.innerHTML = "";
+      for (const s of MOUSE_SHAPES) {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn";
+        btn.textContent = "+ " + MOUSE_SHAPE_LABELS[s];
+        btn.addEventListener("click", () => addMouseShape(s));
+        host.appendChild(btn);
+      }
+    }
+
+    function paintMouseFnChips() {
+      const host = document.getElementById("mouseFnChips");
+      if (!host) return;
+      host.innerHTML = "";
+      for (const a of MOUSE_ACTIONS) {
+        if (a === "none") continue;
+        const chip = document.createElement("button");
+        chip.type = "button";
+        chip.className = "mouse-fn-chip";
+        chip.draggable = true;
+        chip.textContent = MOUSE_ACTION_LABELS[a];
+        chip.title = "Glisse sur une forme";
+        chip.addEventListener("dragstart", (e) => {
+          e.dataTransfer.setData("text/mouse-action", a);
+          e.dataTransfer.effectAllowed = "copy";
+        });
+        chip.addEventListener("click", () => {
+          if (!settings.mouseCustom || !selectedMouseIds.size) return;
+          for (const id of selectedMouseIds) {
+            const item = mouseEditorItems.find((k) => k.id === id);
+            if (item) item.action = a;
+          }
+          commitMouseLayout(true);
+          paintMouseEditor();
+        });
+        host.appendChild(chip);
+      }
+    }
+
+    function addMouseShape(shape) {
+      if (!settings.mouseCustom) {
+        settings.mouseCustom = true;
+        mouseCustom.checked = true;
+        ensureMouseEditorLayout();
+      }
+      const s = normalizeMouseShape(shape);
+      const mins = minMouseSize("none", s);
+      const box = layoutBounds(mouseEditorItems, []);
+      const side = Math.max(mins.w, s === "rect" ? 70 : 65);
+      const item = {
+        id: newMousePartId(),
+        action: "none",
+        shape: s,
+        label: "",
+        x: 8,
+        y: 8,
+        w: s === "rect" ? 80 : side,
+        h: s === "rect" ? 55 : side,
+        r: defaultMouseRadius("none", s),
+        rot: 0,
+      };
+      if (mouseEditorItems.length) {
+        item.x = Math.max(8, box.w + 4);
+        item.y = 8;
+      }
+      mouseEditorItems.push(item);
+      setMouseSelection([item.id], item.id);
+      commitMouseLayout(true);
+      paintMouseEditor();
+    }
+
+    function addMousePart(action) {
+      // compat : ajoute une forme rect + fonction
+      addMouseShape("rect");
+      const item = mouseEditorItems.find((k) => k.id === selectedMouseId);
+      if (item) {
+        item.action = normalizeMouseAction(action, action);
+        commitMouseLayout(true);
+        paintMouseEditor();
+      }
+    }
+
+    function deleteSelectedMousePart() {
+      if (!settings.mouseCustom) return;
+      if (selectedMouseMediaId) {
+        deleteSelectedMouseMedia();
+        return;
+      }
+      if (!selectedMouseIds.size) return;
+      const kill = new Set(selectedMouseIds);
+      mouseEditorItems = mouseEditorItems.filter((p) => !kill.has(p.id));
+      clearMouseSelection();
+      if (mouseEditorItems.length) {
+        setMouseSelection([mouseEditorItems[mouseEditorItems.length - 1].id], mouseEditorItems[mouseEditorItems.length - 1].id);
+      }
+      commitMouseLayout(true);
+      paintMouseEditor();
+    }
+
+    function moveSelectedMouseParts(dx, dy, useSnap) {
+      if (!settings.mouseCustom || !selectedMouseIds.size) return;
+      const ids = [...selectedMouseIds];
+      const primary = mouseEditorItems.find((k) => k.id === selectedMouseId) || mouseEditorItems.find((k) => k.id === ids[0]);
+      if (!primary) return;
+      const origins = Object.fromEntries(
+        ids.map((id) => {
+          const it = mouseEditorItems.find((k) => k.id === id);
+          return [id, { x: it.x, y: it.y }];
+        })
+      );
+      const snapped = figSnapPosition(
+        primary.x + dx,
+        primary.y + dy,
+        primary.w,
+        primary.h,
+        primary.id,
+        useSnap,
+        new Set(ids),
+        mouseEditorItems
+      );
+      const ox = origins[primary.id];
+      const adx = snapped.x - ox.x;
+      const ady = snapped.y - ox.y;
+      for (const id of ids) {
+        const it = mouseEditorItems.find((k) => k.id === id);
+        if (!it) continue;
+        it.x = Math.max(0, origins[id].x + adx);
+        it.y = Math.max(0, origins[id].y + ady);
+      }
+      commitMouseLayout(true);
+      paintMouseEditor();
+    }
+
+    function hideMouseCtx() {
+      if (mouseCtxMenu) mouseCtxMenu.hidden = true;
+    }
+
+    function showMouseCtx(x, y, partId) {
+      if (!mouseCtxMenu) return;
+      mouseCtxMenu.dataset.partId = partId;
+      mouseCtxMenu.hidden = false;
+      mouseCtxMenu.style.left = Math.min(window.innerWidth - 200, Math.max(8, x)) + "px";
+      mouseCtxMenu.style.top = Math.min(window.innerHeight - 220, Math.max(8, y)) + "px";
+    }
+
+    function duplicateMousePart(partId) {
+      const src = mouseEditorItems.find((p) => p.id === partId);
+      if (!src) return null;
+      const clone = {
+        ...serializeMouseItem(src),
+        id: newMousePartId(),
+        x: Math.max(0, src.x + 12),
+        y: Math.max(0, src.y + 12),
+        label: String(src.label || ""),
+      };
+      mouseEditorItems.push(clone);
+      setMouseSelection([clone.id], clone.id);
+      commitMouseLayout(true);
+      paintMouseEditor();
+      return clone;
+    }
+
+    function runMouseCtxCommand(cmd, partId) {
+      const item = mouseEditorItems.find((p) => p.id === partId);
+      if (!item && cmd !== "delete") return;
+      hideMouseCtx();
+      if (cmd === "label") {
+        setMouseSelection([partId], partId);
+        paintMouseEditor();
+        const cur = String(item.label || "");
+        const next = window.prompt("Texte sur la forme (vide = aucun)", cur);
+        if (next === null) return;
+        item.label = String(next).slice(0, 24);
+        commitMouseLayout(true);
+        paintMouseEditor();
+        return;
+      }
+      if (cmd === "shape") {
+        setMouseSelection([partId], partId);
+        paintMouseEditor();
+        const names = MOUSE_SHAPES.map((s) => MOUSE_SHAPE_LABELS[s]).join(", ");
+        const next = window.prompt("Forme (" + names + ")", MOUSE_SHAPE_LABELS[item.shape] || item.shape);
+        if (next === null) return;
+        const raw = String(next).trim().toLowerCase();
+        const byLabel = MOUSE_SHAPES.find((s) => MOUSE_SHAPE_LABELS[s].toLowerCase() === raw);
+        const byId = MOUSE_SHAPES.find((s) => s === raw);
+        const shape = byLabel || byId;
+        if (!shape) return;
+        item.shape = shape;
+        if (shape === "circle" || shape === "square") {
+          const side = Math.max(minMouseSize(item.action, shape).w, Math.round(Math.min(item.w, item.h)));
+          item.w = side;
+          item.h = side;
+        }
+        item.r = clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.action, shape));
+        commitMouseLayout(true);
+        paintMouseEditor();
+        return;
+      }
+      if (cmd === "action") {
+        setMouseSelection([partId], partId);
+        paintMouseEditor();
+        const names = MOUSE_ACTIONS.map((a) => MOUSE_ACTION_LABELS[a]).join(", ");
+        const next = window.prompt("Fonction (" + names + ")", MOUSE_ACTION_LABELS[item.action] || item.action);
+        if (next === null) return;
+        const raw = String(next).trim().toLowerCase();
+        const byLabel = MOUSE_ACTIONS.find((a) => MOUSE_ACTION_LABELS[a].toLowerCase() === raw);
+        const byId = MOUSE_ACTIONS.find((a) => a.toLowerCase() === raw);
+        const action = byLabel || byId;
+        if (!action) return;
+        item.action = action;
+        commitMouseLayout(true);
+        paintMouseEditor();
+        return;
+      }
+      if (cmd === "duplicate") {
+        duplicateMousePart(partId);
+        return;
+      }
+      if (cmd === "delete") {
+        if (!selectedMouseIds.has(partId)) setMouseSelection([partId], partId);
+        deleteSelectedMousePart();
       }
     }
 
@@ -3916,55 +5918,223 @@
       ensureMouseEditorLayout();
       mouseEditor.classList.toggle("disabled", !settings.mouseCustom);
       const guidesEl = document.getElementById("mouseFigGuides");
-      mouseEditor.querySelectorAll(".emouse").forEach((n) => n.remove());
+      mouseEditor.querySelectorAll(".emouse, .emouse-media, .emouse-mask-vis").forEach((n) => n.remove());
       if (!guidesEl) {
         const g = document.createElement("div");
         g.className = "fig-guides";
         g.id = "mouseFigGuides";
         mouseEditor.appendChild(g);
       }
-      let maxR = MOUSE_BOX + 40;
-      let maxB = MOUSE_BOX + 40;
-      const paintOrder = ["pad", "m1", "wheel", "m2"];
-      for (const id of paintOrder) {
-        const p = mouseEditorItems.find((k) => k.id === id);
-        if (!p) continue;
-        maxR = Math.max(maxR, p.x + p.w + 48);
-        maxB = Math.max(maxB, p.y + p.h + 48);
+
+      const art = mouseArtboardSize(mouseEditorItems);
+      for (const m of mouseMediaItems) clampMouseMediaToArt(m, art);
+
+      const sortedMedia = mouseMediaItems.slice().sort((a, b) => a.z - b.z || a.id.localeCompare(b.id));
+      const maskUnder = [];
+      const maskOver = [];
+      const plainBack = [];
+      const plainFront = [];
+      for (const m of sortedMedia) {
+        if (m.mask) {
+          if (m.overLetters) maskOver.push(m);
+          else maskUnder.push(m);
+        } else if (m.overLetters) {
+          plainFront.push(m);
+        } else {
+          plainBack.push(m);
+        }
+      }
+      mouseEditor.classList.toggle(
+        "has-under-labels",
+        maskUnder.length > 0
+      );
+
+      function paintMouseMediaShell(m) {
         const el = document.createElement("div");
-        el.className = "emouse " + p.id + (selectedMouseId === p.id ? " selected" : "");
+        el.className = "emouse-media"
+          + (m.id === selectedMouseMediaId ? " selected" : "")
+          + (m.mask ? " mask-on" : "");
+        el.dataset.mouseMediaId = m.id;
+        el.style.left = m.x + "px";
+        el.style.top = m.y + "px";
+        el.style.width = m.w + "px";
+        el.style.height = m.h + "px";
+        el.style.transform = "rotate(" + (m.rot || 0) + "deg)";
+        if (!m.mask) el.style.opacity = String(m.opacity != null ? m.opacity : 1);
+        el.style.zIndex = m.id === selectedMouseMediaId
+          ? "50"
+          : String((m.overLetters ? 22 : 3) + (m.z || 0));
+        el.title = m.name + " · " + m.w + "×" + m.h
+          + " · " + Math.round((m.opacity != null ? m.opacity : 1) * 100) + "%"
+          + (m.mask ? " · masque" : "")
+          + (m.overLetters ? " · sur texte" : "");
+        if (m.mask && mouseEditorItems.length) {
+          el.style.background = m.id === selectedMouseMediaId
+            ? "rgba(77,163,255,0.10)"
+            : "rgba(77,163,255,0.04)";
+        } else {
+          const img = document.createElement("img");
+          img.src = mediaUrl(m.file);
+          img.alt = "";
+          img.draggable = false;
+          el.appendChild(img);
+        }
+        if (settings.mouseCustom && m.id === selectedMouseMediaId) {
+          for (const corner of ["tl", "tr", "bl", "br"]) {
+            const handle = document.createElement("span");
+            handle.className = "fig-handle " + corner;
+            handle.dataset.resize = corner;
+            el.appendChild(handle);
+          }
+          const rotH = document.createElement("span");
+          rotH.className = "fig-handle rot";
+          rotH.dataset.rotate = "1";
+          el.appendChild(rotH);
+        }
+        mouseEditor.appendChild(el);
+      }
+
+      for (const m of plainBack) paintMouseMediaShell(m);
+      for (const m of maskUnder) paintMouseMediaShell(m);
+
+      function appendMouseMaskSvg(list, zIndex) {
+        if (!list.length || !mouseEditorItems.length) return;
+        const NS = "http://www.w3.org/2000/svg";
+        const svg = document.createElementNS(NS, "svg");
+        svg.setAttribute("class", "emouse-mask-vis");
+        svg.setAttribute("width", String(art.w));
+        svg.setAttribute("height", String(art.h));
+        svg.style.width = art.w + "px";
+        svg.style.height = art.h + "px";
+        svg.style.zIndex = String(zIndex);
+        const defs = document.createElementNS(NS, "defs");
+        const mask = document.createElementNS(NS, "mask");
+        const maskId = "editorMouseMask_" + zIndex;
+        mask.setAttribute("id", maskId);
+        mask.setAttribute("maskUnits", "userSpaceOnUse");
+        mask.setAttribute("x", "0");
+        mask.setAttribute("y", "0");
+        mask.setAttribute("width", String(art.w));
+        mask.setAttribute("height", String(art.h));
+        const black = document.createElementNS(NS, "rect");
+        black.setAttribute("width", String(art.w));
+        black.setAttribute("height", String(art.h));
+        black.setAttribute("fill", "#000");
+        mask.appendChild(black);
+        for (const p of mouseEditorItems) appendMouseShapeMaskHole(mask, p);
+        defs.appendChild(mask);
+        svg.appendChild(defs);
+        const g = document.createElementNS(NS, "g");
+        g.setAttribute("mask", "url(#" + maskId + ")");
+        for (const m of list) {
+          const image = document.createElementNS(NS, "image");
+          const href = mediaUrl(m.file);
+          image.setAttributeNS("http://www.w3.org/1999/xlink", "href", href);
+          image.setAttribute("href", href);
+          image.setAttribute("data-mouse-media-vis", m.id);
+          image.setAttribute("x", String(m.x));
+          image.setAttribute("y", String(m.y));
+          image.setAttribute("width", String(m.w));
+          image.setAttribute("height", String(m.h));
+          image.setAttribute("preserveAspectRatio", "none");
+          image.setAttribute("opacity", String(m.opacity != null ? m.opacity : 1));
+          if (m.rot) {
+            image.setAttribute("transform", "rotate(" + m.rot + " " + (m.x + m.w / 2) + " " + (m.y + m.h / 2) + ")");
+          }
+          g.appendChild(image);
+        }
+        svg.appendChild(g);
+        mouseEditor.appendChild(svg);
+      }
+
+      appendMouseMaskSvg(maskUnder, 4);
+
+      const sorted = mouseEditorItems.slice().sort((a, b) => {
+        const ap = a.action === "pad" ? 0 : 1;
+        const bp = b.action === "pad" ? 0 : 1;
+        return ap - bp;
+      });
+      for (const p of sorted) {
+        const el = document.createElement("div");
+        const action = normalizeMouseAction(p.action, p.id);
+        const shape = normalizeMouseShape(p.shape);
+        p.action = action;
+        p.shape = shape;
+        el.className = "emouse action-" + action
+          + (action === "pad" ? " pad" : "")
+          + (selectedMouseIds.has(p.id) ? " selected" : "")
+          + (selectedMouseIds.has(p.id) && selectedMouseIds.size > 1 ? " multi" : "");
         el.dataset.mouseId = p.id;
         el.style.left = p.x + "px";
         el.style.top = p.y + "px";
         el.style.width = p.w + "px";
         el.style.height = p.h + "px";
-        const pr = clampCornerRadius(p.w, p.h, p.r, defaultMouseRadius(p.id));
-        p.r = pr;
-        el.style.borderRadius = pr + "px";
-        if (p.id === "wheel") {
-          el.innerHTML = '<span class="emouse-half">▲</span><span class="emouse-half">▼</span>';
-        } else {
-          el.textContent = MOUSE_PART_LABELS[p.id] || p.id;
-        }
-        if (settings.mouseCustom && selectedMouseId === p.id) {
+        applyMouseShapeStyle(el, p);
+        const rot = Math.round(Number(p.rot) || 0);
+        p.rot = rot;
+        el.style.transform = rot ? ("rotate(" + rot + "deg)") : "";
+        const label = document.createElement("span");
+        label.className = "emouse-label";
+        label.textContent = mouseDisplayText(p);
+        el.appendChild(label);
+        if (settings.mouseCustom && selectedMouseId === p.id && selectedMouseIds.size === 1) {
           for (const corner of ["tl", "tr", "bl", "br"]) {
             const handle = document.createElement("span");
             handle.className = "fig-handle " + corner;
             handle.dataset.corner = corner;
             el.appendChild(handle);
           }
-          placeRadiusHandle(el, pr);
+          if (shape === "rect" || shape === "square") placeRadiusHandle(el, p.r);
+          const rotH = document.createElement("span");
+          rotH.className = "fig-handle rot";
+          rotH.dataset.rotate = "1";
+          el.appendChild(rotH);
         }
+        el.addEventListener("dragover", (e) => {
+          if (!settings.mouseCustom) return;
+          e.preventDefault();
+          el.classList.add("drop-target");
+        });
+        el.addEventListener("dragleave", () => el.classList.remove("drop-target"));
+        el.addEventListener("drop", (e) => {
+          e.preventDefault();
+          el.classList.remove("drop-target");
+          const act = e.dataTransfer.getData("text/mouse-action");
+          if (!act || !MOUSE_ACTIONS.includes(act)) return;
+          p.action = act;
+          setMouseSelection([p.id], p.id);
+          commitMouseLayout(true);
+          paintMouseEditor();
+        });
+        el.addEventListener("contextmenu", (e) => {
+          if (!settings.mouseCustom) return;
+          e.preventDefault();
+          e.stopPropagation();
+          if (!selectedMouseIds.has(p.id)) setMouseSelection([p.id], p.id);
+          else selectedMouseId = p.id;
+          paintMouseEditor();
+          showMouseCtx(e.clientX, e.clientY, p.id);
+        });
         mouseEditor.appendChild(el);
       }
-      mouseEditor.style.width = maxR + "px";
-      mouseEditor.style.height = maxB + "px";
+
+      appendMouseMaskSvg(maskOver, 24);
+      for (const m of plainFront) paintMouseMediaShell(m);
+      for (const m of maskOver) paintMouseMediaShell(m);
+
+      mouseEditor.style.width = art.w + "px";
+      mouseEditor.style.height = art.h + "px";
       updateMouseMetaFields();
       paintMouseLayers();
+      paintMouseMediaLayersList();
+      paintMouseAssetReuse();
+      syncMouseDeleteButton();
     }
 
     function renderMouseEditor() {
       paintMouseEditor();
+      paintMouseShapeButtons();
+      paintMouseFnChips();
     }
 
     function applyLiveMouseEl(item) {
@@ -3974,76 +6144,358 @@
       live.style.top = item.y + "px";
       live.style.width = item.w + "px";
       live.style.height = item.h + "px";
-      const r = clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.id));
-      item.r = r;
-      live.style.borderRadius = r + "px";
+      applyMouseShapeStyle(live, item);
+      const rot = Math.round(Number(item.rot) || 0);
+      item.rot = rot;
+      live.style.transform = rot ? ("rotate(" + rot + "deg)") : "";
+      const lab = live.querySelector(".emouse-label");
+      if (lab) lab.textContent = mouseDisplayText(item);
       const rh = live.querySelector(".fig-handle.radius");
-      if (rh) rh.style.left = Math.min(item.w / 2, r) + "px";
+      if (rh) rh.style.left = Math.min(item.w / 2, item.r || 0) + "px";
+    }
+
+    function applyLiveMouseMediaEl(item) {
+      const live = mouseEditor && mouseEditor.querySelector('.emouse-media[data-mouse-media-id="' + item.id + '"]');
+      if (live) {
+        live.style.left = item.x + "px";
+        live.style.top = item.y + "px";
+        live.style.width = item.w + "px";
+        live.style.height = item.h + "px";
+        live.style.transform = "rotate(" + (item.rot || 0) + "deg)";
+        if (!item.mask) live.style.opacity = String(item.opacity != null ? item.opacity : 1);
+        live.title = item.name + " · " + item.w + "×" + item.h
+          + (item.mask ? " · masque" : "")
+          + (item.overLetters ? " · sur texte" : "");
+      }
+      const vis = mouseEditor && mouseEditor.querySelector('image[data-mouse-media-vis="' + item.id + '"]');
+      if (vis) {
+        vis.setAttribute("x", String(item.x));
+        vis.setAttribute("y", String(item.y));
+        vis.setAttribute("width", String(item.w));
+        vis.setAttribute("height", String(item.h));
+        vis.setAttribute("opacity", String(item.opacity != null ? item.opacity : 1));
+        const cx = item.x + item.w / 2;
+        const cy = item.y + item.h / 2;
+        if (item.rot) vis.setAttribute("transform", "rotate(" + item.rot + " " + cx + " " + cy + ")");
+        else vis.removeAttribute("transform");
+      }
     }
 
     function bindMouseEditorDrag() {
       if (!mouseEditor) return;
-      let mode = null; // move | resize
-      let corner = null;
-      let startX = 0;
-      let startY = 0;
-      let origin = null;
+      let drag = null;
+
+      function editorPoint(e) {
+        const rect = mouseEditor.getBoundingClientRect();
+        return { x: e.clientX - rect.left, y: e.clientY - rect.top, rect };
+      }
+
+      function updateLassoEl(box) {
+        let el = mouseEditor.querySelector(".fig-lasso");
+        if (!el) {
+          el = document.createElement("div");
+          el.className = "fig-lasso";
+          mouseEditor.appendChild(el);
+        }
+        el.style.left = box.x + "px";
+        el.style.top = box.y + "px";
+        el.style.width = box.w + "px";
+        el.style.height = box.h + "px";
+      }
+
+      function removeLassoEl() {
+        const el = mouseEditor.querySelector(".fig-lasso");
+        if (el) el.remove();
+      }
+
+      function applyLassoSelection(box, additive) {
+        const hit = mouseEditorItems
+          .filter((k) => rectsIntersect(box, { x: k.x, y: k.y, w: k.w, h: k.h }))
+          .map((k) => k.id);
+        if (additive) {
+          const next = new Set(selectedMouseIds);
+          for (const id of hit) next.add(id);
+          setMouseSelection([...next], hit[hit.length - 1] || selectedMouseId);
+        } else {
+          setMouseSelection(hit, hit[hit.length - 1] || null);
+        }
+      }
 
       mouseEditor.addEventListener("pointerdown", (e) => {
         if (!settings.mouseCustom) return;
+        if (e.button !== 0) return;
+        hideMouseCtx();
         const handle = e.target.closest(".fig-handle");
+        const mediaEl = e.target.closest(".emouse-media");
         const el = e.target.closest(".emouse");
-        if (!el) {
-          selectedMouseId = null;
-          clearMouseFigGuides();
+        const pt = editorPoint(e);
+
+        if (mediaEl) {
+          const mid = mediaEl.dataset.mouseMediaId;
+          const item = mouseMediaItems.find((m) => m.id === mid);
+          if (!item) return;
+          setMouseMediaSelection(mid);
           paintMouseEditor();
+          e.preventDefault();
+          const isRotate = !!(handle && handle.dataset.rotate === "1");
+          const isResize = !!(handle && handle.dataset.resize);
+          if (isRotate) {
+            drag = {
+              mode: "media-rotate",
+              id: mid,
+              origin: { rot: Math.round(Number(item.rot) || 0) },
+            };
+          } else if (isResize) {
+            drag = {
+              mode: "media-resize",
+              id: mid,
+              corner: handle.dataset.resize || "br",
+              startX: e.clientX,
+              startY: e.clientY,
+              origin: { x: item.x, y: item.y, w: item.w, h: item.h },
+              aspect: item.w / Math.max(1, item.h),
+            };
+          } else {
+            drag = {
+              mode: "media-move",
+              id: mid,
+              ox: pt.x - item.x,
+              oy: pt.y - item.y,
+            };
+          }
+          mouseEditor.setPointerCapture(e.pointerId);
+          mouseEditor.focus();
           return;
         }
+
+        if (!el) {
+          e.preventDefault();
+          clearMouseMediaSelection();
+          drag = {
+            mode: "lasso",
+            x0: pt.x,
+            y0: pt.y,
+            additive: e.shiftKey,
+            moved: false,
+          };
+          mouseEditor.setPointerCapture(e.pointerId);
+          mouseEditor.focus();
+          return;
+        }
+
         const id = el.dataset.mouseId;
         const item = mouseEditorItems.find((k) => k.id === id);
         if (!item) return;
-        const wasSelected = el.classList.contains("selected") && !!el.querySelector(".fig-handle");
-        selectedMouseId = id;
+
         const isRadius = !!(handle && handle.dataset.radius === "1");
-        mode = isRadius ? "radius" : (handle ? "resize" : "move");
-        corner = handle && !isRadius ? (handle.dataset.corner || "br") : null;
-        startX = e.clientX;
-        startY = e.clientY;
-        origin = { x: item.x, y: item.y, w: item.w, h: item.h, r: clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.id)) };
-        if (!wasSelected) paintMouseEditor();
-        else {
-          mouseEditor.querySelectorAll(".emouse").forEach((n) => n.classList.toggle("selected", n.dataset.mouseId === id));
-          updateMouseMetaFields();
-          paintMouseLayers();
+        const isRotate = !!(handle && handle.dataset.rotate === "1");
+        const isResize = !!(handle && !isRadius && !isRotate);
+
+        if (e.shiftKey && !handle) {
+          selectMousePart(id, true);
+          paintMouseEditor();
+          e.preventDefault();
+          return;
+        }
+
+        if (!selectedMouseIds.has(id)) {
+          setMouseSelection([id], id);
+          paintMouseEditor();
+        } else {
+          selectedMouseId = id;
+          clearMouseMediaSelection();
+          // refresh handles if single
+          if (selectedMouseIds.size === 1) paintMouseEditor();
+          else {
+            mouseEditor.querySelectorAll(".emouse").forEach((n) => {
+              const on = selectedMouseIds.has(n.dataset.mouseId);
+              n.classList.toggle("selected", on);
+              n.classList.toggle("multi", on && selectedMouseIds.size > 1);
+            });
+            updateMouseMetaFields();
+            paintMouseLayers();
+            syncMouseDeleteButton();
+          }
+        }
+
+        e.preventDefault();
+        if (isRadius && selectedMouseIds.size === 1) {
+          drag = {
+            mode: "radius",
+            id,
+            startX: e.clientX,
+            origin: {
+              r: clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.action, item.shape)),
+            },
+          };
+        } else if (isRotate && selectedMouseIds.size === 1) {
+          drag = {
+            mode: "rotate",
+            id,
+            origin: { rot: Math.round(Number(item.rot) || 0) },
+          };
+        } else if (isResize && selectedMouseIds.size === 1) {
+          drag = {
+            mode: "resize",
+            id,
+            corner: handle.dataset.corner || "br",
+            startX: e.clientX,
+            startY: e.clientY,
+            origin: { x: item.x, y: item.y, w: item.w, h: item.h, r: item.r },
+          };
+        } else {
+          const moveIds = [...selectedMouseIds];
+          drag = {
+            mode: "move",
+            id,
+            ids: moveIds,
+            startX: e.clientX,
+            startY: e.clientY,
+            origins: Object.fromEntries(
+              moveIds.map((mid) => {
+                const it = mouseEditorItems.find((k) => k.id === mid);
+                return [mid, { x: it.x, y: it.y }];
+              })
+            ),
+          };
         }
         mouseEditor.setPointerCapture(e.pointerId);
-        e.preventDefault();
+        mouseEditor.focus();
       });
 
       mouseEditor.addEventListener("pointermove", (e) => {
-        if (!mode || !origin || !selectedMouseId) return;
-        const item = mouseEditorItems.find((k) => k.id === selectedMouseId);
-        if (!item) return;
-        const dx = Math.round(e.clientX - startX);
-        const dy = Math.round(e.clientY - startY);
+        if (!drag) return;
         const hardGrid = e.shiftKey;
-        const mins = minMouseSize(item.id);
 
-        if (mode === "radius") {
-          item.r = clampCornerRadius(item.w, item.h, origin.r + dx, defaultMouseRadius(item.id));
+        if (drag.mode === "lasso") {
+          const pt = editorPoint(e);
+          const box = {
+            x: Math.min(drag.x0, pt.x),
+            y: Math.min(drag.y0, pt.y),
+            w: Math.abs(pt.x - drag.x0),
+            h: Math.abs(pt.y - drag.y0),
+          };
+          if (box.w > 3 || box.h > 3) drag.moved = true;
+          updateLassoEl(box);
+          if (drag.moved) applyLassoSelection(box, drag.additive);
+          mouseEditor.querySelectorAll(".emouse").forEach((n) => {
+            const on = selectedMouseIds.has(n.dataset.mouseId);
+            n.classList.toggle("selected", on);
+            n.classList.toggle("multi", on && selectedMouseIds.size > 1);
+          });
+          syncMouseDeleteButton();
+          return;
+        }
+
+        if (drag.mode === "media-move" || drag.mode === "media-resize" || drag.mode === "media-rotate") {
+          const item = mouseMediaItems.find((m) => m.id === drag.id);
+          if (!item) return;
+          const art = mouseArtboardSize(mouseEditorItems);
+          if (drag.mode === "media-move") {
+            const pt = editorPoint(e);
+            let nx = Math.round(pt.x - drag.ox);
+            let ny = Math.round(pt.y - drag.oy);
+            if (hardGrid) {
+              nx = Math.round(nx / KEY_GRID) * KEY_GRID;
+              ny = Math.round(ny / KEY_GRID) * KEY_GRID;
+            }
+            item.x = nx;
+            item.y = ny;
+            clampMouseMediaToArt(item, art);
+          } else if (drag.mode === "media-resize") {
+            const dx = Math.round(e.clientX - drag.startX);
+            const dy = Math.round(e.clientY - drag.startY);
+            const origin = drag.origin;
+            const corner = drag.corner;
+            let x = origin.x;
+            let y = origin.y;
+            let w = origin.w;
+            let h = origin.h;
+            if (corner === "br") { w = origin.w + dx; h = origin.h + dy; }
+            else if (corner === "bl") { x = origin.x + dx; w = origin.w - dx; h = origin.h + dy; }
+            else if (corner === "tr") { y = origin.y + dy; w = origin.w + dx; h = origin.h - dy; }
+            else if (corner === "tl") { x = origin.x + dx; y = origin.y + dy; w = origin.w - dx; h = origin.h - dy; }
+            if (!hardGrid && drag.aspect) {
+              const dw = w - origin.w;
+              const dh = h - origin.h;
+              if (Math.abs(dw) >= Math.abs(dh * drag.aspect)) {
+                w = Math.max(16, w);
+                h = w / drag.aspect;
+              } else {
+                h = Math.max(16, h);
+                w = h * drag.aspect;
+              }
+              if (corner.indexOf("l") >= 0) x = origin.x + origin.w - w;
+              if (corner.indexOf("t") >= 0) y = origin.y + origin.h - h;
+            }
+            item.w = Math.max(16, Math.round(w));
+            item.h = Math.max(16, Math.round(h));
+            item.x = Math.round(x);
+            item.y = Math.round(y);
+            clampMouseMediaToArt(item, art);
+          } else if (drag.mode === "media-rotate") {
+            const rect = mouseEditor.getBoundingClientRect();
+            const cx = rect.left + item.x + item.w / 2;
+            const cy = rect.top + item.y + item.h / 2;
+            const ang = Math.atan2(e.clientY - cy, e.clientX - cx) * 180 / Math.PI;
+            let rot = Math.round(ang + 90);
+            if (hardGrid) rot = Math.round(rot / 15) * 15;
+            item.rot = ((rot % 360) + 360) % 360;
+          }
+          applyLiveMouseMediaEl(item);
+          updateMouseMetaFields();
+          return;
+        }
+
+        const item = mouseEditorItems.find((k) => k.id === drag.id);
+        if (!item) return;
+        const dx = Math.round(e.clientX - drag.startX);
+        const dy = Math.round(e.clientY - (drag.startY || 0));
+
+        if (drag.mode === "radius") {
+          item.r = clampCornerRadius(item.w, item.h, drag.origin.r + dx, defaultMouseRadius(item.action, item.shape));
           applyLiveMouseEl(item);
           updateMouseMetaFields();
           return;
         }
 
-        if (mode === "move") {
-          let nx = origin.x + dx;
-          let ny = origin.y + dy;
-          const snapped = figSnapPosition(nx, ny, item.w, item.h, item.id, hardGrid, null, mouseEditorItems);
-          item.x = snapped.x;
-          item.y = snapped.y;
+        if (drag.mode === "rotate") {
+          const rect = mouseEditor.getBoundingClientRect();
+          const cx = rect.left + item.x + item.w / 2;
+          const cy = rect.top + item.y + item.h / 2;
+          const ang = Math.atan2(e.clientY - cy, e.clientX - cx) * 180 / Math.PI;
+          let rot = Math.round(ang + 90);
+          if (hardGrid) rot = Math.round(rot / 15) * 15;
+          item.rot = ((rot % 360) + 360) % 360;
+          applyLiveMouseEl(item);
+          updateMouseMetaFields();
+          return;
+        }
+
+        if (drag.mode === "move") {
+          const primaryOrigin = drag.origins[drag.id];
+          if (!primaryOrigin) return;
+          let nx = primaryOrigin.x + dx;
+          let ny = primaryOrigin.y + dy;
+          const snapped = figSnapPosition(nx, ny, item.w, item.h, item.id, hardGrid, new Set(drag.ids), mouseEditorItems);
+          const adx = snapped.x - primaryOrigin.x;
+          const ady = snapped.y - primaryOrigin.y;
+          for (const mid of drag.ids) {
+            const it = mouseEditorItems.find((k) => k.id === mid);
+            if (!it) continue;
+            it.x = Math.max(0, drag.origins[mid].x + adx);
+            it.y = Math.max(0, drag.origins[mid].y + ady);
+            applyLiveMouseEl(it);
+          }
           showMouseFigGuides(snapped.guides);
-        } else {
+          updateMouseMetaFields();
+          return;
+        }
+
+        if (drag.mode === "resize") {
+          const mins = minMouseSize(item.action, item.shape);
+          const origin = drag.origin;
+          const corner = drag.corner;
           let x = origin.x;
           let y = origin.y;
           let w = origin.w;
@@ -4052,38 +6504,56 @@
           else if (corner === "bl") { x = origin.x + dx; w = origin.w - dx; h = origin.h + dy; }
           else if (corner === "tr") { y = origin.y + dy; w = origin.w + dx; h = origin.h - dy; }
           else if (corner === "tl") { x = origin.x + dx; y = origin.y + dy; w = origin.w - dx; h = origin.h - dy; }
-          if (hardGrid) {
-            x = snap(x, KEY_GRID);
-            y = snap(y, KEY_GRID);
-            w = Math.max(mins.w, snap(w, KEY_GRID));
-            h = Math.max(mins.h, snap(h, KEY_GRID));
-          } else {
-            w = Math.max(mins.w, Math.round(w));
-            h = Math.max(mins.h, Math.round(h));
-            x = Math.round(x);
-            y = Math.round(y);
-          }
+          w = Math.max(mins.w, Math.round(w));
+          h = Math.max(mins.h, Math.round(h));
+          x = Math.round(x);
+          y = Math.round(y);
           if (w === mins.w && corner && corner.indexOf("l") >= 0) x = origin.x + origin.w - mins.w;
           if (h === mins.h && corner && corner.indexOf("t") >= 0) y = origin.y + origin.h - mins.h;
-          item.x = Math.max(0, x);
-          item.y = Math.max(0, y);
-          item.w = w;
-          item.h = h;
-          item.r = clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.id));
-          clearMouseFigGuides();
+
+          const snapped = figSnapResize(x, y, w, h, corner, {
+            hardGrid,
+            selfId: item.id,
+            excludeIds: new Set([item.id]),
+            itemsPool: mouseEditorItems,
+            minW: mins.w,
+            minH: mins.h,
+          });
+          const sized = coerceMouseShapeSize(item.shape, snapped.w, snapped.h, mins);
+          item.shape = sized.shape;
+          item.x = Math.max(0, snapped.x);
+          item.y = Math.max(0, snapped.y);
+          item.w = sized.w;
+          item.h = sized.h;
+          if (sized.shape === "circle") {
+            if (corner.indexOf("l") >= 0) item.x = origin.x + origin.w - item.w;
+            if (corner.indexOf("t") >= 0) item.y = origin.y + origin.h - item.h;
+          }
+          item.r = clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.action, item.shape));
+          showMouseFigGuides(snapped.guides);
+          applyLiveMouseEl(item);
+          updateMouseMetaFields();
         }
-        applyLiveMouseEl(item);
-        updateMouseMetaFields();
       });
 
       const endDrag = (e) => {
-        if (!mode) return;
-        mode = null;
-        corner = null;
-        origin = null;
-        clearMouseFigGuides();
-        commitMouseLayout(true);
-        paintMouseEditor();
+        if (!drag) return;
+        if (drag.mode === "lasso") {
+          removeLassoEl();
+          if (!drag.moved && !drag.additive) {
+            clearMouseSelection();
+            clearMouseMediaSelection();
+          }
+          paintMouseEditor();
+        } else if (drag.mode === "media-move" || drag.mode === "media-resize" || drag.mode === "media-rotate") {
+          commitMouseMediaLayout(true);
+          paintMouseEditor();
+        } else {
+          clearMouseFigGuides();
+          commitMouseLayout(true);
+          paintMouseEditor();
+        }
+        drag = null;
         try { mouseEditor.releasePointerCapture(e.pointerId); } catch (_) {}
       };
       mouseEditor.addEventListener("pointerup", endDrag);
@@ -4365,8 +6835,11 @@
           drag = {
             mode: "resize",
             id,
+            corner: "br",
             startX: e.clientX,
             startY: e.clientY,
+            origX: item.x,
+            origY: item.y,
             origW: item.w,
             origH: item.h,
           };
@@ -4460,18 +6933,30 @@
         }
 
         if (drag.mode === "resize") {
+          let x = drag.origX;
+          let y = drag.origY;
           let w = drag.origW + (e.clientX - drag.startX);
           let h = drag.origH + (e.clientY - drag.startY);
-          if (e.shiftKey) {
-            w = snap(w, KEY_GRID);
-            h = snap(h, KEY_GRID);
-          }
-          item.w = Math.max(16, Math.round(w));
-          item.h = Math.max(16, Math.round(h));
+          w = Math.max(16, Math.round(w));
+          h = Math.max(16, Math.round(h));
+          const snapped = figSnapResize(x, y, w, h, drag.corner || "br", {
+            hardGrid: e.shiftKey,
+            selfId: item.id,
+            excludeIds: new Set([item.id]),
+            itemsPool: editorItems,
+            minW: 16,
+            minH: 16,
+          });
+          item.x = snapped.x;
+          item.y = snapped.y;
+          item.w = snapped.w;
+          item.h = snapped.h;
           item.r = clampCornerRadius(item.w, item.h, item.r, 8);
-          clearFigGuides();
+          showFigGuides(snapped.guides);
           const live = keyEditor.querySelector('.ekey[data-id="' + drag.id + '"]');
           if (live) {
+            live.style.left = item.x + "px";
+            live.style.top = item.y + "px";
             live.style.width = item.w + "px";
             live.style.height = item.h + "px";
             live.style.borderRadius = item.r + "px";
@@ -4479,6 +6964,10 @@
             if (rh) rh.style.left = Math.min(item.w / 2, item.r) + "px";
             live.title = item.label + " · " + item.x + "," + item.y + " · " + item.w + "×" + item.h + " · r" + item.r;
           }
+          const box = layoutBounds(editorItems, mediaItems);
+          keyEditor.style.width = box.w + "px";
+          keyEditor.style.height = box.h + "px";
+          syncEditorMeta();
         } else {
           let x = e.clientX - pt.rect.left - drag.ox;
           let y = e.clientY - pt.rect.top - drag.oy;
@@ -4561,21 +7050,36 @@
       if (!MOUSE_STYLES.some(([v]) => v === s.mouse)) s.mouse = DEFAULTS.mouse;
       if (!LAYOUTS.some(([v]) => v === s.layout)) s.layout = DEFAULTS.layout;
       s.mouseSens = Math.max(0.05, Math.min(10, Number(s.mouseSens) || DEFAULTS.mouseSens));
-      s.keyCustom = !!s.keyCustom;
-      if (s.keyCustom) {
-        const rawLayout = Array.isArray(s.keyLayout) ? s.keyLayout : [];
-        s.keyLayout = normalizeKeyLayout(rawLayout, s.layout, { fillMissing: false })
-          .map(serializeKeyItem);
-        s.mediaLayers = normalizeMediaLayers(s.mediaLayers);
-      } else {
+
+      // Images / clavier / souris custom = uniquement thème perso sauvegardé (pas Kawaii, Apex…)
+      if (s.design !== DESIGN_CUSTOM) {
+        s.keyCustom = false;
         s.keyLayout = null;
         s.mediaLayers = [];
-      }
-      s.mouseCustom = !!s.mouseCustom;
-      if (s.mouseCustom) {
-        s.mouseLayout = normalizeMouseLayout(s.mouseLayout);
-      } else {
+        s.mouseCustom = false;
         s.mouseLayout = null;
+        s.mouseMediaLayers = [];
+        s.activeCustomId = null;
+      } else {
+        s.keyCustom = !!s.keyCustom;
+        if (s.keyCustom) {
+          const rawLayout = Array.isArray(s.keyLayout) ? s.keyLayout : [];
+          s.keyLayout = normalizeKeyLayout(rawLayout, s.layout, { fillMissing: false })
+            .map(serializeKeyItem);
+          s.mediaLayers = normalizeMediaLayers(s.mediaLayers);
+        } else {
+          s.keyLayout = null;
+          s.mediaLayers = [];
+        }
+        s.mouseCustom = !!s.mouseCustom;
+        if (s.mouseCustom) {
+          s.mouseLayout = normalizeMouseLayout(s.mouseLayout);
+          s.mouseMediaLayers = normalizeMediaLayers(s.mouseMediaLayers);
+        } else {
+          s.mouseLayout = null;
+          s.mouseMediaLayers = [];
+        }
+        s.activeCustomId = s.activeCustomId ? String(s.activeCustomId) : null;
       }
       delete s.contour;
       delete s.contourWidth;
@@ -4589,6 +7093,22 @@
       return s;
     }
 
+    async function migrateLegacyCustomIfNeeded() {
+      if (settings.design !== DESIGN_CUSTOM) return;
+      if (settings.activeCustomId) return;
+      if (!settings.keyCustom && !settings.mouseCustom) return;
+      if (customDesigns.length) {
+        // Relie au premier si déjà des designs, sinon crée depuis l'état actuel
+        return;
+      }
+      try {
+        const id = await saveCustomDesignRecord("Mon thème");
+        settings.activeCustomId = id;
+        await loadCustomDesigns();
+        await saveSettings(false);
+      } catch (e) { /* ignore */ }
+    }
+
     async function loadSettings() {
       try {
         const res = await fetch(settingsUrl, { cache: "no-store" });
@@ -4596,11 +7116,14 @@
         settings = normalize(await res.json());
         setOnline(true);
         homeView = "themes";
+        await loadCustomDesigns();
+        await migrateLegacyCustomIfNeeded();
         render();
       } catch (e) {
         settings = normalize(DEFAULTS);
         setOnline(false);
         homeView = "themes";
+        customDesigns = [];
         render();
       }
     }
@@ -4625,6 +7148,47 @@
       }
     }
 
+    async function handleSaveClick() {
+      settings = normalize(settings);
+      if (homeView === "create") {
+        try {
+          let name = "Mon thème";
+          if (editingDesignId) {
+            const existing = customDesigns.find((d) => d.id === editingDesignId);
+            name = (existing && existing.name) || name;
+            const renamed = window.prompt("Nom du thème", name);
+            if (renamed === null) return;
+            name = renamed.trim() || name;
+            const id = await saveCustomDesignRecord(name, editingDesignId);
+            settings.design = DESIGN_CUSTOM;
+            settings.activeCustomId = id;
+            editingDesignId = id;
+            createCommitted = true;
+          } else {
+            const named = window.prompt("Nom de ton thème", "Mon thème");
+            if (named === null) return;
+            name = named.trim() || "Mon thème";
+            const id = await saveCustomDesignRecord(name, null);
+            settings.design = DESIGN_CUSTOM;
+            settings.activeCustomId = id;
+            editingDesignId = id;
+            createCommitted = true;
+          }
+          await loadCustomDesigns();
+          await saveSettings(true);
+          syncExportButton();
+          savedLabel.textContent = "Thème sauvegardé ✓";
+          setTimeout(() => { savedLabel.textContent = ""; }, 1600);
+          return;
+        } catch (e) {
+          savedLabel.textContent = "Échec sauvegarde thème";
+          setTimeout(() => { savedLabel.textContent = ""; }, 1800);
+          return;
+        }
+      }
+      await saveSettings(true);
+    }
+
     function queueSave() {
       clearTimeout(saveTimer);
       saveTimer = setTimeout(() => saveSettings(true), 180);
@@ -4635,18 +7199,108 @@
       statusLabel.textContent = ok ? "En ligne" : "Offline";
     }
 
+    function leaveCreateSession(restoreIfNeeded) {
+      if (restoreIfNeeded && !createCommitted && createSnapshot) {
+        settings = normalize(createSnapshot);
+        clearAllSelection();
+        mediaItems = Array.isArray(settings.mediaLayers) ? settings.mediaLayers.map((m) => ({ ...m })) : [];
+        mouseEditorItems = [];
+        clearMouseSelection();
+      }
+      editingDesignId = null;
+      createSnapshot = null;
+      createCommitted = false;
+    }
+
     document.querySelectorAll(".tab").forEach((tab) => {
       tab.addEventListener("click", () => {
         document.querySelectorAll(".tab").forEach((t) => t.classList.remove("active"));
         document.querySelectorAll(".panel").forEach((p) => p.classList.remove("active"));
         tab.classList.add("active");
         document.getElementById("panel-" + tab.dataset.tab).classList.add("active");
-        if (tab.dataset.tab === "home") showHomeThemes();
+        if (tab.dataset.tab === "home") {
+          if (homeView === "create") {
+            leaveCreateSession(true);
+            showHomeThemes();
+            render();
+            queueSave();
+          } else {
+            showHomeThemes();
+          }
+        }
       });
     });
 
     document.getElementById("btnBackThemes").addEventListener("click", () => {
+      leaveCreateSession(true);
       showHomeThemes();
+      render();
+      queueSave();
+    });
+
+    document.getElementById("btnExportDesign").addEventListener("click", async () => {
+      const id = settings.activeCustomId || editingDesignId;
+      if (!id) return;
+      try {
+        const existing = customDesigns.find((d) => d.id === id);
+        const name = (existing && existing.name) || "Mon thème";
+        if (homeView === "create" && editingDesignId === id) {
+          await saveCustomDesignRecord(name, id);
+        }
+        const data = await exportCustomDesign(id);
+        savedLabel.textContent = data.path
+          ? "Exporté → themeperso\\exports\\"
+          : "Exporté ✓";
+        if (data.path) {
+          window.alert("Dossier prêt à partager :\n" + data.path + "\n\nContient theme.json + assets.");
+        }
+        setTimeout(() => { savedLabel.textContent = ""; }, 2200);
+      } catch (e) {
+        savedLabel.textContent = "Échec export";
+        setTimeout(() => { savedLabel.textContent = ""; }, 1800);
+      }
+    });
+
+    document.getElementById("btnImportDesign").addEventListener("click", () => {
+      const input = document.getElementById("importDesignInput");
+      if (input) input.click();
+    });
+
+    document.getElementById("importDesignInput").addEventListener("change", async () => {
+      const input = document.getElementById("importDesignInput");
+      const file = input && input.files && input.files[0];
+      if (input) input.value = "";
+      if (!file) return;
+      try {
+        const text = await file.text();
+        const theme = JSON.parse(text);
+        if (!theme || typeof theme !== "object") throw new Error("json");
+        delete theme.id;
+        const name = String(theme.name || file.name.replace(/\.json$/i, "") || "Thème importé").slice(0, 60);
+        theme.name = name;
+        theme.updatedAt = new Date().toISOString();
+        const res = await fetch(designsApiBase, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(theme),
+        });
+        if (!res.ok) throw new Error("save");
+        const data = await res.json();
+        const newId = data && data.id;
+        await loadCustomDesigns();
+        if (newId) {
+          const full = await fetchDesignTheme(newId);
+          applyDesignTheme(full, newId);
+        }
+        showHomeThemes();
+        render();
+        queueSave();
+        savedLabel.textContent = "Importé ✓ — mets les assets dans themeperso\\assets si besoin";
+        setTimeout(() => { savedLabel.textContent = ""; }, 2800);
+      } catch (e) {
+        savedLabel.textContent = "Échec import (theme.json invalide)";
+        setTimeout(() => { savedLabel.textContent = ""; }, 2000);
+      }
     });
 
     fillSelect(sgJump, SG_KEYS);
@@ -4809,14 +7463,25 @@
           : buildDefaultMouseLayout();
         settings.mouseLayout = mouseEditorItems.map(serializeMouseItem);
         savedMouseLayout = settings.mouseLayout;
+        mouseMediaItems = normalizeMediaLayers(savedMouseMediaLayers);
+        settings.mouseMediaLayers = mouseMediaItems.map(serializeMedia);
+        savedMouseMediaLayers = settings.mouseMediaLayers;
       } else {
         if (Array.isArray(settings.mouseLayout) && settings.mouseLayout.length) {
           savedMouseLayout = settings.mouseLayout;
         } else if (mouseEditorItems.length) {
           savedMouseLayout = mouseEditorItems.map(serializeMouseItem);
         }
+        if (Array.isArray(settings.mouseMediaLayers) && settings.mouseMediaLayers.length) {
+          savedMouseMediaLayers = settings.mouseMediaLayers.map(serializeMedia);
+        } else if (mouseMediaItems.length) {
+          savedMouseMediaLayers = mouseMediaItems.map(serializeMedia);
+        }
         settings.mouseLayout = null;
-        selectedMouseId = null;
+        settings.mouseMediaLayers = [];
+        mouseMediaItems = [];
+        clearMouseSelection();
+        clearMouseMediaSelection();
       }
       render();
       queueSave();
@@ -4826,7 +7491,7 @@
       mouseEditorItems = buildDefaultMouseLayout();
       settings.mouseCustom = true;
       mouseCustom.checked = true;
-      selectedMouseId = null;
+      clearMouseSelection();
       clearMouseFigGuides();
       commitMouseLayout(true);
       renderMouseEditor();
@@ -4838,7 +7503,7 @@
         mouseCustom.checked = true;
       }
       mouseEditorItems = buildDefaultMouseLayout();
-      selectedMouseId = null;
+      clearMouseSelection();
       clearMouseFigGuides();
       commitMouseLayout(true);
       renderMouseEditor();
@@ -4849,18 +7514,38 @@
       if (value === "" || value === "-") return;
       const n = Math.round(Number(value));
       if (!Number.isFinite(n)) return;
+
+      const mediaItem = mouseMediaItems.find((m) => m.id === selectedMouseMediaId);
+      if (mediaItem) {
+        if (field === "x" || field === "y") mediaItem[field] = n;
+        else if (field === "w" || field === "h") mediaItem[field] = Math.max(16, n);
+        else if (field === "rot") mediaItem.rot = ((n % 360) + 360) % 360;
+        clampMouseMediaToArt(mediaItem, mouseArtboardSize(mouseEditorItems));
+        commitMouseMediaLayout(true);
+        paintMouseEditor();
+        return;
+      }
+
       const item = mouseEditorItems.find((k) => k.id === selectedMouseId);
       if (!item) return;
-      const mins = minMouseSize(item.id);
+      const mins = minMouseSize(item.action);
       if (field === "x" || field === "y") item[field] = Math.max(0, n);
       else if (field === "w") {
-        item.w = Math.max(mins.w, n);
-        item.r = clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.id));
+        const sized = coerceMouseShapeSize(item.shape, n, item.h, mins);
+        item.shape = sized.shape;
+        item.w = sized.w;
+        item.h = sized.h;
+        item.r = clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.action, item.shape));
       } else if (field === "h") {
-        item.h = Math.max(mins.h, n);
-        item.r = clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.id));
+        const sized = coerceMouseShapeSize(item.shape, item.w, n, mins);
+        item.shape = sized.shape;
+        item.w = sized.w;
+        item.h = sized.h;
+        item.r = clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.action, item.shape));
       } else if (field === "r") {
-        item.r = clampCornerRadius(item.w, item.h, n, defaultMouseRadius(item.id));
+        item.r = clampCornerRadius(item.w, item.h, n, defaultMouseRadius(item.action, item.shape));
+      } else if (field === "rot") {
+        item.rot = ((n % 360) + 360) % 360;
       }
       commitMouseLayout(true);
       paintMouseEditor();
@@ -4871,11 +7556,102 @@
     mouseW.addEventListener("change", () => applyMouseMetaField("w", mouseW.value));
     mouseH.addEventListener("change", () => applyMouseMetaField("h", mouseH.value));
     mouseR.addEventListener("change", () => applyMouseMetaField("r", mouseR.value));
+    if (mouseRot) {
+      mouseRot.addEventListener("change", () => applyMouseMetaField("rot", mouseRot.value));
+      mouseRot.addEventListener("input", () => applyMouseMetaField("rot", mouseRot.value));
+    }
     mouseX.addEventListener("input", () => applyMouseMetaField("x", mouseX.value));
     mouseY.addEventListener("input", () => applyMouseMetaField("y", mouseY.value));
     mouseW.addEventListener("input", () => applyMouseMetaField("w", mouseW.value));
     mouseH.addEventListener("input", () => applyMouseMetaField("h", mouseH.value));
     mouseR.addEventListener("input", () => applyMouseMetaField("r", mouseR.value));
+
+    if (mouseAction) {
+      fillMouseActionSelect();
+      mouseAction.addEventListener("change", () => {
+        if (!settings.mouseCustom || !selectedMouseId) return;
+        const item = mouseEditorItems.find((k) => k.id === selectedMouseId);
+        if (!item) return;
+        item.action = normalizeMouseAction(mouseAction.value, item.id);
+        const mins = minMouseSize(item.action);
+        item.w = Math.max(mins.w, item.w);
+        item.h = Math.max(mins.h, item.h);
+        item.r = clampCornerRadius(item.w, item.h, item.r, defaultMouseRadius(item.action));
+        commitMouseLayout(true);
+        paintMouseEditor();
+      });
+    }
+    if (btnMouseDelete) {
+      btnMouseDelete.addEventListener("click", () => deleteSelectedMousePart());
+    }
+    if (mouseCtxMenu) {
+      mouseCtxMenu.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-cmd]");
+        if (!btn) return;
+        e.preventDefault();
+        e.stopPropagation();
+        const cmd = btn.getAttribute("data-cmd");
+        const partId = mouseCtxMenu.dataset.partId;
+        if (cmd && partId) runMouseCtxCommand(cmd, partId);
+      });
+      mouseCtxMenu.addEventListener("contextmenu", (e) => {
+        e.preventDefault();
+        e.stopPropagation();
+      });
+      mouseCtxMenu.addEventListener("pointerdown", (e) => e.stopPropagation());
+    }
+    document.addEventListener("pointerdown", (e) => {
+      if (!mouseCtxMenu || mouseCtxMenu.hidden) return;
+      if (mouseCtxMenu.contains(e.target)) return;
+      hideMouseCtx();
+    }, true);
+    document.addEventListener("keydown", (e) => {
+      if (e.key === "Escape") hideMouseCtx();
+    });
+    if (mouseEditor) {
+      mouseEditor.addEventListener("contextmenu", (e) => {
+        if (!e.target.closest(".emouse")) {
+          e.preventDefault();
+          hideMouseCtx();
+        }
+      });
+      mouseEditor.addEventListener("keydown", (e) => {
+        if (!settings.mouseCustom) return;
+        if ((e.key === "Delete" || e.key === "Backspace") && (selectedMouseIds.size || selectedMouseMediaId)) {
+          e.preventDefault();
+          hideMouseCtx();
+          deleteSelectedMousePart();
+          return;
+        }
+        if (selectedMouseMediaId) {
+          const item = mouseMediaItems.find((m) => m.id === selectedMouseMediaId);
+          if (!item) return;
+          const step = e.shiftKey ? KEY_GRID : 1;
+          let handled = true;
+          if (e.key === "ArrowLeft") item.x -= step;
+          else if (e.key === "ArrowRight") item.x += step;
+          else if (e.key === "ArrowUp") item.y -= step;
+          else if (e.key === "ArrowDown") item.y += step;
+          else handled = false;
+          if (handled) {
+            e.preventDefault();
+            clampMouseMediaToArt(item, mouseArtboardSize(mouseEditorItems));
+            commitMouseMediaLayout(true);
+            paintMouseEditor();
+          }
+          return;
+        }
+        if (!selectedMouseIds.size) return;
+        const step = e.shiftKey ? KEY_GRID : 1;
+        let handled = true;
+        if (e.key === "ArrowLeft") moveSelectedMouseParts(-step, 0, e.shiftKey);
+        else if (e.key === "ArrowRight") moveSelectedMouseParts(step, 0, e.shiftKey);
+        else if (e.key === "ArrowUp") moveSelectedMouseParts(0, -step, e.shiftKey);
+        else if (e.key === "ArrowDown") moveSelectedMouseParts(0, step, e.shiftKey);
+        else handled = false;
+        if (handled) e.preventDefault();
+      });
+    }
 
     btnKeyReset.addEventListener("click", () => {
       settings.keyCustom = false;
@@ -4968,17 +7744,63 @@
       if (file) addMediaFromFile(file);
     });
 
+    if (mouseMediaFileInput) {
+      mouseMediaFileInput.addEventListener("change", () => {
+        const file = mouseMediaFileInput.files && mouseMediaFileInput.files[0];
+        mouseMediaFileInput.value = "";
+        if (file) addMouseMediaFromFile(file);
+      });
+    }
+
+    if (mouseMediaOpacity) {
+      const applyMouseMediaOpacity = () => {
+        const item = mouseMediaItems.find((m) => m.id === selectedMouseMediaId);
+        if (!item) return;
+        item.opacity = Math.max(0.05, Math.min(1, Number(mouseMediaOpacity.value) / 100));
+        if (mouseMediaOpacityVal) mouseMediaOpacityVal.textContent = Math.round(item.opacity * 100) + "%";
+        commitMouseMediaLayout(true);
+        paintMouseEditor();
+      };
+      mouseMediaOpacity.addEventListener("input", applyMouseMediaOpacity);
+      mouseMediaOpacity.addEventListener("change", applyMouseMediaOpacity);
+    }
+
+    if (mouseMediaMask) {
+      mouseMediaMask.addEventListener("change", () => {
+        const item = mouseMediaItems.find((m) => m.id === selectedMouseMediaId);
+        if (!item) return;
+        item.mask = mouseMediaMask.checked;
+        commitMouseMediaLayout(true);
+        paintMouseEditor();
+      });
+    }
+    if (mouseMediaOverLabels) {
+      mouseMediaOverLabels.addEventListener("change", () => {
+        const item = mouseMediaItems.find((m) => m.id === selectedMouseMediaId);
+        if (!item) return;
+        item.overLetters = mouseMediaOverLabels.checked;
+        commitMouseMediaLayout(true);
+        paintMouseEditor();
+      });
+    }
+
     bindKeyEditorDrag();
     bindMouseEditorDrag();
 
-    document.getElementById("btnSave").addEventListener("click", () => saveSettings(true));
+    document.getElementById("btnSave").addEventListener("click", () => handleSaveClick());
     document.getElementById("btnReset").addEventListener("click", () => {
       settings = normalize(DEFAULTS);
       clearAllSelection();
       mediaItems = [];
+      mouseMediaItems = [];
       mouseEditorItems = [];
-      selectedMouseId = null;
+      clearMouseSelection();
+      clearMouseMediaSelection();
       savedMouseLayout = null;
+      savedMouseMediaLayers = null;
+      editingDesignId = null;
+      createSnapshot = null;
+      createCommitted = false;
       homeView = "themes";
       render();
       saveSettings(true);
