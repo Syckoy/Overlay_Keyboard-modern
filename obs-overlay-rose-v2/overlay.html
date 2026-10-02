@@ -1333,7 +1333,10 @@
   <div class="status" id="status">LANCE start-overlay.bat</div>
 
   <script>
-    if (/tiktok=1/.test(location.search)) document.body.classList.add("tiktok");
+    if (/tiktok=1/.test(location.search)) {
+      document.body.classList.add("tiktok");
+      document.title = "Overlay TikTok";
+    }
 
     const DEFAULT_SETTINGS = {
       accent: "#e56b8a",
